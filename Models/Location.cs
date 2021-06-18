@@ -2,7 +2,7 @@
 
 namespace Payroll.Models
 {
-    public class Area : Audit
+    public class Location : Audit
     {
         public int Id { set; get; }
         [Required]
