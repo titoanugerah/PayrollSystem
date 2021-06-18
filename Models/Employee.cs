@@ -46,6 +46,11 @@ namespace Payroll.Models
                 }
             }
         }
+        [Required]
+        public string Email { set; get; }
+        [DefaultValue("user.jpg")]
+        [Required]
+        public string Image { set; get; }
         public string DriverLicense { set; get; }
         public DateTime DriverLicenseExpire { set; get; }
         [DefaultValue("L")]
