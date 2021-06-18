@@ -2,7 +2,7 @@
 
 namespace Payroll.Models
 {
-    public class Position : Audit
+    public class EmploymentStatus : Audit
     {
         public int Id { set; get; }
         [Required]
