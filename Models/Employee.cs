@@ -107,7 +107,9 @@ namespace Payroll.Models
         public Customer Customer { set; get; }
         [Required]
         public DateTime JoinCustomerDate { set; get; }
-
+        [Required]        
+        public int RoleId { set; get; }
+        public Role Role { set; get; }
 
     }
 }

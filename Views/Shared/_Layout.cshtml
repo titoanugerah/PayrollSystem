@@ -172,11 +172,11 @@
                                         <div class="dropdown-divider"></div>
                                         @if (User.Identity.IsAuthenticated)
                                         {
-                                        <a class="dropdown-item" asp-action="Logout" asp-controller="Account">Logout</a>
+                                        <a class="dropdown-item" asp-action="Logout" asp-controller="Auth">Logout</a>
                                         }
                                         else
                                         {
-                                        <a class="dropdown-item" asp-action="Login" asp-controller="Account">Login</a>
+                                        <a class="dropdown-item" asp-action="Login" asp-controller="Auth">Login</a>
                                         }
                                     </li>
                                 </div>

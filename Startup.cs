@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -9,6 +10,7 @@ using Payroll.DataAccess;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Payroll
@@ -28,7 +30,31 @@ namespace Payroll
             var connectionString = Configuration.GetConnectionString("PayrollDB");
             services.AddDbContext<DatabaseContext>(options => options
                 .UseMySQL(connectionString));
+
             services.AddControllersWithViews();
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            }).AddCookie(options =>
+            {
+                options.LoginPath = Configuration["Login:Path"];
+            }).AddGoogle(options =>
+            {
+                options.ClientId = Configuration["Login:ClientId"];
+                options.ClientSecret = Configuration["Login:ClientSecret"];
+                options.Scope.Add("profile");
+                options.Events.OnCreatingTicket = (context) =>
+                {
+                    var picture = context.User.GetProperty("picture").GetString();
+                    context.Identity.AddClaim(new Claim("picture", picture));
+                    var name = context.User.GetProperty("name").GetString();
+                    context.Identity.AddClaim(new Claim("name", name));
+                    var email = context.User.GetProperty("email").GetString();
+                    context.Identity.AddClaim(new Claim("email", email));
+                    return Task.CompletedTask;
+                };
+            });
 
         }
 
@@ -50,6 +76,7 @@ namespace Payroll
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
