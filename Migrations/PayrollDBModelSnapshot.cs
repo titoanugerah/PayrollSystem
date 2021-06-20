@@ -7,8 +7,8 @@ using Payroll.DataAccess;
 
 namespace Payroll.Migrations
 {
-    [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(PayrollDB))]
+    partial class PayrollDBModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
@@ -250,9 +250,12 @@ namespace Payroll.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<char>("Sex")
-                        .HasMaxLength(1)
+                    b.Property<int>("RoleId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Sex")
+                        .HasMaxLength(1)
+                        .HasColumnType("varchar(1)");
 
                     b.Property<DateTime>("StartContract")
                         .HasColumnType("datetime");
@@ -270,6 +273,8 @@ namespace Payroll.Migrations
                     b.HasIndex("LocationId");
 
                     b.HasIndex("PositionId");
+
+                    b.HasIndex("RoleId");
 
                     b.ToTable("Employee");
                 });
@@ -482,6 +487,12 @@ namespace Payroll.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Payroll.Models.Role", "Role")
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Bank");
 
                     b.Navigation("Customer");
@@ -493,6 +504,8 @@ namespace Payroll.Migrations
                     b.Navigation("Location");
 
                     b.Navigation("Position");
+
+                    b.Navigation("Role");
                 });
 
             modelBuilder.Entity("Payroll.Models.Location", b =>

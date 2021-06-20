@@ -107,7 +107,7 @@ CREATE TABLE `Location` (
 CREATE TABLE `Employee` (
     `NIK` int NOT NULL AUTO_INCREMENT,
     `Name` text NOT NULL,
-    `Sex` int NOT NULL,
+    `Sex` varchar(1) NULL,
     `BirthPlace` text NOT NULL,
     `BirthDate` datetime NOT NULL,
     `Religion` text NOT NULL,
@@ -139,6 +139,7 @@ CREATE TABLE `Employee` (
     `LocationId` int NOT NULL,
     `CustomerId` int NOT NULL,
     `JoinCustomerDate` datetime NOT NULL,
+    `RoleId` int NOT NULL,
     `IsExist` bit NOT NULL,
     `CreateBy` int NOT NULL,
     `ModifyBy` int NULL,
@@ -150,7 +151,8 @@ CREATE TABLE `Employee` (
     CONSTRAINT `FK_Employee_EmploymentStatus_EmploymentStatusId` FOREIGN KEY (`EmploymentStatusId`) REFERENCES `EmploymentStatus` (`Id`) ON DELETE CASCADE,
     CONSTRAINT `FK_Employee_FamilyStatus_FamilyStatusCode` FOREIGN KEY (`FamilyStatusCode`) REFERENCES `FamilyStatus` (`Code`) ON DELETE CASCADE,
     CONSTRAINT `FK_Employee_Location_LocationId` FOREIGN KEY (`LocationId`) REFERENCES `Location` (`Id`) ON DELETE CASCADE,
-    CONSTRAINT `FK_Employee_Position_PositionId` FOREIGN KEY (`PositionId`) REFERENCES `Position` (`Id`) ON DELETE CASCADE
+    CONSTRAINT `FK_Employee_Position_PositionId` FOREIGN KEY (`PositionId`) REFERENCES `Position` (`Id`) ON DELETE CASCADE,
+    CONSTRAINT `FK_Employee_Role_RoleId` FOREIGN KEY (`RoleId`) REFERENCES `Role` (`Id`) ON DELETE CASCADE
 );
 
 CREATE INDEX `IX_Employee_BankCode` ON `Employee` (`BankCode`);
@@ -165,10 +167,12 @@ CREATE INDEX `IX_Employee_LocationId` ON `Employee` (`LocationId`);
 
 CREATE INDEX `IX_Employee_PositionId` ON `Employee` (`PositionId`);
 
+CREATE INDEX `IX_Employee_RoleId` ON `Employee` (`RoleId`);
+
 CREATE INDEX `IX_Location_DistrictId` ON `Location` (`DistrictId`);
 
 INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`)
-VALUES ('20210620035340_Initial', '5.0.7');
+VALUES ('20210620045918_Initial', '5.0.7');
 
 COMMIT;
 

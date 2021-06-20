@@ -13,12 +13,10 @@ namespace Payroll.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> logger;
-        private readonly DatabaseContext dbContext;
 
-        public HomeController(ILogger<HomeController> _logger, DatabaseContext _dbContext)
+        public HomeController(ILogger<HomeController> _logger)
         {
             logger = _logger;
-            dbContext = _dbContext;
         }
 
         public IActionResult Index()

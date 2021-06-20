@@ -6,11 +6,11 @@ using Payroll.Models;
 
 namespace Payroll.DataAccess
 {
-    public class DatabaseContext : DbContext
+    public class PayrollDB : DbContext
     {
         private readonly IConfiguration configuration;
         private readonly ILoggerFactory logger;
-        public DatabaseContext(IConfiguration _configuration, ILoggerFactory _logger)
+        public PayrollDB(IConfiguration _configuration, ILoggerFactory _logger)
         {
             configuration = _configuration;
             logger = _logger;

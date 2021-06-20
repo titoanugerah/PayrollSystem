@@ -14,7 +14,7 @@ namespace Payroll.Models
         public string Name { set; get; }
         [MaxLength(1)]
         [DefaultValue("L")]
-        public char Sex { set; get; }
+        public string Sex { set; get; }
         [Required]
         public string BirthPlace { set; get; }
         [Required]

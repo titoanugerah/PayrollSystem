@@ -17,12 +17,12 @@ namespace Payroll.Controllers
     public class AuthController : Controller
     {
         private readonly ILogger<AuthController> logger;
-        private readonly DatabaseContext dbContext;
+        private readonly PayrollDB payrollDB;
 
-        public AuthController(ILogger<AuthController> _logger, DatabaseContext _dbContext)
+        public AuthController(ILogger<AuthController> _logger, PayrollDB _payrollDB)
         {
             logger = _logger;
-            dbContext = _dbContext;
+            payrollDB = _payrollDB;
         }
 
         [Route("Auth/Login")]
@@ -67,17 +67,17 @@ namespace Payroll.Controllers
                 userIdentity.Email = userClaim.Where(claim => claim.Type == "email").Select(claim => claim.Value).FirstOrDefault();
                 userIdentity.Picture = userClaim.Where(claim => claim.Type == "picture").Select(claim => claim.Value).FirstOrDefault();
                 userIdentity.Name = userClaim.Where(claim => claim.Type == "name").Select(claim => claim.Value).FirstOrDefault();
-                var checkUser = dbContext.Employee
+                var checkUser = payrollDB.Employee
                     .Any(user => user.Email == userIdentity.Email);
                 if (checkUser)
                 {
-                    var user = dbContext.Employee
+                    var user = payrollDB.Employee
                         .Include(table => table.Role)
                         .Where(user => user.Email == userIdentity.Email)
                         .FirstOrDefault();
                     user.Image = userIdentity.Picture;
                     user.Name = userIdentity.Name;
-                    await dbContext.SaveChangesAsync();
+                    await payrollDB.SaveChangesAsync();
                     var claims = new List<Claim>
                 {
                     new Claim("Id", user.NIK.ToString()),

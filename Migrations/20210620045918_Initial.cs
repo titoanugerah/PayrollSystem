@@ -172,7 +172,7 @@ namespace Payroll.Migrations
                     NIK = table.Column<int>(type: "int", maxLength: 5, nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(type: "text", nullable: false),
-                    Sex = table.Column<int>(type: "int", maxLength: 1, nullable: false),
+                    Sex = table.Column<string>(type: "varchar(1)", maxLength: 1, nullable: true),
                     BirthPlace = table.Column<string>(type: "text", nullable: false),
                     BirthDate = table.Column<DateTime>(type: "datetime", nullable: false),
                     Religion = table.Column<string>(type: "text", nullable: false),
@@ -204,6 +204,7 @@ namespace Payroll.Migrations
                     LocationId = table.Column<int>(type: "int", nullable: false),
                     CustomerId = table.Column<int>(type: "int", nullable: false),
                     JoinCustomerDate = table.Column<DateTime>(type: "datetime", nullable: false),
+                    RoleId = table.Column<int>(type: "int", nullable: false),
                     IsExist = table.Column<ulong>(type: "bit", nullable: false),
                     CreateBy = table.Column<int>(type: "int", nullable: false),
                     ModifyBy = table.Column<int>(type: "int", nullable: true),
@@ -249,6 +250,12 @@ namespace Payroll.Migrations
                         principalTable: "Position",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Employee_Role_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "Role",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -282,6 +289,11 @@ namespace Payroll.Migrations
                 column: "PositionId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Employee_RoleId",
+                table: "Employee",
+                column: "RoleId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Location_DistrictId",
                 table: "Location",
                 column: "DistrictId");
@@ -291,9 +303,6 @@ namespace Payroll.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Employee");
-
-            migrationBuilder.DropTable(
-                name: "Role");
 
             migrationBuilder.DropTable(
                 name: "Bank");
@@ -312,6 +321,9 @@ namespace Payroll.Migrations
 
             migrationBuilder.DropTable(
                 name: "Position");
+
+            migrationBuilder.DropTable(
+                name: "Role");
 
             migrationBuilder.DropTable(
                 name: "District");
