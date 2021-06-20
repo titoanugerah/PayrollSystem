@@ -53,8 +53,8 @@ namespace Payroll.Controllers
         {
             try
             {
-                var result = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-                List<ViewModels.UserClaim> userClaim = result.Principal
+                var response = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                List<ViewModels.UserClaim> userClaim = response.Principal
                     .Identities.FirstOrDefault().Claims
                     .Where(claim => claim.Type == "email" || claim.Type == "name" || claim.Type == "picture")
                     .Select(claim => new ViewModels.UserClaim
@@ -71,7 +71,7 @@ namespace Payroll.Controllers
                     .Any(user => user.Email == userIdentity.Email);
                 if (checkUser)
                 {
-                    var user = payrollDB.Employee
+                    var user = payrollDB.Employee                        
                         .Include(table => table.Role)
                         .Where(user => user.Email == userIdentity.Email)
                         .FirstOrDefault();
@@ -79,14 +79,14 @@ namespace Payroll.Controllers
                     user.Name = userIdentity.Name;
                     await payrollDB.SaveChangesAsync();
                     var claims = new List<Claim>
-                {
-                    new Claim("Id", user.NIK.ToString()),
-                    new Claim("Name", user.Name),
-                    new Claim("Email", user.Email),
-                    new Claim("Role", user.Role.Name),
-                    new Claim("Image", user.Image),
-                    new Claim("RoleId", user.RoleId.ToString())
-                };
+                    {
+                        new Claim("NIK", user.NIK.ToString()),
+                        new Claim("Name", user.Name),
+                        new Claim("Email", user.Email),
+                        new Claim("Role", user.Role.Name),
+                        new Claim("Image", user.Image),
+                        new Claim("RoleId", user.RoleId.ToString())
+                    };
                     var claimsIdentity = new ClaimsIdentity(
                     claims, CookieAuthenticationDefaults.AuthenticationScheme);
                     var authProperties = new AuthenticationProperties();

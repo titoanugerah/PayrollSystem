@@ -10,7 +10,7 @@
 <html lang="en">
 <head>
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>SMASH</title>
+    <title>Payroll</title>
     <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
     <link rel="icon" href="~/img/icon.ico" type="image/x-icon" />
     <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
@@ -72,8 +72,8 @@
         <div class="main-header">
             <!-- Logo Header -->
             <div class="logo-header" data-background-color="blue">
-                <a asp-action="Index" asp-controller="Dashboard" class="logo" style="color:white;">
-                    SMASH
+                <a asp-action="Index" asp-controller="Home" class="logo" style="color:white;">
+                    Payroll
                 </a>
                 <button class="navbar-toggler sidenav-toggler ml-auto" type="button" data-toggle="collapse" data-target="collapse" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon">
@@ -163,7 +163,7 @@
                                             {
                                             <div class="avatar-lg"><img src="~/img/user.jpg" alt="image profile" class="avatar-img rounded"></div>
                                             <div class="u-text">
-                                                <h4>Not Logged In</h4>
+                                                <h4>Belum login</h4>
                                             </div>
                                             }
                                         </div>
@@ -212,8 +212,8 @@
                                     }
                                     else
                                     {
-                                    <b>Not Logged In</b>
-                                    <a asp-action="Login" asp-controller="Account">Please login here</a>
+                                    <b>Belum login</b>
+                                    <a asp-action="Login" asp-controller="Auth">Silahkan login</a>
                                     }
                                 </span>
                             </a>
