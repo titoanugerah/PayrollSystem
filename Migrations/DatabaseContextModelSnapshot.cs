@@ -29,9 +29,6 @@ namespace Payroll.Migrations
                     b.Property<DateTime>("CreateDateUtc")
                         .HasColumnType("datetime");
 
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
                     b.Property<ulong>("IsExist")
                         .HasColumnType("bit");
 

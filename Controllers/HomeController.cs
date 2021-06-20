@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Payroll.DataAccess;
 using Payroll.Models;
 using System;
 using System.Collections.Generic;
@@ -11,11 +12,13 @@ namespace Payroll.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ILogger<HomeController> logger;
+        private readonly DatabaseContext dbContext;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> _logger, DatabaseContext _dbContext)
         {
-            _logger = logger;
+            logger = _logger;
+            dbContext = _dbContext;
         }
 
         public IActionResult Index()

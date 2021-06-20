@@ -8,7 +8,6 @@ START TRANSACTION;
 
 CREATE TABLE `Bank` (
     `Code` varchar(4) NOT NULL,
-    `Id` int NOT NULL,
     `Name` text NOT NULL,
     `IsExist` bit NOT NULL,
     `CreateBy` int NOT NULL,
@@ -116,6 +115,8 @@ CREATE TABLE `Employee` (
     `PhoneNumber` text NOT NULL,
     `KTP` varchar(16) NOT NULL,
     `KK` varchar(16) NOT NULL,
+    `Email` text NOT NULL,
+    `Image` text NOT NULL,
     `DriverLicense` text NULL,
     `DriverLicenseExpire` datetime NOT NULL,
     `FamilyStatusCode` varchar(2) NOT NULL,
@@ -167,7 +168,7 @@ CREATE INDEX `IX_Employee_PositionId` ON `Employee` (`PositionId`);
 CREATE INDEX `IX_Location_DistrictId` ON `Location` (`DistrictId`);
 
 INSERT INTO `__EFMigrationsHistory` (`MigrationId`, `ProductVersion`)
-VALUES ('20210618165652_InitialCreate', '5.0.7');
+VALUES ('20210620035340_Initial', '5.0.7');
 
 COMMIT;
 

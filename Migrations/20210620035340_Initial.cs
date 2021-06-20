@@ -4,7 +4,7 @@ using MySql.EntityFrameworkCore.Metadata;
 
 namespace Payroll.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -13,7 +13,6 @@ namespace Payroll.Migrations
                 columns: table => new
                 {
                     Code = table.Column<string>(type: "varchar(4)", maxLength: 4, nullable: false),
-                    Id = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     IsExist = table.Column<ulong>(type: "bit", nullable: false),
                     CreateBy = table.Column<int>(type: "int", nullable: false),
@@ -181,6 +180,8 @@ namespace Payroll.Migrations
                     PhoneNumber = table.Column<string>(type: "text", nullable: false),
                     KTP = table.Column<string>(type: "varchar(16)", maxLength: 16, nullable: false),
                     KK = table.Column<string>(type: "varchar(16)", maxLength: 16, nullable: false),
+                    Email = table.Column<string>(type: "text", nullable: false),
+                    Image = table.Column<string>(type: "text", nullable: false),
                     DriverLicense = table.Column<string>(type: "text", nullable: true),
                     DriverLicenseExpire = table.Column<DateTime>(type: "datetime", nullable: false),
                     FamilyStatusCode = table.Column<string>(type: "varchar(2)", nullable: false),

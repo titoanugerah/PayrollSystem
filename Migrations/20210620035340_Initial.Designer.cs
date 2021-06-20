@@ -9,8 +9,8 @@ using Payroll.DataAccess;
 namespace Payroll.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20210618175315_UpdateEmployee2")]
-    partial class UpdateEmployee2
+    [Migration("20210620035340_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -30,9 +30,6 @@ namespace Payroll.Migrations
 
                     b.Property<DateTime>("CreateDateUtc")
                         .HasColumnType("datetime");
-
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
 
                     b.Property<ulong>("IsExist")
                         .HasColumnType("bit");

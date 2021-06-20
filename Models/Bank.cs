@@ -4,7 +4,6 @@ namespace Payroll.Models
 {
     public class Bank : Audit
     {
-        public int Id { set; get; }
         [Required]
         [MaxLength(4)]
         public string Code { set; get; }
