@@ -1,15 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 namespace Payroll.Controllers
 {
     public class EmployeeController : Controller
     {
-        public IActionResult Index()
+        [Authorize]
+        public async Task<IActionResult> Index()
         {
+            
             return View();
         }
     }

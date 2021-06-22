@@ -1,17 +1,14 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Payroll.DataAccess;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Payroll.WebSockets;
 
 namespace Payroll
 {
@@ -32,6 +29,8 @@ namespace Payroll
                 .UseMySQL(connectionString));
 
             services.AddControllersWithViews();
+
+            services.AddSignalR();
 
             services.AddAuthentication(options =>
             {
@@ -84,6 +83,7 @@ namespace Payroll
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapHub<NotificationHub>("/notificationHub");
             });
         }
     }
