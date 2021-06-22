@@ -2,24 +2,23 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Threading.Tasks;
 
 namespace Payroll.Controllers
 {
-    public class EmployeeController : Controller
+    public class CustomerController : Controller
     {
-        private readonly ILogger<EmployeeController> logger;
-        public EmployeeController(ILogger<EmployeeController> _logger)
+        private readonly ILogger<CustomerController> logger;
+
+        public CustomerController(ILogger<CustomerController> _logger)
         {
             logger = _logger;
         }
 
         [Authorize]
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            
             try
-            { 
+            {
                 return View();
             }
             catch (Exception error)
@@ -27,7 +26,6 @@ namespace Payroll.Controllers
                 logger.LogError(error, "Customer Controller - Index");
                 throw error;
             }
-
-}
+        }
     }
 }

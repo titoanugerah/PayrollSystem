@@ -1,18 +1,15 @@
 ﻿
-var table = $("#tblEmployee").DataTable({
+var table = $("#tblCustomer").DataTable({
     "processing": true,
     "serverSide": true,
     ajax: {
-        url: "/api/employee/readDatatable",
+        url: "/api/customer/readDatatable",
         dataSrc: 'data',
         dataType: 'json'
     },
     columns: [
-        { data: "nik" },
-        { data: "name"},
-        { data: "customer"},
-        { data: "position"},
-        { data: "location"},
+        { data: "name" },
+        { data: "remark"},
     ]
 });
 
