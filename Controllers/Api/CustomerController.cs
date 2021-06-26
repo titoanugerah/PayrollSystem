@@ -22,6 +22,29 @@ namespace Payroll.Controllers.Api
             payrollDB = _payrollDB;
         }
 
+        [Route("api/customer/create")]
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> Create([FromForm]CustomerClientInput customerInput)
+        {
+            try
+            {
+                Customer customer = new Customer();
+                customer.Name = customerInput.Name;
+                customer.Remark = customerInput.Remark;
+                payrollDB.Customer.Add(customer);
+                payrollDB.Entry(customer).State = EntityState.Added;
+
+                await payrollDB.SaveChangesAsync();
+                return new JsonResult(customer);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error, "Customer API Controller - Create");
+                throw error;
+            }
+        }
+
         [Route("api/customer/readDatatable")]
         [Authorize]
         public async Task<IActionResult> ReadDatatable()
@@ -39,12 +62,30 @@ namespace Payroll.Controllers.Api
                 logger.LogError(error, "Customer API Controller - Read Datatable");
                 throw error;
             }
+        }
 
+        [HttpGet]
+        [Route("api/customer/readdetail/{id}")]
+        [Authorize]
+        public async Task<IActionResult> ReadDetail(int id)
+        {
+            try
+            {
+                Customer customer = await payrollDB.Customer
+                    .Where(column => column.Id == id)
+                    .FirstOrDefaultAsync();
+                return new JsonResult(customer);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error, $"Customer API Controller - Read Detail {id}");
+                throw error;
+            }
         }
 
         [Route("api/customer/readDeleted")]
         [Authorize]
-        public async Task<IActionResult> readDeleted()
+        public async Task<IActionResult> ReadDeleted()
         {
             try
             {
@@ -66,22 +107,67 @@ namespace Payroll.Controllers.Api
             }
         }
 
-
-        [Route("api/customer/create")]
-        [Authorize]
         [HttpPost]
-        public async Task<IActionResult> create(CreateCustomer createCustomer)
+        [Route("api/customer/update/{id}")]
+        [Authorize]
+        public async Task<IActionResult> Update([FromForm]CustomerClientInput customerClientInput, int id)
         {
             try
             {
-//                Customer customer = new Customer(createCustomer);
-                
-//                var x = User.Claims.Where(x => x.Type == "Id").Select(x => x.Value).FirstOrDefault();
-                return  Ok();
+                Customer customer = payrollDB.Customer.Where(column => column.Id == id).FirstOrDefault();
+                customer.Name = customerClientInput.Name;
+                customer.Remark = customerClientInput.Remark;
+                payrollDB.Entry(customer).State = EntityState.Modified;
+                await payrollDB.SaveChangesAsync();
+                return new JsonResult(customer);
             }
             catch (Exception error)
             {
-                logger.LogError(error, "Customer API Controller - Create");
+                logger.LogError(error, $"Customer API Controller - Update {id}");
+                throw error;
+            }
+        }
+
+        [HttpPost]
+        [Route("api/customer/delete/{id}")]
+        [Authorize]
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+                Customer customer = await payrollDB.Customer
+                    .Where(column => column.Id == id)
+                    .FirstOrDefaultAsync();
+                customer.IsExist = false;
+                payrollDB.Entry(customer).State = EntityState.Modified;
+                await payrollDB.SaveChangesAsync();
+                return new JsonResult(customer);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error, $"Customer API - Delete {id}");
+                throw error;
+            }
+        }
+
+        [HttpPost]
+        [Route("api/customer/recover/{id}")]
+        [Authorize]
+        public async Task<IActionResult> Recover(int id)
+        {
+            try
+            {
+                Customer customer = await payrollDB.Customer
+                    .Where(column => column.Id == id)
+                    .FirstOrDefaultAsync();
+                customer.IsExist = true;
+                payrollDB.Entry(customer).State = EntityState.Modified;
+                await payrollDB.SaveChangesAsync();
+                return Ok();
+            }
+            catch(Exception error)
+            {
+                logger.LogError(error, $"Customer API - Recover {id}");
                 throw error;
             }
         }

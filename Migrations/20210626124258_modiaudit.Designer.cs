@@ -9,8 +9,8 @@ using Payroll.DataAccess;
 namespace Payroll.Migrations
 {
     [DbContext(typeof(PayrollDB))]
-    [Migration("20210620045918_Initial")]
-    partial class Initial
+    [Migration("20210626124258_modiaudit")]
+    partial class modiaudit
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -37,7 +37,7 @@ namespace Payroll.Migrations
                     b.Property<int?>("ModifyBy")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("ModifyTimeUtc")
+                    b.Property<DateTime?>("ModifyDateUtc")
                         .HasColumnType("datetime");
 
                     b.Property<string>("Name")
@@ -67,7 +67,7 @@ namespace Payroll.Migrations
                     b.Property<int?>("ModifyBy")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("ModifyTimeUtc")
+                    b.Property<DateTime?>("ModifyDateUtc")
                         .HasColumnType("datetime");
 
                     b.Property<string>("Name")
@@ -100,7 +100,7 @@ namespace Payroll.Migrations
                     b.Property<int?>("ModifyBy")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("ModifyTimeUtc")
+                    b.Property<DateTime?>("ModifyDateUtc")
                         .HasColumnType("datetime");
 
                     b.Property<string>("Name")
@@ -231,7 +231,7 @@ namespace Payroll.Migrations
                     b.Property<int?>("ModifyBy")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("ModifyTimeUtc")
+                    b.Property<DateTime?>("ModifyDateUtc")
                         .HasColumnType("datetime");
 
                     b.Property<string>("NPWP")
@@ -299,7 +299,7 @@ namespace Payroll.Migrations
                     b.Property<int?>("ModifyBy")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("ModifyTimeUtc")
+                    b.Property<DateTime?>("ModifyDateUtc")
                         .HasColumnType("datetime");
 
                     b.Property<string>("Name")
@@ -332,7 +332,7 @@ namespace Payroll.Migrations
                     b.Property<int?>("ModifyBy")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("ModifyTimeUtc")
+                    b.Property<DateTime?>("ModifyDateUtc")
                         .HasColumnType("datetime");
 
                     b.Property<string>("Name")
@@ -371,7 +371,7 @@ namespace Payroll.Migrations
                     b.Property<int?>("ModifyBy")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("ModifyTimeUtc")
+                    b.Property<DateTime?>("ModifyDateUtc")
                         .HasColumnType("datetime");
 
                     b.Property<string>("Name")
@@ -403,7 +403,7 @@ namespace Payroll.Migrations
                     b.Property<int?>("ModifyBy")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("ModifyTimeUtc")
+                    b.Property<DateTime?>("ModifyDateUtc")
                         .HasColumnType("datetime");
 
                     b.Property<string>("Name")
@@ -436,7 +436,7 @@ namespace Payroll.Migrations
                     b.Property<int?>("ModifyBy")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("ModifyTimeUtc")
+                    b.Property<DateTime?>("ModifyDateUtc")
                         .HasColumnType("datetime");
 
                     b.Property<string>("Name")

@@ -6,52 +6,63 @@ namespace Payroll.Models
 {
     public class Audit
     {
+        private bool isExist;
+
         [Column(TypeName = "bit")]
-        [DefaultValue(true)]
-        public bool IsExist { set; get; }
+        public bool IsExist {
+            set 
+            {
+                if (value == null)
+                {
+                    isExist = true;
+                } 
+                else
+                {
+                    isExist = value;
+                }
+            }
+            get 
+            {
+                return isExist;                 
+            }
+        }
         public int CreateBy { set; get; }
         public int? ModifyBy { set; get; }
         [NotMapped]
         public string CreateByName { set; get; }
         [NotMapped]
         public string ModifyByName { set; get; }
-        private DateTime createDateUtc { set; get; }
-        public DateTime CreateDateUtc 
-        { 
-            set
-            {
-                createDateUtc = value;
-            }
+        private DateTime createDateUtc;
+        public DateTime CreateDateUtc
+        {
             get
             {
                 if (createDateUtc.Kind == DateTimeKind.Unspecified)
                 {
                     return DateTime.SpecifyKind(createDateUtc, DateTimeKind.Utc);
                 }
-                else
-                {
-                    return createDateUtc;
-                }
+                return createDateUtc;
+            }
+            set
+            {
+                createDateUtc = value;
             }
         }
 
-        private DateTime modifyTimeUtc { set; get; }
-        public DateTime ModifyTimeUtc
+        private DateTime? modifyDateUtc;
+        public DateTime? ModifyDateUtc
         {
-            set
-            {
-                modifyTimeUtc = value;
-            }
             get
             {
-                if (modifyTimeUtc.Kind == DateTimeKind.Unspecified)
+                if (modifyDateUtc.HasValue && modifyDateUtc.Value.Kind == DateTimeKind.Unspecified)
                 {
-                    return DateTime.SpecifyKind(modifyTimeUtc, DateTimeKind.Utc);
+                    return DateTime.SpecifyKind(modifyDateUtc.Value, DateTimeKind.Utc);
                 }
-                else
-                {
-                    return modifyTimeUtc;
-                }
+                return modifyDateUtc;
+            }
+            set
+            {
+                modifyDateUtc = value;
             }
         }
 

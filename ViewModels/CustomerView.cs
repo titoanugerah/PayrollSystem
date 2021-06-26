@@ -25,4 +25,5 @@ namespace Payroll.ViewModels
         [DefaultValue(1)]
         public int Draw { set; get; }
     }
+
 }

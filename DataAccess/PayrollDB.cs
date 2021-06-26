@@ -3,6 +3,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Payroll.Models;
+using System;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Payroll.DataAccess
 {
@@ -10,10 +15,13 @@ namespace Payroll.DataAccess
     {
         private readonly IConfiguration configuration;
         private readonly ILoggerFactory logger;
-        public PayrollDB(IConfiguration _configuration, ILoggerFactory _logger)
+        private readonly IHttpContextAccessor httpContextAccessor;
+
+        public PayrollDB(IConfiguration _configuration, ILoggerFactory _logger, IHttpContextAccessor _httpContextAccessor)
         {
             configuration = _configuration;
             logger = _logger;
+            httpContextAccessor = _httpContextAccessor;
         }
 
         public DbSet<Bank> Bank { set; get; }
@@ -81,6 +89,54 @@ namespace Payroll.DataAccess
                 role.HasKey(col => col.Id);
             });
 
+        }
+
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default(CancellationToken))
+        {
+            OnBeforeSaving();
+            return base.SaveChangesAsync(cancellationToken);
+        }
+
+        public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default(CancellationToken))
+        {
+            OnBeforeSaving();
+            return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
+        }
+
+        private void OnBeforeSaving()
+        {
+            {
+                if (httpContextAccessor != null && httpContextAccessor.HttpContext != null && httpContextAccessor.HttpContext.User != null && httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
+                {
+                    var email = httpContextAccessor.HttpContext.User.GetEmail();
+                    Employee employee = Employee.Where(column => column.Email == email).FirstOrDefault();
+                    if (employee != null)
+                    {
+                        var entries = ChangeTracker.Entries().ToList();
+                        foreach (var entry in entries)
+                        {
+                            if (entry.Entity is Models.Audit audit)
+                            {
+                                switch (entry.State)
+                                {
+                                    case EntityState.Added:
+                                        audit.CreateBy = employee.NIK;
+                                        audit.CreateDateUtc = DateTime.UtcNow;
+                                        audit.ModifyBy = employee.NIK;
+                                        audit.ModifyDateUtc = DateTime.UtcNow;
+                                        break;
+                                    case EntityState.Modified:
+                                        audit.ModifyBy = employee.NIK;
+                                        audit.ModifyDateUtc = DateTime.UtcNow;
+                                        Entry(audit).Property(p => p.CreateBy).IsModified = false;
+                                        Entry(audit).Property(p => p.CreateDateUtc).IsModified = false;
+                                        break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 

@@ -9,6 +9,7 @@ using Payroll.DataAccess;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Payroll.WebSockets;
+using Microsoft.AspNetCore.Http;
 
 namespace Payroll
 {
@@ -54,6 +55,9 @@ namespace Payroll
                     return Task.CompletedTask;
                 };
             });
+
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
 
         }
 

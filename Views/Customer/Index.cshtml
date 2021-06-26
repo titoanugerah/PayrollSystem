@@ -6,7 +6,7 @@
             </div>
             <div class="ml-md-auto py-2 py-md-0">
                 <button type="button" onclick="showAddCustomerForm()" class="btn btn-white btn-border btn-round mr-2">Tambah Customer</button>
-                <button type="button" onclick="reload()" class="btn btn-white btn-border btn-round mr-2">Reload Data</button>
+                <button type="button" onclick="reloadTable()" class="btn btn-white btn-border btn-round mr-2">Reload Data</button>
                 <a href="#" class="btn btn-white btn-border btn-round mr-2" hidden>Manage</a>
             </div>
         </div>
@@ -21,11 +21,12 @@
                     <div class="card-header">
                         <div class="card-title">Kelola Data Customer</div>
                         <div class="d-flex flex-wrap justify-content-around pb-2 pt-4">
-                            <table id="tblCustomer" class="display">
+                            <table id="table" class="display">
                                 <thead>
                                     <tr>
                                         <td>Customer</td>
                                         <td>Keterangan</td>
+                                        <td>Opsi</td>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -39,7 +40,7 @@
     </div>
 </div>
 
-<div class="modal fade" id="modalAddCustomer" role="dialog">
+<div class="modal fade" id="addCustomerModal" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -82,7 +83,7 @@
                         <div class="form-group">
                             <label>Customer</label>
                             &nbsp;&nbsp;&nbsp;&nbsp;
-                            <select class="form-control select2addmodal" id="recoverCustomerId" style="width:360px">
+                            <select class="form-control select2addmodal" id="recoverId" style="width:360px">
                             </select>
                         </div>
                         <div class="modal-footer">
@@ -90,6 +91,41 @@
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Kembali</button>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editCustomerModal" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <center>
+                    <h4>Edit Customer</h4>
+                </center>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Nama Customer</label>
+                            <input type="text" class="form-control" id="editId" hidden>
+                            <input type="text" class="form-control" id="editName" required>
+                        </div>
+                    </div>
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Keterangan</label>
+                            <input type="text" class="form-control" id="editRemark" required>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="updateCustomer()">Simpan</button>
+                    <button type="button" class="btn btn-danger" onclick="deleteCustomer()">Hapus</button>
+                    <button type="button" data-dismiss="modal" class="btn btn-secondary">Kembali</button>
                 </div>
             </div>
         </div>

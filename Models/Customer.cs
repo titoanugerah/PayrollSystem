@@ -1,19 +1,23 @@
 ﻿using Payroll.ViewModels;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Payroll.Models
 {
     public class Customer : Audit
     {
- //       public Customer(CreateCustomer createCustomer)
- //       {
- //           Name = createCustomer.Name;
- //           Remark = createCustomer.Remark;
- ////           CreateBy = User.Claims.Where(x => x.Type == type).Select(x => x.Value).FirstOrDefault();
- //       }
         public int Id { set; get; }
         [Required]
         public string Name { set; get; }
-        public string Remark { set; get; }
+        public string Remark { set; get; } 
+        [NotMapped]
+        public string Button
+        {
+        get
+            {
+                return $"<button type='button' onclick='showEditForm({Id})' class='btn btn-info'>Edit</button>";
+            }
+        }
+       
     }
 }

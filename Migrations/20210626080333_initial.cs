@@ -4,7 +4,7 @@ using MySql.EntityFrameworkCore.Metadata;
 
 namespace Payroll.Migrations
 {
-    public partial class Initial : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -18,7 +18,7 @@ namespace Payroll.Migrations
                     CreateBy = table.Column<int>(type: "int", nullable: false),
                     ModifyBy = table.Column<int>(type: "int", nullable: true),
                     CreateDateUtc = table.Column<DateTime>(type: "datetime", nullable: false),
-                    ModifyTimeUtc = table.Column<DateTime>(type: "datetime", nullable: false)
+                    ModifyDateUtc = table.Column<DateTime>(type: "datetime", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -37,7 +37,7 @@ namespace Payroll.Migrations
                     CreateBy = table.Column<int>(type: "int", nullable: false),
                     ModifyBy = table.Column<int>(type: "int", nullable: true),
                     CreateDateUtc = table.Column<DateTime>(type: "datetime", nullable: false),
-                    ModifyTimeUtc = table.Column<DateTime>(type: "datetime", nullable: false)
+                    ModifyDateUtc = table.Column<DateTime>(type: "datetime", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -57,7 +57,7 @@ namespace Payroll.Migrations
                     CreateBy = table.Column<int>(type: "int", nullable: false),
                     ModifyBy = table.Column<int>(type: "int", nullable: true),
                     CreateDateUtc = table.Column<DateTime>(type: "datetime", nullable: false),
-                    ModifyTimeUtc = table.Column<DateTime>(type: "datetime", nullable: false)
+                    ModifyDateUtc = table.Column<DateTime>(type: "datetime", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -76,7 +76,7 @@ namespace Payroll.Migrations
                     CreateBy = table.Column<int>(type: "int", nullable: false),
                     ModifyBy = table.Column<int>(type: "int", nullable: true),
                     CreateDateUtc = table.Column<DateTime>(type: "datetime", nullable: false),
-                    ModifyTimeUtc = table.Column<DateTime>(type: "datetime", nullable: false)
+                    ModifyDateUtc = table.Column<DateTime>(type: "datetime", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -95,7 +95,7 @@ namespace Payroll.Migrations
                     CreateBy = table.Column<int>(type: "int", nullable: false),
                     ModifyBy = table.Column<int>(type: "int", nullable: true),
                     CreateDateUtc = table.Column<DateTime>(type: "datetime", nullable: false),
-                    ModifyTimeUtc = table.Column<DateTime>(type: "datetime", nullable: false)
+                    ModifyDateUtc = table.Column<DateTime>(type: "datetime", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -114,7 +114,7 @@ namespace Payroll.Migrations
                     CreateBy = table.Column<int>(type: "int", nullable: false),
                     ModifyBy = table.Column<int>(type: "int", nullable: true),
                     CreateDateUtc = table.Column<DateTime>(type: "datetime", nullable: false),
-                    ModifyTimeUtc = table.Column<DateTime>(type: "datetime", nullable: false)
+                    ModifyDateUtc = table.Column<DateTime>(type: "datetime", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -133,7 +133,7 @@ namespace Payroll.Migrations
                     CreateBy = table.Column<int>(type: "int", nullable: false),
                     ModifyBy = table.Column<int>(type: "int", nullable: true),
                     CreateDateUtc = table.Column<DateTime>(type: "datetime", nullable: false),
-                    ModifyTimeUtc = table.Column<DateTime>(type: "datetime", nullable: false)
+                    ModifyDateUtc = table.Column<DateTime>(type: "datetime", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -152,7 +152,7 @@ namespace Payroll.Migrations
                     CreateBy = table.Column<int>(type: "int", nullable: false),
                     ModifyBy = table.Column<int>(type: "int", nullable: true),
                     CreateDateUtc = table.Column<DateTime>(type: "datetime", nullable: false),
-                    ModifyTimeUtc = table.Column<DateTime>(type: "datetime", nullable: false)
+                    ModifyDateUtc = table.Column<DateTime>(type: "datetime", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -209,7 +209,7 @@ namespace Payroll.Migrations
                     CreateBy = table.Column<int>(type: "int", nullable: false),
                     ModifyBy = table.Column<int>(type: "int", nullable: true),
                     CreateDateUtc = table.Column<DateTime>(type: "datetime", nullable: false),
-                    ModifyTimeUtc = table.Column<DateTime>(type: "datetime", nullable: false)
+                    ModifyDateUtc = table.Column<DateTime>(type: "datetime", nullable: false)
                 },
                 constraints: table =>
                 {
