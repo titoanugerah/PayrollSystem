@@ -8,7 +8,8 @@
     },
     columns: [
         { data: "name" },
-        { data: "remark" },
+        { data: "district.name" },
+        { data: "umk" },
         { data: "button" },
     ]
 });
@@ -26,7 +27,8 @@ function showEditForm(id) {
             console.log(result);
             $('#editId').val(result.id);
             $('#editName').val(result.name);
-            $('#editRemark').val(result.remark);
+            $('#editDistrictId').val(result.districtId).change();
+            $('#editUMK').val(result.umk);
         },
         error: function (result) {
             console.log(result);
@@ -50,7 +52,8 @@ function addLocation() {
         url: "api/location/create",
         data: {
             Name: $("#addName").val(),
-            Remark: $("#addRemark").val(),
+            UMK: $("#addUMK").val(),
+            DistrictId: $("#addDistrictId").val(),
         },
         success: function (result) {
             $('#addLocationModal').modal('hide');
@@ -73,7 +76,8 @@ function updateLocation() {
         url: "api/location/update/" + $('#editId').val(),
         data: {
             Name: $("#editName").val(),
-            Remark: $("#editRemark").val(),
+            UMK: $("#editUMK").val(),
+            DistrictId: $("#editDistrictId").val(),
         },
         success: function (result) {
             $('#editLocationModal').modal('hide');
@@ -142,9 +146,34 @@ function getDeletedLocation() {
     });
 }
 
+function getDistrict() {
+    $.ajax({
+        type: "GET",
+        dataType: "JSON",
+        url: "api/district/read",
+        success: function (result) {
+            var html = "<option value=0> Silahkan Pilih</option>";
+            result.forEach(function (data) {
+                html = html + "<option value=" + data.id + "> " + data.name + "</option>";
+            });
+            $('#addDistrictId').html(html);
+            $('#editDistrictId').html(html);
+        },
+        error: function (result) {
+            console.log(result);
+            notify('fas fa-times', 'Gagal', result.responseText, 'danger');
+        }
+    });
+}
+
 $(document).ready(function () {
     $('.select2addmodal').select2({
         dropdownParent: $('#addLocationModal')
     });
+    $('.select2editmodal').select2({
+        dropdownParent: $('#editLocationModal')
+    });
+
     getDeletedLocation();
+    getDistrict();
 });

@@ -24,6 +24,30 @@ namespace Payroll.Controllers.Api
         }
 
         [Authorize]
+        [HttpPost]
+        [Route("api/location/create")]
+        public async Task<IActionResult> Create([FromForm]LocationInput locationInput)
+        {
+            try
+            {
+                Location location = new Location();
+                location.Name = locationInput.Name;
+                location.UMK = locationInput.UMK;
+                location.DistrictId = locationInput.DistrictId;
+                location.IsExist = true;
+                payrollDB.Location.Add(location);
+                payrollDB.Entry(location).State = EntityState.Added;
+                await payrollDB.SaveChangesAsync();
+                return new JsonResult(location);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error, $"Location API - Craete");
+                throw error;
+            }
+        }
+
+        [Authorize]
         [HttpGet]
         [Route("api/location/readDatatable")]
         public async Task<IActionResult> ReadDatatable()

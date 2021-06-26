@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Payroll.Models
 {
@@ -11,5 +12,13 @@ namespace Payroll.Models
         [Required]
         public int DistrictId { set; get; }
         public District District { set; get; }
+        [NotMapped]
+        public string Button
+        {
+            get
+            {
+                return $"<button type='button' onclick='showEditForm({Id})' class='btn btn-info'>Edit</button>";
+            }
+        }
     }
 }

@@ -46,10 +46,30 @@ namespace Payroll.Controllers.Api
             }
         }
 
+
+        [Authorize]
+        [HttpGet]
+        [Route("api/district/read")]
+        public async Task<IActionResult>Read()
+        {
+            try
+            {
+                List<District> district = await payrollDB.District
+                    .ToListAsync();
+                return new JsonResult(district);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error, $"District API - Read");
+                throw error;
+            }
+        }
+
+
         [Authorize]
         [HttpGet]
         [Route("api/district/readDatatable")]
-        public async Task<IActionResult> Read()
+        public async Task<IActionResult> ReadDatatable()
         {
             try
             {
