@@ -1,20 +1,18 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading.Tasks;
 
 namespace Payroll.Controllers
 {
-    public class DistrictController : Controller
+    public class LocationController : Controller
     {
-        private readonly ILogger<DistrictController> logger;
-        public DistrictController(ILogger<DistrictController> _logger)
+        private readonly ILogger<LocationController> logger;
+        public LocationController(ILogger<LocationController> _logger)
         {
             logger = _logger;
         }
 
-        [Authorize]
         public async Task<IActionResult> Index()
         {
             try
@@ -23,7 +21,7 @@ namespace Payroll.Controllers
             }
             catch (Exception error)
             {
-                logger.LogError(error, $"District Controller - Index");
+                logger.LogError(error, "Location Controller - Index");
                 throw error;
             }
         }
