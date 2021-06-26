@@ -23,7 +23,6 @@ function showEditForm(id) {
         dataType: "JSON",
         url: "api/customer/readDetail/"+id,
         success: function (result) {
-            console.log(result);
             $('#editId').val(result.id);
             $('#editName').val(result.name);
             $('#editRemark').val(result.remark);
@@ -53,6 +52,7 @@ function addCustomer() {
             Remark: $("#addRemark").val(),
         },
         success: function (result) {
+            reloadTable();
             $('#addCustomerModal').modal('hide');
             notify('fas fa-check', 'Berhasil', 'Customer berhasil ditambahkan', 'success');
         },
@@ -75,6 +75,7 @@ function updateCustomer() {
             Remark: $("#editRemark").val(),
         },
         success: function (result) {
+            reloadTable();
             $('#editCustomerModal').modal('hide');
             notify('fas fa-check', 'Berhasil', 'Customer berhasil diubah', 'success');
         },

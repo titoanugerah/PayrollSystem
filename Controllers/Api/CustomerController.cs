@@ -25,13 +25,14 @@ namespace Payroll.Controllers.Api
         [Route("api/customer/create")]
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> Create([FromForm]CustomerClientInput customerInput)
+        public async Task<IActionResult> Create([FromForm]CustomerInput customerInput)
         {
             try
             {
                 Customer customer = new Customer();
                 customer.Name = customerInput.Name;
                 customer.Remark = customerInput.Remark;
+                customer.IsExist = true;    
                 payrollDB.Customer.Add(customer);
                 payrollDB.Entry(customer).State = EntityState.Added;
 
@@ -110,7 +111,7 @@ namespace Payroll.Controllers.Api
         [HttpPost]
         [Route("api/customer/update/{id}")]
         [Authorize]
-        public async Task<IActionResult> Update([FromForm]CustomerClientInput customerClientInput, int id)
+        public async Task<IActionResult> Update([FromForm] CustomerInput customerClientInput, int id)
         {
             try
             {

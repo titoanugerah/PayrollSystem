@@ -55,6 +55,7 @@ function addDistrict() {
         success: function (result) {
             $('#addDistrictModal').modal('hide');
             notify('fas fa-check', 'Berhasil', 'District berhasil ditambahkan', 'success');
+            reloadTable();
         },
         error: function (result) {
             console.log(result);
@@ -77,6 +78,7 @@ function updateDistrict() {
         success: function (result) {
             $('#editDistrictModal').modal('hide');
             notify('fas fa-check', 'Berhasil', 'District berhasil diubah', 'success');
+            reloadTable();
         },
         error: function (result) {
             console.log(result);

@@ -13,7 +13,7 @@ namespace Payroll.Models
         [NotMapped]
         public string Button
         {
-        get
+            get
             {
                 return $"<button type='button' onclick='showEditForm({Id})' class='btn btn-info'>Edit</button>";
             }

@@ -1,6 +1,6 @@
 ﻿namespace Payroll.ViewModels
 {
-    public class CustomerClientInput
+    public class DistrictInput
     {
         public string Name { set; get; }
         public string Remark { set; get; }
