@@ -13,8 +13,8 @@ var table = $("#tblCustomer").DataTable({
     ]
 });
 
-function showAddEmployeeForm() {
-
+function showAddCustomerForm() {
+    $('#modalAddCustomer').modal('show');
 }
 
 function reload() {
@@ -22,6 +22,43 @@ function reload() {
     notify("fa fa-check","Berhasil", "Data berhasil di reload", "success");
 }
 
-$(document).ready(function () {
+function addCustomer() {
+    $.ajax({
+        type: "POST",
+        dataType: "JSON",
+        url: "api/customer/create",
+        data: {
+            Name: $("#addName").val(),
+            Remark: $("#addRemark").val(),
+        },
+        success: function (result) {
+            console.log(result);
+        },
+        error: function (result) {
+            console.log(result);
+            notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' +result.responseText, 'danger');
+        }
+    });
+}
 
+function getDeletedCustomer() {
+    $.ajax({
+        type: "GET",
+        dataType: "JSON",
+        url: "api/customer/readDeleted",
+        success: function (result) {
+            console.log(result);
+        },
+        error: function (result) {
+            console.log(result);
+            notify('fas fa-times', 'Gagal', result.responseText, 'danger');
+        }
+    });
+}
+
+$(document).ready(function () {
+    $('.select2addmodal').select2({
+        dropdownParent: $('#modalAddCustomer')
+    });
+    getDeletedCustomer();
 });

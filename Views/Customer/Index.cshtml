@@ -39,6 +39,63 @@
     </div>
 </div>
 
+<div class="modal fade" id="modalAddCustomer" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <center>
+                    <h4>Tambah Customer</h4>
+                </center>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <ul class="wizard-menu nav nav-pills nav-primary">
+                    <li class="step" style="width: 50%;">
+                        <a class="nav-link active" href="#addNewTab" data-toggle="tab" aria-expanded="true"><i class="fa fa-user-plus mr-0"></i> Tambah Baru</a>
+                    </li>
+                    <li class="step" style="width: 50%;">
+                        <a class="nav-link" href="#recoverTab" data-toggle="tab"><i class="fas fa-undo mr-2"></i> Pulihkan </a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane active" id="addNewTab">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Nama Customer</label>
+                                    <input type="text" class="form-control" id="addName" required>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label>Keterangan</label>
+                                    <input type="text" class="form-control" id="addRemark" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" onclick="addCustomer()">Simpan</button>
+                            <button type="button" data-dismiss="modal" class="btn btn-secondary">Kembali</button>
+                        </div>
+                    </div>
+                    <div class="tab-pane" id="recoverTab">
+                        <div class="form-group">
+                            <label>Customer</label>
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                            <select class="form-control select2addmodal" id="recoverCustomerId" style="width:360px">
+                            </select>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" onclick="recoverCustomer()">Pulihkan</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Kembali</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 
 <script src="~/js/customer/index.js"></script>
