@@ -28,7 +28,7 @@ namespace Payroll.Models
         [Required]
         [MaxLength(16)]
         public string KTP { set; get; }
-        [Required]
+        //[Required]
         [MaxLength(16)]
         public string KK { set; get; }
         [NotMapped]
@@ -49,7 +49,7 @@ namespace Payroll.Models
         [Required]
         public string Email { set; get; }
         [DefaultValue("user.jpg")]
-        [Required]
+        //[Required]
         public string Image { set; get; }
         public string DriverLicense { set; get; }
         public DateTime DriverLicenseExpire { set; get; }
@@ -57,11 +57,11 @@ namespace Payroll.Models
         [Required]
         public string FamilyStatusCode { set; get; }
         public FamilyStatus FamilyStatus { set; get; }
-        [Required]
+        //[Required]
         [MaxLength(14)]
         public string BpjsNumber { set; get; }
         public string BpjsRemark { set; get; }
-        [Required]
+        //[Required]
         [MaxLength(12)]
         public string JamsostekNumber { set; get; }
         public string JamsostekRemark { set; get; }
