@@ -67,16 +67,24 @@ namespace Payroll.Controllers.Api
 
 
         [Authorize]
-        [HttpGet]
+        [HttpPost]
         [Route("api/position/readDatatable")]
         public async Task<IActionResult> ReadDatatable()
         {
             try
             {
+                DatatablesRequest request = new DatatablesRequest(Request.Form.Select(column => new InputRequest { Key = column.Key, Value = column.Value }).ToList());
                 PositionView positionView = new PositionView();
                 positionView.Data = await payrollDB.Position
                     .Where(column => column.IsExist == true)
+                    .Where(column => column.Name.Contains(request.Keyword) || column.Remark.Contains(request.Keyword))
+                    .Skip(request.Skip)
+                    .OrderBy(column => column.Name)
+                    .Take(request.PageSize)
                     .ToListAsync();
+                positionView.RecordsFiltered = await payrollDB.Position
+                    .Where(column => column.IsExist == true)
+                    .CountAsync();
                 return new JsonResult(positionView);
             }
             catch(Exception error)

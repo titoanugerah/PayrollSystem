@@ -15,13 +15,8 @@ namespace Payroll.ViewModels
                 return Data.Count();
             }
         }
-        public int RecordsFiltered
-        {
-            get
-            {
-                return Data.Count();
-            }
-        }
+        public int RecordsFiltered { set; get; }
+
         [DefaultValue(1)]
         public int Draw { set; get; }
     }
