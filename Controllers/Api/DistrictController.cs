@@ -67,16 +67,24 @@ namespace Payroll.Controllers.Api
 
 
         [Authorize]
-        [HttpGet]
+        [HttpPost]
         [Route("api/district/readDatatable")]
         public async Task<IActionResult> ReadDatatable()
         {
             try
             {
+                DatatablesRequest request = new DatatablesRequest(Request.Form.Select(column => new InputRequest { Key = column.Key, Value = column.Value }).ToList());
                 DistrictView districtView = new DistrictView();
                 districtView.Data = await payrollDB.District
                     .Where(column => column.IsExist == true)
+                    .Where(column => column.Name.Contains(request.Keyword) || column.Remark.Contains(request.Keyword))
+                    .Skip(request.Skip)
+                    .OrderBy(column => column.Name)
+                    .Take(request.PageSize)
                     .ToListAsync();
+                districtView.RecordsFiltered = await payrollDB.District
+                    .Where(column => column.IsExist == true)
+                    .CountAsync();
                 return new JsonResult(districtView);
             }
             catch(Exception error)

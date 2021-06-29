@@ -9,13 +9,5 @@ namespace Payroll.Models
         [Required]
         public string Name { set; get; }
         public string Remark { set; get; }
-        [NotMapped]
-        public string Button
-        {
-            get
-            {
-                return $"<button type='button' onclick='showEditForm({Id})' class='btn btn-info'>Edit</button>";
-            }
-        }
     }
 }

@@ -47,6 +47,7 @@ namespace Payroll.Controllers.Api
         }
 
         [Route("api/customer/readDatatable")]
+        [HttpPost]
         [Authorize]
         public async Task<IActionResult> ReadDatatable()
         {
