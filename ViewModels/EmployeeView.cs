@@ -8,14 +8,8 @@ namespace Payroll.ViewModels
     public class EmployeeView
     {
         public List<Employee> Data { set; get; }
+        public int RecordsFiltered { set; get; }
         public int RecordsTotal
-        {
-            get
-            {
-                return Data.Count();
-            }
-        }
-        public int RecordsFiltered
         {
             get
             {
@@ -26,13 +20,4 @@ namespace Payroll.ViewModels
         public int Draw { set; get; }
     }
 
-    //public class Employee
-    //{
-    //    public int NIK { set; get; }
-    //    public string Name { set; get; }
-    //    public string Position { set; get; }
-    //    public string Location { set; get; }
-    //    public string Customer { set; get; }
-
-    //}
 }

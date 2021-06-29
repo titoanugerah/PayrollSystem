@@ -2,17 +2,25 @@
 var table = $("#tblEmployee").DataTable({
     "processing": true,
     "serverSide": true,
-    ajax: {
-        url: "/api/employee/readDatatable",
-        dataSrc: 'data',
-        dataType: 'json'
+    "filter": true,
+    "paging": true,
+    "pageLength": 10,
+    "ajax" : {
+        "url" : "/api/employee/readDatatable",
+        "type" : "POST",
+        "dataType": 'json'
     },
-    columns: [
-        { data: "nik" },
-        { data: "name"},
-        { data: "customer.name"},
-        { data: "position.name"},
-        { data: "location.name"},
+    "columnDefs": [{
+        "targets": [0],
+        "visible": false,
+        "searchable": false
+    }],
+    "columns" : [
+        { "data": "nik", "name": "NIK"},
+        { "data": "name", "name": "Name"},
+        { "data": "customer.name",  "name": "Customer" },
+        { "data": "position.name", "name": "Position"},
+        { "data": "location.name", "name": "Location"},
     ]
 });
 
