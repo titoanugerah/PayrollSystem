@@ -3,24 +3,26 @@ var table = $("#tblEmployee").DataTable({
     "processing": true,
     "serverSide": true,
     "filter": true,
+    "ordering" : false,
     "paging": true,
     "pageLength": 10,
     "ajax" : {
-        "url" : "/api/employee/readDatatable",
+        "url": "/api/employee/readDatatable",
+        "dataSrc" : "data",
         "type" : "POST",
         "dataType": 'json'
     },
-    "columnDefs": [{
-        "targets": [0],
-        "visible": false,
-        "searchable": false
-    }],
     "columns" : [
         { "data": "nik", "name": "NIK"},
         { "data": "name", "name": "Name"},
         { "data": "customer.name",  "name": "Customer" },
         { "data": "position.name", "name": "Position"},
-        { "data": "location.name", "name": "Location"},
+        { "data": "location.name", "name": "Location" },
+        {
+            "render": function (data,type, row) {
+                return "<button type='button' class='btn btn-info' onclick=editEmployeeForm('" + row.nik + "'); >Edit</button>";
+            }
+        },
     ]
 });
 

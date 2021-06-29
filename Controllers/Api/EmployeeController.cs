@@ -577,7 +577,9 @@ namespace Payroll.Controllers.Api
                     .OrderBy(column => column.Name)
                     .Take(request.PageSize)
                     .ToListAsync();
-                employeeView.RecordsFiltered = await payrollDB.Employee.CountAsync();
+                employeeView.RecordsFiltered = await payrollDB.Employee
+                    .Where(column => column.IsExist == true)
+                    .CountAsync();
                 return Ok(employeeView);
             }
             catch (Exception error)

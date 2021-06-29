@@ -1,6 +1,4 @@
-﻿
-using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -17,9 +15,6 @@ namespace Payroll.ViewModels
             Keyword = GetValueString(inputRequest, "search[value]");
             PageSize = Length != null ? Convert.ToInt32(Length) : 0;
             Skip = Start != null ? Start :0 ;
-            OrderDirection = GetValueString(inputRequest, "order[0][dir]");
-            string column = GetValueString(inputRequest, "order[0][column]");
-            OrderBy = GetValueString(inputRequest, $"columns[{column}][data]") ;
         }
 
         public int Draw { set; get; }
@@ -28,10 +23,7 @@ namespace Payroll.ViewModels
         public string Keyword { set; get; }
         public int PageSize { set; get; }
         public int Skip { set; get; }
-        [DefaultValue("asc")]
-        public string OrderDirection { set; get; }
-        public string OrderBy { set; get; }
- 
+
         public int GetValueInt(List<InputRequest> inputRequest, string key)
         {
             return int.Parse(inputRequest.Where(column => column.Key == key).FirstOrDefault().Value);

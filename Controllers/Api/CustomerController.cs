@@ -52,10 +52,18 @@ namespace Payroll.Controllers.Api
         {
             try
             {
+                DatatablesRequest request = new DatatablesRequest(Request.Form.Select(column => new InputRequest { Key = column.Key, Value = column.Value }).ToList());
                 CustomerView customerView = new CustomerView();
                 customerView.Data = await payrollDB.Customer
                     .Where(column => column.IsExist == true)
+                    .Where(column => column.Name.Contains(request.Keyword) || column.Remark.Contains(request.Keyword))
+                    .Skip(request.Skip)
+                    .OrderBy(column => column.Name)
+                    .Take(request.PageSize)
                     .ToListAsync();
+                customerView.RecordsFiltered = await payrollDB.Customer
+                    .Where(column => column.IsExist == true)
+                    .CountAsync();
                 return new JsonResult(customerView);
             }
             catch (Exception error)

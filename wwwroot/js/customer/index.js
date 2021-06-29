@@ -1,15 +1,24 @@
 ﻿var table = $("#table").DataTable({
     "processing": true,
     "serverSide": true,
-    ajax: {
-        url: "/api/customer/readDatatable",
-        dataSrc: 'data',
-        dataType: 'json'
+    "filter": true,
+    "ordering": false,
+    "paging": true,
+    "pageLength": 10,
+    "ajax": {
+        "url": "/api/customer/readDatatable",
+        "dataSrc": "data",
+        "type": "POST",
+        "dataType": 'json'
     },
-    columns: [
-        { data: "name" },
-        { data: "remark" },
-        { data: "button" },
+    "columns": [
+        { "data": "name"},
+        { "data": "remark"},
+        {
+            "render": function (data, type, row) {
+                return "<button type='button' class='btn btn-info' onclick=showEditForm('" + row.id + "'); >Edit</button>";
+            }
+        },
     ]
 });
 
