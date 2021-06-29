@@ -11,14 +11,6 @@ namespace Payroll.Models
         public int UMK { set; get; }
         [Required]
         public int DistrictId { set; get; }
-        public District District { set; get; }
-        [NotMapped]
-        public string Button
-        {
-            get
-            {
-                return $"<button type='button' onclick='showEditForm({Id})' class='btn btn-info'>Edit</button>";
-            }
-        }
+        public District District { set; get; }        
     }
 }

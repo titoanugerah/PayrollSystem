@@ -8,14 +8,8 @@ namespace Payroll.ViewModels
     public class LocationView
     {
         public List<Location> Data { set; get; }
+        public int RecordsFiltered { set; get; }
         public int RecordsTotal
-        {
-            get
-            {
-                return Data.Count();
-            }
-        }
-        public int RecordsFiltered
         {
             get
             {

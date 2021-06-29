@@ -48,17 +48,25 @@ namespace Payroll.Controllers.Api
         }
 
         [Authorize]
-        [HttpGet]
+        [HttpPost]
         [Route("api/location/readDatatable")]
         public async Task<IActionResult> ReadDatatable()
         {
             try
             {
+                DatatablesRequest request = new DatatablesRequest(Request.Form.Select(column => new InputRequest { Key = column.Key, Value = column.Value }).ToList());
                 LocationView locationView = new LocationView();
                 locationView.Data = await payrollDB.Location
                     .Include(table => table.District)
                     .Where(column => column.IsExist == true)
+                    .Where(column => column.Name.Contains(request.Keyword) || column.District.Name.Contains(request.Keyword))
+                    .Skip(request.Skip)
+                    .OrderBy(column => column.Name)
+                    .Take(request.PageSize)
                     .ToListAsync();
+                locationView.RecordsFiltered = await payrollDB.Location
+                    .Where(column => column.IsExist == true)
+                    .CountAsync();
                 return new JsonResult(locationView);
             }
             catch (Exception error)
