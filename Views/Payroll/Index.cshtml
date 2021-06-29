@@ -24,8 +24,8 @@
                             <table id="table" class="display">
                                 <thead>
                                     <tr>
-                                        <td>Penggajian</td>
-                                        <td>Keterangan</td>
+                                        <td>Periode</td>
+                                        <td>Status</td>
                                         <td>Opsi</td>
                                     </tr>
                                 </thead>
@@ -50,88 +50,23 @@
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
-                <ul class="wizard-menu nav nav-pills nav-primary">
-                    <li class="step" style="width: 50%;">
-                        <a class="nav-link active" href="#addNewTab" data-toggle="tab" aria-expanded="true"><i class="fa fa-user-plus mr-0"></i> Tambah Baru</a>
-                    </li>
-                    <li class="step" style="width: 50%;">
-                        <a class="nav-link" href="#recoverTab" data-toggle="tab"><i class="fas fa-undo mr-2"></i> Pulihkan </a>
-                    </li>
-                </ul>
-                <div class="tab-content">
-                    <div class="tab-pane active" id="addNewTab">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label>Nama Penggajian</label>
-                                    <input type="text" class="form-control" id="addName" required>
-                                </div>
-                            </div>
-                            <div class="col-md-12">
-                                <div class="form-group">
-                                    <label>Keterangan</label>
-                                    <input type="text" class="form-control" id="addRemark" required>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-primary" onclick="addPayroll()">Simpan</button>
-                            <button type="button" data-dismiss="modal" class="btn btn-secondary">Kembali</button>
-                        </div>
-                    </div>
-                    <div class="tab-pane" id="recoverTab">
-                        <div class="form-group">
-                            <label>Penggajian</label>
-                            &nbsp;&nbsp;&nbsp;&nbsp;
-                            <select class="form-control select2addmodal" id="recoverId" style="width:360px">
-                            </select>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-primary" onclick="recoverPayroll()">Pulihkan</button>
-                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Kembali</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
 
-<div class="modal fade" id="editPayrollModal" role="dialog">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <center>
-                    <h4>Edit Payroll</h4>
-                </center>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
-            <div class="modal-body">
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label>Nama Payroll</label>
-                            <input type="text" class="form-control" id="editId" hidden>
-                            <input type="text" class="form-control" id="editName" required>
-                        </div>
-                    </div>
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label>Keterangan</label>
-                            <input type="text" class="form-control" id="editRemark" required>
+                            <label>Periode Penggajian</label>
+                            <input type="month" class="form-control" id="addName" required>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" onclick="updatePayroll()">Simpan</button>
-                    <button type="button" class="btn btn-danger" onclick="deletePayroll()">Hapus</button>
+                    <button type="button" class="btn btn-primary" onclick="addPayroll()">Simpan</button>
                     <button type="button" data-dismiss="modal" class="btn btn-secondary">Kembali</button>
-                </div>
+                </div>                   
             </div>
         </div>
     </div>
 </div>
-
 
 
 <script src="~/js/payroll/index.js"></script>
