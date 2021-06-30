@@ -5,7 +5,6 @@ using Microsoft.Extensions.Logging;
 using Payroll.Models;
 using System;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -33,6 +32,9 @@ namespace Payroll.DataAccess
         public DbSet<Location> Location { set; get; }
         public DbSet<Position> Position { set; get; }
         public DbSet<Role> Role { set; get; }
+        public DbSet<PayrollHistory> PayrollHistory { set; get; }
+        public DbSet<PayrollDetail> PayrollDetail { set; get; }
+        public DbSet<PayrollStatus> PayrollStation { set; get; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
