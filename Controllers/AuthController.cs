@@ -76,7 +76,7 @@ namespace Payroll.Controllers
                         .Where(user => user.Email == userIdentity.Email)
                         .FirstOrDefault();
                     user.Image = userIdentity.Picture;
-                    user.Name = userIdentity.Name;
+                    //user.Name = userIdentity.Name;
                     await payrollDB.SaveChangesAsync();
                     var claims = new List<Claim>
                     {

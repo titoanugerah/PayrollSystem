@@ -4,11 +4,11 @@ using System;
 
 namespace Payroll.Controllers
 {
-    public class PayrollController : Controller
+    public class PayrollHistoryController : Controller
     {
-        private readonly ILogger<PayrollController> logger;
+        private readonly ILogger<PayrollHistoryController> logger;
         
-        public PayrollController(ILogger<PayrollController> _logger)
+        public PayrollHistoryController(ILogger<PayrollHistoryController> _logger)
         {
             logger = _logger;
         }

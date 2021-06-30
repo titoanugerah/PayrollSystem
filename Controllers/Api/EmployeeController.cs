@@ -67,7 +67,7 @@ namespace Payroll.Controllers.Api
                         {
                             ExcelCellAddress start = worksheet.Dimension.Start;
                             ExcelCellAddress end = worksheet.Dimension.End;
-                            for (row = 7; row < end.Row; row++)
+                            for (row = 7; row <= end.Row; row++)
                             {
                                 bool isValid = true;
                                 Employee employee = new Employee();
@@ -516,10 +516,9 @@ namespace Payroll.Controllers.Api
                                     }
                                     else
                                     {
-                                        //employee.IsExist = true;
+                                        employee.RoleId = 2;
                                         payrollDB.Entry(employee).State = EntityState.Added;
                                         newEmployees.Add(employee);
-
                                     }
 
                                 }
@@ -531,14 +530,9 @@ namespace Payroll.Controllers.Api
 
                             }
 
-                        if (row == end.Row)
-                        {
-                            value = "";
                         }
-
-                    }
-                    await payrollDB.Employee.AddRangeAsync(newEmployees);
-                    await payrollDB.SaveChangesAsync();
+                        await payrollDB.Employee.AddRangeAsync(newEmployees);
+                        await payrollDB.SaveChangesAsync();
                     }
                 }
                 return new JsonResult("OK");
