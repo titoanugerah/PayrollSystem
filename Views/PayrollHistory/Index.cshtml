@@ -5,7 +5,7 @@
                 <h2 class="text-white pb-2 fw-bold">Kelola Penggajian</h2>
             </div>
             <div class="ml-md-auto py-2 py-md-0">
-                <button type="button" onclick="showAddPayrollForm()" class="btn btn-white btn-border btn-round mr-2">Tambah Penggajian</button>
+                <button type="button" onclick="showAddPayrollHistoryForm()" class="btn btn-white btn-border btn-round mr-2">Tambah Penggajian</button>
                 <button type="button" onclick="reloadTable()" class="btn btn-white btn-border btn-round mr-2">Reload Data</button>
                 <a href="#" class="btn btn-white btn-border btn-round mr-2" hidden>Manage</a>
             </div>
@@ -26,6 +26,7 @@
                                     <tr>
                                         <td>Periode</td>
                                         <td>Status</td>
+                                        <td>Keterangan</td>
                                         <td>Opsi</td>
                                     </tr>
                                 </thead>
@@ -40,7 +41,7 @@
     </div>
 </div>
 
-<div class="modal fade" id="addPayrollModal" role="dialog">
+<div class="modal fade" id="addPayrollHistoryModal" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -52,15 +53,38 @@
             <div class="modal-body">
 
                 <div class="row">
-                    <div class="col-md-12">
+                    <div class="col-md-12 row">
+                            &nbsp;&nbsp;&nbsp;&nbsp;
                         <div class="form-group">
-                            <label>Periode Penggajian</label>
-                            <input type="month" class="form-control" id="addName" required>
+                            <label>Bulan</label><br />
+                            <select class="form-control select2addmodal" id="addMonth" style="width:190px">
+                                <option value="january">January</option>
+                                <option value="february">February</option>
+                                <option value="march">March</option>
+                                <option value="april">April</option>
+                                <option value="may">May</option>
+                                <option value="june">June</option>
+                                <option value="july">July</option>
+                                <option value="august">August</option>
+                                <option value="september">September</option>
+                                <option value="october">October</option>
+                                <option value="november">November</option>
+                                <option value="december">December</option>
+                            </select>
+                        </div>
+                            &nbsp;&nbsp;&nbsp;&nbsp;
+                        <div class="form-group">
+                            <label>Tahun</label><br />
+                            <select class="form-control select2addmodal" id="addYear" style="width:180px">
+                                <option value="2021">2021</option>
+                                <option value="2022">2022</option>
+                                <option value="2023">2023</option>
+                            </select>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" onclick="addPayroll()">Simpan</button>
+                    <button type="button" class="btn btn-primary" onclick="addPayrollHistory()">Simpan</button>
                     <button type="button" data-dismiss="modal" class="btn btn-secondary">Kembali</button>
                 </div>                   
             </div>
@@ -69,4 +93,4 @@
 </div>
 
 
-<script src="~/js/payroll/index.js"></script>
+<script src="~/js/payrollHistory/index.js"></script>

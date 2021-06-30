@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Payroll.Models
 {
@@ -10,27 +11,27 @@ namespace Payroll.Models
         public string Month { set; get; }
         [Required]
         public string Year { set; get; }
-        [DefaultValue(1)]        
         public int StatusId { set; get; }
+        public PayrollStatus Status { set; get; }
         [Required]
-        public int JamsostekPercentage { set; get; }
+        public decimal JamsostekPercentage { set; get; }
         [Required]
-        public int BpjsPercentage { set; get; }
+        public decimal BpjsPercentage { set; get; }
         [Required]
-        public int PensionPercentage { set; get; }
+        public decimal PensionPercentage { set; get; }
         [Required]
-        public int ManagementFeePercentage { set; get; }
+        public decimal ManagementFeePercentage { set; get; }
         [Required]
-        public int PpnPercentage { set; get; }
+        public decimal PpnPercentage { set; get; }
         [Required]
-        public int BpjsTk1Percentage { set; get; }
+        public decimal BpjsTk1Percentage { set; get; }
         [Required]
-        public int BpjsKesehatanPercentage { set; get; }
+        public decimal BpjsKesehatanPercentage { set; get; }
         [Required]
-        public int Pension1Percentage { set; get; }
+        public decimal Pension1Percentage { set; get; }
         [Required]
-        public int Pph21Percentage { set; get; }
+        public decimal Pph21Percentage { set; get; }
         [Required]
-        public int Pph23Percentage { set; get; }
+        public decimal Pph23Percentage { set; get; }
     }
 }

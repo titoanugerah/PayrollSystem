@@ -34,7 +34,7 @@ namespace Payroll.DataAccess
         public DbSet<Role> Role { set; get; }
         public DbSet<PayrollHistory> PayrollHistory { set; get; }
         public DbSet<PayrollDetail> PayrollDetail { set; get; }
-        public DbSet<PayrollStatus> PayrollStation { set; get; }
+        public DbSet<PayrollStatus> PayrollStatus { set; get; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

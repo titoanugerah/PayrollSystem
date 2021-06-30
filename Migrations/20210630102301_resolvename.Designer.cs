@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Payroll.DataAccess;
 
 namespace Payroll.Migrations
 {
     [DbContext(typeof(PayrollDB))]
-    partial class PayrollDBModelSnapshot : ModelSnapshot
+    [Migration("20210630102301_resolvename")]
+    partial class resolvename
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -496,14 +498,14 @@ namespace Payroll.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<decimal>("BpjsKesehatanPercentage")
-                        .HasColumnType("decimal(18, 2)");
+                    b.Property<int>("BpjsKesehatanPercentage")
+                        .HasColumnType("int");
 
-                    b.Property<decimal>("BpjsPercentage")
-                        .HasColumnType("decimal(18, 2)");
+                    b.Property<int>("BpjsPercentage")
+                        .HasColumnType("int");
 
-                    b.Property<decimal>("BpjsTk1Percentage")
-                        .HasColumnType("decimal(18, 2)");
+                    b.Property<int>("BpjsTk1Percentage")
+                        .HasColumnType("int");
 
                     b.Property<int>("CreateBy")
                         .HasColumnType("int");
@@ -514,11 +516,11 @@ namespace Payroll.Migrations
                     b.Property<ulong>("IsExist")
                         .HasColumnType("bit");
 
-                    b.Property<decimal>("JamsostekPercentage")
-                        .HasColumnType("decimal(18, 2)");
+                    b.Property<int>("JamsostekPercentage")
+                        .HasColumnType("int");
 
-                    b.Property<decimal>("ManagementFeePercentage")
-                        .HasColumnType("decimal(18, 2)");
+                    b.Property<int>("ManagementFeePercentage")
+                        .HasColumnType("int");
 
                     b.Property<int?>("ModifyBy")
                         .HasColumnType("int");
@@ -530,20 +532,20 @@ namespace Payroll.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<decimal>("Pension1Percentage")
-                        .HasColumnType("decimal(18, 2)");
+                    b.Property<int>("Pension1Percentage")
+                        .HasColumnType("int");
 
-                    b.Property<decimal>("PensionPercentage")
-                        .HasColumnType("decimal(18, 2)");
+                    b.Property<int>("PensionPercentage")
+                        .HasColumnType("int");
 
-                    b.Property<decimal>("Pph21Percentage")
-                        .HasColumnType("decimal(18, 2)");
+                    b.Property<int>("Pph21Percentage")
+                        .HasColumnType("int");
 
-                    b.Property<decimal>("Pph23Percentage")
-                        .HasColumnType("decimal(18, 2)");
+                    b.Property<int>("Pph23Percentage")
+                        .HasColumnType("int");
 
-                    b.Property<decimal>("PpnPercentage")
-                        .HasColumnType("decimal(18, 2)");
+                    b.Property<int>("PpnPercentage")
+                        .HasColumnType("int");
 
                     b.Property<int>("StatusId")
                         .HasColumnType("int");
@@ -553,8 +555,6 @@ namespace Payroll.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("StatusId");
 
                     b.ToTable("PayrollHistory");
                 });
@@ -730,17 +730,6 @@ namespace Payroll.Migrations
                     b.Navigation("Employee");
 
                     b.Navigation("PayrollHistory");
-                });
-
-            modelBuilder.Entity("Payroll.Models.PayrollHistory", b =>
-                {
-                    b.HasOne("Payroll.Models.PayrollStatus", "Status")
-                        .WithMany()
-                        .HasForeignKey("StatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Status");
                 });
 #pragma warning restore 612, 618
         }

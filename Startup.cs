@@ -29,6 +29,8 @@ namespace Payroll
             services.AddDbContext<PayrollDB>(options => options
                 .UseMySQL(connectionString));
 
+            services.Configure<ViewModels.PayrollConfiguration>(Configuration.GetSection("PayrollConfiguration"));
+
             services.AddControllersWithViews();
 
             services.AddSignalR();
