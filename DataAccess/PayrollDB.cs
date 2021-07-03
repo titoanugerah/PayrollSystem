@@ -34,7 +34,6 @@ namespace Payroll.DataAccess
         public DbSet<Role> Role { set; get; }
         public DbSet<PayrollHistory> PayrollHistory { set; get; }
         public DbSet<PayrollDetail> PayrollDetail { set; get; }
-        public DbSet<PayrollStatus> PayrollStatus { set; get; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -63,7 +62,7 @@ namespace Payroll.DataAccess
 
             modelBuilder.Entity<Employee>(employee =>
             {
-                employee.HasKey(col => col.NIK);        
+                employee.HasKey(col => col.NIK);
             });
 
             modelBuilder.Entity<EmploymentStatus>(employmentStatus =>
@@ -89,6 +88,16 @@ namespace Payroll.DataAccess
             modelBuilder.Entity<Role>(role =>
             {
                 role.HasKey(col => col.Id);
+            });
+
+            modelBuilder.Entity<PayrollHistory>(payrollHistory =>
+            {
+                payrollHistory.HasKey(col => col.Id);
+            });
+
+            modelBuilder.Entity<PayrollDetail>(payrollDetail =>
+            {
+                payrollDetail.HasKey(col => col.Id);
             });
 
         }

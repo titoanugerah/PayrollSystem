@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -12,7 +13,31 @@ namespace Payroll.Models
         [Required]
         public string Year { set; get; }
         public int StatusId { set; get; }
-        public PayrollStatus Status { set; get; }
+        public string Status {
+            get
+            {
+                string result = null;
+                switch (StatusId)
+                {
+                    case 1:
+                        result = "Pendataan gaji belum diproses";
+                        break;
+                    case 2:
+                        result = "Pendataan gaji sedang diproses";
+                        break;
+                    case 3:
+                        result = "Pendataan gaji selesai diproses";
+                        break;
+                    case 4:
+                        result = "Selesai";
+                        break;
+                    default:
+                        result = null;
+                        break;
+                }
+                return result;
+            }
+        }
         [Required]
         public decimal JamsostekPercentage { set; get; }
         [Required]

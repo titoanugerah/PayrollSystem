@@ -6,35 +6,34 @@
     "paging": true,
     "pageLength": 10,
     "ajax": {
-        "url": "/api/payrollHistory/readDatatable",
+        "url": "/api/payrollDetail/readDatatable/"+$("#payrollHistoryId").val(),
         "dataSrc": "data",
         "type": "POST",
         "dataType": 'json'
     },
     "columns": [
-        {
-            "render": function (data, type, row) {
-                return  row.month + ", " + row.year;
-            }
-        },
+        { "data": "nik" },
+        { "data": "nik" },
+        { "data": "total" },
         { "data": "status" },
         {
             "render": function (data, type, row) {
-                return "<a href='payrollDetail?id="+row.id+"' class='btn btn-info' >Detail</a>";
+                return "<button type='button' class='btn btn-info' onclick=showEditForm('" + row.id + "'); >Edit</button>";
             }
         },
     ]
 });
 
-function showAddPayrollHistoryForm() {
-    $('#addPayrollHistoryModal').modal('show');
+
+function showAddDistrictForm() {
+    $('#addDistrictModal').modal('show');
 }
 
 function showEditForm(id) {
     $.ajax({
         type: "GET",
         dataType: "JSON",
-        url: "api/payrollHistory/readDetail/" + id,
+        url: "api/district/readDetail/" + id,
         success: function (result) {
             console.log(result);
             $('#editId').val(result.id);
@@ -46,28 +45,28 @@ function showEditForm(id) {
             notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' + result.responseText, 'danger');
         }
     });
-    $('#editPayrollHistoryModal').modal('show');
+    $('#editDistrictModal').modal('show');
 }
 
 function reloadTable() {
     table.ajax.reload();
-    //getDeletedPayrollHistory();
+    getDeletedDistrict();
     notify("fa fa-check", "Berhasil", "Data berhasil di reload", "success");
 }
 
-function addPayrollHistory() {
+function addDistrict() {
     $.ajax({
         type: "POST",
         dataType: "JSON",
         contentType: "application/x-www-form-urlencoded",
-        url: "api/payrollHistory/create",
+        url: "api/district/create",
         data: {
-            Month: $("#addMonth").val(),
-            Year: $("#addYear").val(),
+            Name: $("#addName").val(),
+            Remark: $("#addRemark").val(),
         },
         success: function (result) {
-            $('#addPayrollHistoryModal').modal('hide');
-            notify('fas fa-check', 'Berhasil', 'PayrollHistory berhasil ditambahkan', 'success');
+            $('#addDistrictModal').modal('hide');
+            notify('fas fa-check', 'Berhasil', 'District berhasil ditambahkan', 'success');
             reloadTable();
         },
         error: function (result) {
@@ -78,19 +77,19 @@ function addPayrollHistory() {
 }
 
 
-function updatePayrollHistory() {
+function updateDistrict() {
     $.ajax({
         type: "POST",
         dataType: "json",
         contentType: "application/x-www-form-urlencoded",
-        url: "api/payrollHistory/update/" + $('#editId').val(),
+        url: "api/district/update/" + $('#editId').val(),
         data: {
             Name: $("#editName").val(),
             Remark: $("#editRemark").val(),
         },
         success: function (result) {
-            $('#editPayrollHistoryModal').modal('hide');
-            notify('fas fa-check', 'Berhasil', 'PayrollHistory berhasil diubah', 'success');
+            $('#editDistrictModal').modal('hide');
+            notify('fas fa-check', 'Berhasil', 'District berhasil diubah', 'success');
             reloadTable();
         },
         error: function (result) {
@@ -100,34 +99,16 @@ function updatePayrollHistory() {
     });
 }
 
-//function deletePayrollHistory() {
-//    $.ajax({
-//        type: "POST",
-//        contentType: 'application/json; charset=utf-8',
-//        //dataType: "JSON",
-//        url: "api/payrollHistory/delete/" + $('#editId').val(),
-//        success: function (result) {
-//            reloadTable();
-//            $('#editPayrollHistoryModal').modal('hide');
-//            notify('fas fa-check', 'Berhasil', 'PayrollHistory berhasil dihapus', 'success');
-//        },
-//        error: function (result) {
-//            console.log(result);
-//            notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' + result.responseText, 'danger');
-//        }
-//    });
-//}
-
-function recoverPayrollHistory() {
+function deleteDistrict() {
     $.ajax({
         type: "POST",
         contentType: 'application/json; charset=utf-8',
         //dataType: "JSON",
-        url: "api/payrollHistory/recover/" + $('#recoverId').val(),
+        url: "api/district/delete/" + $('#editId').val(),
         success: function (result) {
             reloadTable();
-            $('#addPayrollHistoryModal').modal('hide');
-            notify('fas fa-check', 'Berhasil', 'PayrollHistory berhasil dipulihkan', 'success');
+            $('#editDistrictModal').modal('hide');
+            notify('fas fa-check', 'Berhasil', 'District berhasil dihapus', 'success');
         },
         error: function (result) {
             console.log(result);
@@ -136,11 +117,29 @@ function recoverPayrollHistory() {
     });
 }
 
-function getDeletedPayrollHistory() {
+function recoverDistrict() {
+    $.ajax({
+        type: "POST",
+        contentType: 'application/json; charset=utf-8',
+        //dataType: "JSON",
+        url: "api/district/recover/" + $('#recoverId').val(),
+        success: function (result) {
+            reloadTable();
+            $('#addDistrictModal').modal('hide');
+            notify('fas fa-check', 'Berhasil', 'District berhasil dipulihkan', 'success');
+        },
+        error: function (result) {
+            console.log(result);
+            notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' + result.responseText, 'danger');
+        }
+    });
+}
+
+function getDeletedDistrict() {
     $.ajax({
         type: "GET",
         dataType: "JSON",
-        url: "api/payrollHistory/readDeleted",
+        url: "api/district/readDeleted",
         success: function (result) {
             var html = "<option value=0> Silahkan Pilih</option>";
             result.forEach(function (data) {
@@ -157,8 +156,7 @@ function getDeletedPayrollHistory() {
 
 $(document).ready(function () {
     $('.select2addmodal').select2({
-        dropdownParent: $('#addPayrollHistoryModal')
+        dropdownParent: $('#addDistrictModal')
     });
-    //getDeletedPayrollHistory();
+    getDeletedDistrict();
 });
-

@@ -9,8 +9,8 @@ using Payroll.DataAccess;
 namespace Payroll.Migrations
 {
     [DbContext(typeof(PayrollDB))]
-    [Migration("20210630072518_payroll")]
-    partial class payroll
+    [Migration("20210703144522_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -411,6 +411,12 @@ namespace Payroll.Migrations
                     b.Property<int>("BpjsTkDeduction")
                         .HasColumnType("int");
 
+                    b.Property<int>("CreateBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreateDateUtc")
+                        .HasColumnType("datetime");
+
                     b.Property<int>("EmployeeId")
                         .HasColumnType("int");
 
@@ -426,6 +432,9 @@ namespace Payroll.Migrations
                     b.Property<int>("InsentiveBilling")
                         .HasColumnType("int");
 
+                    b.Property<ulong>("IsExist")
+                        .HasColumnType("bit");
+
                     b.Property<int>("JamsostekBilling")
                         .HasColumnType("int");
 
@@ -437,6 +446,12 @@ namespace Payroll.Migrations
 
                     b.Property<int>("ManagementFeeBilling")
                         .HasColumnType("int");
+
+                    b.Property<int?>("ModifyBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifyDateUtc")
+                        .HasColumnType("datetime");
 
                     b.Property<int>("Netto")
                         .HasColumnType("int");
@@ -457,6 +472,9 @@ namespace Payroll.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("PTKP")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PayrollDetailStatusId")
                         .HasColumnType("int");
 
                     b.Property<int>("PayrollHistoryId")
@@ -498,14 +516,14 @@ namespace Payroll.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("BpjsKesehatanPercentage")
-                        .HasColumnType("int");
+                    b.Property<decimal>("BpjsKesehatanPercentage")
+                        .HasColumnType("decimal(18, 2)");
 
-                    b.Property<int>("BpjsPercentage")
-                        .HasColumnType("int");
+                    b.Property<decimal>("BpjsPercentage")
+                        .HasColumnType("decimal(18, 2)");
 
-                    b.Property<int>("BpjsTk1Percentage")
-                        .HasColumnType("int");
+                    b.Property<decimal>("BpjsTk1Percentage")
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<int>("CreateBy")
                         .HasColumnType("int");
@@ -516,11 +534,11 @@ namespace Payroll.Migrations
                     b.Property<ulong>("IsExist")
                         .HasColumnType("bit");
 
-                    b.Property<int>("JamsostekPercentage")
-                        .HasColumnType("int");
+                    b.Property<decimal>("JamsostekPercentage")
+                        .HasColumnType("decimal(18, 2)");
 
-                    b.Property<int>("ManagementFeePercentage")
-                        .HasColumnType("int");
+                    b.Property<decimal>("ManagementFeePercentage")
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<int?>("ModifyBy")
                         .HasColumnType("int");
@@ -532,20 +550,20 @@ namespace Payroll.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("Pension1Percentage")
-                        .HasColumnType("int");
+                    b.Property<decimal>("Pension1Percentage")
+                        .HasColumnType("decimal(18, 2)");
 
-                    b.Property<int>("PensionPercentage")
-                        .HasColumnType("int");
+                    b.Property<decimal>("PensionPercentage")
+                        .HasColumnType("decimal(18, 2)");
 
-                    b.Property<int>("Pph21Percentage")
-                        .HasColumnType("int");
+                    b.Property<decimal>("Pph21Percentage")
+                        .HasColumnType("decimal(18, 2)");
 
-                    b.Property<int>("Pph23Percentage")
-                        .HasColumnType("int");
+                    b.Property<decimal>("Pph23Percentage")
+                        .HasColumnType("decimal(18, 2)");
 
-                    b.Property<int>("PpnPercentage")
-                        .HasColumnType("int");
+                    b.Property<decimal>("PpnPercentage")
+                        .HasColumnType("decimal(18, 2)");
 
                     b.Property<int>("StatusId")
                         .HasColumnType("int");
@@ -557,24 +575,6 @@ namespace Payroll.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("PayrollHistory");
-                });
-
-            modelBuilder.Entity("Payroll.Models.PayrollStatus", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Remark")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("PayrollStation");
                 });
 
             modelBuilder.Entity("Payroll.Models.Position", b =>

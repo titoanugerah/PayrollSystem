@@ -52,6 +52,20 @@ namespace Payroll.Controllers.Api
                 payrollDB.Entry(payrollHistory).State = EntityState.Added;
                 await payrollDB.PayrollHistory.AddAsync(payrollHistory);
                 await payrollDB.SaveChangesAsync();
+
+                List<Employee> employees = await payrollDB.Employee
+                    .Where(column => column.IsExist == true)
+                    .ToListAsync();
+                List<PayrollDetail> payrollDetails = new List<PayrollDetail>();
+                foreach (Employee employee in employees)
+                {
+                    PayrollDetail payrollDetail = new PayrollDetail();
+                    payrollDetail.EmployeeId = employee.NIK;
+                    payrollDetail.PayrollHistoryId = payrollHistory.Id;
+                    payrollDetail.MainPrice = 0;
+                    payrollDetails.Add(payrollDetail);
+                }
+                await payrollDB.PayrollDetail.AddRangeAsync(payrollDetails);
                 return new JsonResult(payrollHistory);
             }
             catch (Exception error)
@@ -89,7 +103,6 @@ namespace Payroll.Controllers.Api
                 DatatablesRequest request = new DatatablesRequest(Request.Form.Select(column => new InputRequest { Key = column.Key, Value = column.Value }).ToList());
                 PayrollHistoryView payrollHistoryView = new PayrollHistoryView();
                 payrollHistoryView.Data = await payrollDB.PayrollHistory
-                    .Include(table => table.Status)
                     .Where(column => column.IsExist == true)
                     .Where(column => column.Month.Contains(request.Keyword) || column.Year.Contains(request.Keyword))
                     .Skip(request.Skip)

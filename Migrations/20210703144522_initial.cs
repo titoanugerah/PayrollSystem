@@ -18,7 +18,7 @@ namespace Payroll.Migrations
                     CreateBy = table.Column<int>(type: "int", nullable: false),
                     ModifyBy = table.Column<int>(type: "int", nullable: true),
                     CreateDateUtc = table.Column<DateTime>(type: "datetime", nullable: false),
-                    ModifyDateUtc = table.Column<DateTime>(type: "datetime", nullable: false)
+                    ModifyDateUtc = table.Column<DateTime>(type: "datetime", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -37,7 +37,7 @@ namespace Payroll.Migrations
                     CreateBy = table.Column<int>(type: "int", nullable: false),
                     ModifyBy = table.Column<int>(type: "int", nullable: true),
                     CreateDateUtc = table.Column<DateTime>(type: "datetime", nullable: false),
-                    ModifyDateUtc = table.Column<DateTime>(type: "datetime", nullable: false)
+                    ModifyDateUtc = table.Column<DateTime>(type: "datetime", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -51,13 +51,12 @@ namespace Payroll.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(type: "text", nullable: false),
-                    UMK = table.Column<int>(type: "int", nullable: false),
                     Remark = table.Column<string>(type: "text", nullable: true),
                     IsExist = table.Column<ulong>(type: "bit", nullable: false),
                     CreateBy = table.Column<int>(type: "int", nullable: false),
                     ModifyBy = table.Column<int>(type: "int", nullable: true),
                     CreateDateUtc = table.Column<DateTime>(type: "datetime", nullable: false),
-                    ModifyDateUtc = table.Column<DateTime>(type: "datetime", nullable: false)
+                    ModifyDateUtc = table.Column<DateTime>(type: "datetime", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -76,7 +75,7 @@ namespace Payroll.Migrations
                     CreateBy = table.Column<int>(type: "int", nullable: false),
                     ModifyBy = table.Column<int>(type: "int", nullable: true),
                     CreateDateUtc = table.Column<DateTime>(type: "datetime", nullable: false),
-                    ModifyDateUtc = table.Column<DateTime>(type: "datetime", nullable: false)
+                    ModifyDateUtc = table.Column<DateTime>(type: "datetime", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -95,11 +94,41 @@ namespace Payroll.Migrations
                     CreateBy = table.Column<int>(type: "int", nullable: false),
                     ModifyBy = table.Column<int>(type: "int", nullable: true),
                     CreateDateUtc = table.Column<DateTime>(type: "datetime", nullable: false),
-                    ModifyDateUtc = table.Column<DateTime>(type: "datetime", nullable: false)
+                    ModifyDateUtc = table.Column<DateTime>(type: "datetime", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_FamilyStatus", x => x.Code);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "PayrollHistory",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    Month = table.Column<string>(type: "text", nullable: false),
+                    Year = table.Column<string>(type: "text", nullable: false),
+                    StatusId = table.Column<int>(type: "int", nullable: false),
+                    JamsostekPercentage = table.Column<decimal>(type: "decimal(18, 2)", nullable: false),
+                    BpjsPercentage = table.Column<decimal>(type: "decimal(18, 2)", nullable: false),
+                    PensionPercentage = table.Column<decimal>(type: "decimal(18, 2)", nullable: false),
+                    ManagementFeePercentage = table.Column<decimal>(type: "decimal(18, 2)", nullable: false),
+                    PpnPercentage = table.Column<decimal>(type: "decimal(18, 2)", nullable: false),
+                    BpjsTk1Percentage = table.Column<decimal>(type: "decimal(18, 2)", nullable: false),
+                    BpjsKesehatanPercentage = table.Column<decimal>(type: "decimal(18, 2)", nullable: false),
+                    Pension1Percentage = table.Column<decimal>(type: "decimal(18, 2)", nullable: false),
+                    Pph21Percentage = table.Column<decimal>(type: "decimal(18, 2)", nullable: false),
+                    Pph23Percentage = table.Column<decimal>(type: "decimal(18, 2)", nullable: false),
+                    IsExist = table.Column<ulong>(type: "bit", nullable: false),
+                    CreateBy = table.Column<int>(type: "int", nullable: false),
+                    ModifyBy = table.Column<int>(type: "int", nullable: true),
+                    CreateDateUtc = table.Column<DateTime>(type: "datetime", nullable: false),
+                    ModifyDateUtc = table.Column<DateTime>(type: "datetime", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PayrollHistory", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -114,7 +143,7 @@ namespace Payroll.Migrations
                     CreateBy = table.Column<int>(type: "int", nullable: false),
                     ModifyBy = table.Column<int>(type: "int", nullable: true),
                     CreateDateUtc = table.Column<DateTime>(type: "datetime", nullable: false),
-                    ModifyDateUtc = table.Column<DateTime>(type: "datetime", nullable: false)
+                    ModifyDateUtc = table.Column<DateTime>(type: "datetime", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -133,7 +162,7 @@ namespace Payroll.Migrations
                     CreateBy = table.Column<int>(type: "int", nullable: false),
                     ModifyBy = table.Column<int>(type: "int", nullable: true),
                     CreateDateUtc = table.Column<DateTime>(type: "datetime", nullable: false),
-                    ModifyDateUtc = table.Column<DateTime>(type: "datetime", nullable: false)
+                    ModifyDateUtc = table.Column<DateTime>(type: "datetime", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -147,12 +176,13 @@ namespace Payroll.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(type: "text", nullable: false),
+                    UMK = table.Column<int>(type: "int", nullable: false),
                     DistrictId = table.Column<int>(type: "int", nullable: false),
                     IsExist = table.Column<ulong>(type: "bit", nullable: false),
                     CreateBy = table.Column<int>(type: "int", nullable: false),
                     ModifyBy = table.Column<int>(type: "int", nullable: true),
                     CreateDateUtc = table.Column<DateTime>(type: "datetime", nullable: false),
-                    ModifyDateUtc = table.Column<DateTime>(type: "datetime", nullable: false)
+                    ModifyDateUtc = table.Column<DateTime>(type: "datetime", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -179,15 +209,15 @@ namespace Payroll.Migrations
                     Address = table.Column<string>(type: "text", nullable: false),
                     PhoneNumber = table.Column<string>(type: "text", nullable: false),
                     KTP = table.Column<string>(type: "varchar(16)", maxLength: 16, nullable: false),
-                    KK = table.Column<string>(type: "varchar(16)", maxLength: 16, nullable: false),
+                    KK = table.Column<string>(type: "varchar(16)", maxLength: 16, nullable: true),
                     Email = table.Column<string>(type: "text", nullable: false),
-                    Image = table.Column<string>(type: "text", nullable: false),
+                    Image = table.Column<string>(type: "text", nullable: true),
                     DriverLicense = table.Column<string>(type: "text", nullable: true),
                     DriverLicenseExpire = table.Column<DateTime>(type: "datetime", nullable: false),
                     FamilyStatusCode = table.Column<string>(type: "varchar(2)", nullable: false),
-                    BpjsNumber = table.Column<string>(type: "varchar(14)", maxLength: 14, nullable: false),
+                    BpjsNumber = table.Column<string>(type: "varchar(14)", maxLength: 14, nullable: true),
                     BpjsRemark = table.Column<string>(type: "text", nullable: true),
-                    JamsostekNumber = table.Column<string>(type: "varchar(12)", maxLength: 12, nullable: false),
+                    JamsostekNumber = table.Column<string>(type: "varchar(12)", maxLength: 12, nullable: true),
                     JamsostekRemark = table.Column<string>(type: "text", nullable: true),
                     NPWP = table.Column<string>(type: "text", nullable: true),
                     JoinCompanyDate = table.Column<DateTime>(type: "datetime", nullable: false),
@@ -209,7 +239,7 @@ namespace Payroll.Migrations
                     CreateBy = table.Column<int>(type: "int", nullable: false),
                     ModifyBy = table.Column<int>(type: "int", nullable: true),
                     CreateDateUtc = table.Column<DateTime>(type: "datetime", nullable: false),
-                    ModifyDateUtc = table.Column<DateTime>(type: "datetime", nullable: false)
+                    ModifyDateUtc = table.Column<DateTime>(type: "datetime", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -258,6 +288,68 @@ namespace Payroll.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "PayrollDetail",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    PayrollHistoryId = table.Column<int>(type: "int", nullable: false),
+                    EmployeeId = table.Column<int>(type: "int", nullable: false),
+                    MainSalaryBilling = table.Column<int>(type: "int", nullable: false),
+                    JamsostekBilling = table.Column<int>(type: "int", nullable: false),
+                    BpjsBilling = table.Column<int>(type: "int", nullable: false),
+                    PensionBilling = table.Column<int>(type: "int", nullable: false),
+                    AtributeBilling = table.Column<int>(type: "int", nullable: false),
+                    MainPrice = table.Column<int>(type: "int", nullable: false),
+                    ManagementFeeBilling = table.Column<int>(type: "int", nullable: false),
+                    InsentiveBilling = table.Column<int>(type: "int", nullable: false),
+                    AttendanceBilling = table.Column<int>(type: "int", nullable: false),
+                    OvertimeBilling = table.Column<int>(type: "int", nullable: false),
+                    SubtotalBilling = table.Column<int>(type: "int", nullable: false),
+                    TaxBilling = table.Column<int>(type: "int", nullable: false),
+                    GrandTotalBilling = table.Column<int>(type: "int", nullable: false),
+                    ResultPayroll = table.Column<int>(type: "int", nullable: false),
+                    FeePayroll = table.Column<int>(type: "int", nullable: false),
+                    TotalPayroll = table.Column<int>(type: "int", nullable: false),
+                    TaxPayroll = table.Column<int>(type: "int", nullable: false),
+                    GrossPayroll = table.Column<int>(type: "int", nullable: false),
+                    AttributePayroll = table.Column<int>(type: "int", nullable: false),
+                    BpjsTkDeduction = table.Column<int>(type: "int", nullable: false),
+                    BpjsKesehatanDeduction = table.Column<int>(type: "int", nullable: false),
+                    PensionDeduction = table.Column<int>(type: "int", nullable: false),
+                    PKP1 = table.Column<int>(type: "int", nullable: false),
+                    PTKP = table.Column<int>(type: "int", nullable: false),
+                    PKP2 = table.Column<int>(type: "int", nullable: false),
+                    PPH21 = table.Column<int>(type: "int", nullable: false),
+                    PPH23 = table.Column<int>(type: "int", nullable: false),
+                    Netto = table.Column<int>(type: "int", nullable: false),
+                    AnotherDeduction = table.Column<int>(type: "int", nullable: false),
+                    AnotherDeductionRemark = table.Column<string>(type: "text", nullable: true),
+                    PayrollDetailStatusId = table.Column<int>(type: "int", nullable: false),
+                    IsExist = table.Column<ulong>(type: "bit", nullable: false),
+                    CreateBy = table.Column<int>(type: "int", nullable: false),
+                    ModifyBy = table.Column<int>(type: "int", nullable: true),
+                    CreateDateUtc = table.Column<DateTime>(type: "datetime", nullable: false),
+                    ModifyDateUtc = table.Column<DateTime>(type: "datetime", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_PayrollDetail", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PayrollDetail_Employee_EmployeeId",
+                        column: x => x.EmployeeId,
+                        principalTable: "Employee",
+                        principalColumn: "NIK",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_PayrollDetail_PayrollHistory_PayrollHistoryId",
+                        column: x => x.PayrollHistoryId,
+                        principalTable: "PayrollHistory",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Employee_BankCode",
                 table: "Employee",
@@ -297,12 +389,28 @@ namespace Payroll.Migrations
                 name: "IX_Location_DistrictId",
                 table: "Location",
                 column: "DistrictId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PayrollDetail_EmployeeId",
+                table: "PayrollDetail",
+                column: "EmployeeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PayrollDetail_PayrollHistoryId",
+                table: "PayrollDetail",
+                column: "PayrollHistoryId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "PayrollDetail");
+
+            migrationBuilder.DropTable(
                 name: "Employee");
+
+            migrationBuilder.DropTable(
+                name: "PayrollHistory");
 
             migrationBuilder.DropTable(
                 name: "Bank");

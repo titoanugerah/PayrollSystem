@@ -409,6 +409,12 @@ namespace Payroll.Migrations
                     b.Property<int>("BpjsTkDeduction")
                         .HasColumnType("int");
 
+                    b.Property<int>("CreateBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreateDateUtc")
+                        .HasColumnType("datetime");
+
                     b.Property<int>("EmployeeId")
                         .HasColumnType("int");
 
@@ -424,6 +430,9 @@ namespace Payroll.Migrations
                     b.Property<int>("InsentiveBilling")
                         .HasColumnType("int");
 
+                    b.Property<ulong>("IsExist")
+                        .HasColumnType("bit");
+
                     b.Property<int>("JamsostekBilling")
                         .HasColumnType("int");
 
@@ -435,6 +444,12 @@ namespace Payroll.Migrations
 
                     b.Property<int>("ManagementFeeBilling")
                         .HasColumnType("int");
+
+                    b.Property<int?>("ModifyBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ModifyDateUtc")
+                        .HasColumnType("datetime");
 
                     b.Property<int>("Netto")
                         .HasColumnType("int");
@@ -455,6 +470,9 @@ namespace Payroll.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("PTKP")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PayrollDetailStatusId")
                         .HasColumnType("int");
 
                     b.Property<int>("PayrollHistoryId")
@@ -554,27 +572,7 @@ namespace Payroll.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("StatusId");
-
                     b.ToTable("PayrollHistory");
-                });
-
-            modelBuilder.Entity("Payroll.Models.PayrollStatus", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Remark")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("PayrollStatus");
                 });
 
             modelBuilder.Entity("Payroll.Models.Position", b =>
@@ -730,17 +728,6 @@ namespace Payroll.Migrations
                     b.Navigation("Employee");
 
                     b.Navigation("PayrollHistory");
-                });
-
-            modelBuilder.Entity("Payroll.Models.PayrollHistory", b =>
-                {
-                    b.HasOne("Payroll.Models.PayrollStatus", "Status")
-                        .WithMany()
-                        .HasForeignKey("StatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Status");
                 });
 #pragma warning restore 612, 618
         }

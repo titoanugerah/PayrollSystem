@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Payroll.Models
 {
-    public class PayrollDetail
+    public class PayrollDetail : Audit
     {
         public int Id { set; get; }
         [Required]
@@ -72,5 +72,29 @@ namespace Payroll.Models
         public int AnotherDeduction{ set; get; }
         [DefaultValue(0)]
         public string AnotherDeductionRemark{ set; get; }
+        public int PayrollDetailStatusId { set; get; }
+        public string PayrollDetailStatus
+        {
+            get
+            {
+                string result = null;
+                switch (PayrollDetailStatusId)
+                {
+                    case 1:
+                        result = "Perincian gaji belum diupload";
+                        break;
+                    case 2:
+                        result = "Perincian gaji sudah diupload";
+                        break;
+                    case 3:
+                        result = "Gaji sudah dikirim";
+                        break;
+                    default:
+                        result = null;
+                        break;
+                }
+                return result;
+            }
+        }
     }
 }
