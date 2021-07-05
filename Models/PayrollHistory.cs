@@ -13,6 +13,7 @@ namespace Payroll.Models
         [Required]
         public string Year { set; get; }
         public int StatusId { set; get; }
+        [NotMapped]
         public string Status {
             get
             {

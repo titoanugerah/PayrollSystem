@@ -63,9 +63,12 @@ namespace Payroll.Controllers.Api
                     payrollDetail.EmployeeId = employee.NIK;
                     payrollDetail.PayrollHistoryId = payrollHistory.Id;
                     payrollDetail.MainPrice = 0;
+                    payrollDetail.PayrollDetailStatusId = 1;
                     payrollDetails.Add(payrollDetail);
+                    payrollDB.Entry(payrollDetail).State = EntityState.Added;
                 }
                 await payrollDB.PayrollDetail.AddRangeAsync(payrollDetails);
+                await payrollDB.SaveChangesAsync();
                 return new JsonResult(payrollHistory);
             }
             catch (Exception error)
