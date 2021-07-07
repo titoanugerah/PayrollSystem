@@ -12,5 +12,7 @@
         public decimal Pension1Percentage { set; get; }
         public decimal PPH21Percentage { set; get; }
         public decimal PPH23Percentage { set; get; }
+        public decimal BpjsPayrollPercentage { set; get; }
+        public decimal PensionPayrollPercentage { set; get; }
     }
 }

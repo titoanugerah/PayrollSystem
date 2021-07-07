@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Threading.Tasks;
 
 namespace Payroll.Controllers
 {
@@ -12,7 +13,7 @@ namespace Payroll.Controllers
         {
             logger = _logger;
         }
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             try
             {
@@ -21,6 +22,20 @@ namespace Payroll.Controllers
             catch (Exception error)
             {
                 logger.LogError(error, "Payroll Controller - Index");
+                throw error;
+            }
+        }
+
+        [Route("PayrollHistory/Download/Report/{id}")]
+        public async Task<IActionResult> DownloadReport(int id)
+        {
+            try
+            {
+                return Ok();
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error, "Payroll History Controller - Download Report");
                 throw error;
             }
         }

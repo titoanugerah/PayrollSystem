@@ -59,5 +59,7 @@ namespace Payroll.Models
         public decimal Pph21Percentage { set; get; }
         [Required]
         public decimal Pph23Percentage { set; get; }
+        public decimal BpjsPayrollPercentage { set; get; }
+        public decimal PensionPayrollPercentage { set; get; }
     }
 }

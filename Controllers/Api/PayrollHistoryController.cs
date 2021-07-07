@@ -45,6 +45,8 @@ namespace Payroll.Controllers.Api
                 payrollHistory.Pension1Percentage = payrollConfiguration.Value.Pension1Percentage;
                 payrollHistory.Pph21Percentage = payrollConfiguration.Value.PPH21Percentage;
                 payrollHistory.Pph23Percentage = payrollConfiguration.Value.PPH23Percentage;
+                payrollHistory.BpjsPayrollPercentage= payrollConfiguration.Value.BpjsPayrollPercentage;
+                payrollHistory.PensionPayrollPercentage = payrollConfiguration.Value.PensionPayrollPercentage;
                 payrollHistory.Month = payrollInput.Month;
                 payrollHistory.Year = payrollInput.Year;
                 payrollHistory.StatusId = 1;

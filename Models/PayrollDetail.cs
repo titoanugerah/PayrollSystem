@@ -118,7 +118,7 @@ namespace Payroll.Models
         {
             get
             {
-                if (MainPrice == SuspectedMainPrice)
+                if (MainPrice == SuspectedMainPrice || MainPrice == SuspectedMainPrice+1 || MainPrice == SuspectedMainPrice-1)
                 {
                     return true;
                 }
@@ -181,6 +181,14 @@ namespace Payroll.Models
                 {
                     return true;
                 }
+                else if (SubtotalBilling == SuspectedSubtotalBilling + 1)
+                {
+                    return true;
+                }
+                else if (SubtotalBilling == SuspectedSubtotalBilling - 1)
+                {
+                    return true;
+                }
                 else
                 {
                     return false;
@@ -221,13 +229,32 @@ namespace Payroll.Models
                 }
             }
         }
+
+        [DefaultValue(0)]
+        public int GrandTotalBilling { set; get; }
+        [NotMapped]
+        public int SuspectedGrandTotalBilling
+        {
+            get
+            {
+                return SubtotalBilling + TaxBilling;
+            }
+        }
         [NotMapped]
         [DefaultValue(false)]
         public bool IsValidGrandTotalBilling
         {
             get
             {
-                if (GrandTotalBilling == SubtotalBilling + TaxBilling )
+                if (GrandTotalBilling == SuspectedGrandTotalBilling)
+                {
+                    return true;
+                }
+                else if (GrandTotalBilling == SuspectedGrandTotalBilling +1)
+                {
+                    return true;
+                }
+                else if (GrandTotalBilling == SuspectedGrandTotalBilling -1)
                 {
                     return true;
                 }
@@ -237,8 +264,6 @@ namespace Payroll.Models
                 }
             }
         }
-        [DefaultValue(0)]
-        public int GrandTotalBilling { set; get; }
         [DefaultValue(0)]
         public int ResultPayroll { set; get; }
         [DefaultValue(0)]
@@ -273,6 +298,8 @@ namespace Payroll.Models
         public int AnotherDeduction { set; get; }
         [DefaultValue(0)]
         public string AnotherDeductionRemark{ set; get; }
+        [DefaultValue(0)]
+        public int TakeHomePay { set; get; }
         public int PayrollDetailStatusId { set; get; }
         [NotMapped]
         public string PayrollDetailStatus            

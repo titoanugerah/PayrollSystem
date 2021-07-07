@@ -6,6 +6,7 @@
             </div>
             <div class="ml-md-auto py-2 py-md-0">
                 <input type="number" id="payrollHistoryId" value="@ViewBag.Id" hidden/>
+                <button type="button" onclick="downloadReport()" class="btn btn-white btn-border btn-round mr-2">Download</button>
                 <button type="button" onclick="showAddPayrollDetailForm()" class="btn btn-white btn-border btn-round mr-2">Upload Gaji</button>
                 <button type="button" onclick="reloadTable()" class="btn btn-white btn-border btn-round mr-2">Reload Data</button>
                 <a href="#" class="btn btn-white btn-border btn-round mr-2" hidden>Manage</a>

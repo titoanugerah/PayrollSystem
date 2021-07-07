@@ -14,7 +14,11 @@
     "columns": [
         { "data": "employee.nik" },
         { "data": "employee.name" },
-        { "data": "netto" },
+        {
+            "render": function (data, type, row) {
+                return "Rp. " + row.takeHomePay.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            }
+        },
         { "data": "payrollDetailStatus" },
         {
             "render": function (data, type, row) {
@@ -24,6 +28,9 @@
     ]
 });
 
+function downloadReport() {
+    window.open('PayrollHistory/Download/Report/' + $("#payrollHistoryId").val(), '_blank');
+}
 
 function showAddPayrollDetailForm() {
     $('#addPayrollDetailModal').modal('show');
@@ -64,7 +71,7 @@ function updatePayrollDetail() {
         contentType: false,
         type: 'post',
         success: function (response) {
-            reload()
+            reloadTable()
             $('#addEmployeeModal').modal('hide');
             console.log('success', response);
         },
