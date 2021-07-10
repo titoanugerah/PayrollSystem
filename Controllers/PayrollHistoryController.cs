@@ -39,7 +39,7 @@ namespace Payroll.Controllers
         }
 
         [Route("PayrollHistory/Download/Report/{id}")]
-        public async Task<IActionResult> DownloadReport(int id)
+        public async Task<IActionResult> DownloadReportAll(int id)
         {
             try
             {
@@ -52,7 +52,10 @@ namespace Payroll.Controllers
                     .Where(column => column.PayrollHistoryId == id)
                     .OrderBy(column => column.Employee.CustomerId)
                     .ToListAsync();
-
+                if (allPayrollDetails.Count() == 0)
+                {
+                    return new JsonResult("No Data Received");
+                }
                 List<Customer> customers = await payrollDB.Customer
                     .Where(column => allPayrollDetails.Select(col => col.Employee.CustomerId).Contains(column.Id))
                     .ToListAsync();
@@ -208,22 +211,19 @@ namespace Payroll.Controllers
 
                             await SetValue($"AB{currentRow}", $"Total");
                             await SetValue($"AC{currentRow++}", payrollDetails.Sum(column => column.TakeHomePay) + payrollDetails.Sum(column => column.AtributeBilling) + payrollDetails.Sum(column => column.JamsostekBilling) + (payrollDetails.Sum(column => column.PensionBilling)) + (payrollDetails.Sum(column => column.BpjsTkDeduction)) + payrollDetails.Sum(column => column.PPH21) + payrollDetails.Sum(column => column.ManagementFeeBilling) + payrollDetails.Sum(column => column.TakeHomePay) + payrollDetails.Sum(column => column.TaxBilling) + payrollDetails.Sum(column => column.AnotherDeduction) + (payrollDetails.Sum(column => column.PensionDeduction) + payrollDetails.Sum(column => column.BpjsKesehatanDeduction)) + (payrollDetails.Sum(column => column.BpjsBilling)));
+                            await HideColumn(4);
+                            await HideColumn(5);
+                            await HideColumn(6);
                             worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
-                            worksheet.Column(4).Hidden = true;
-                            worksheet.Column(5).Hidden = true;
-                            worksheet.Column(6).Hidden = true;
+                            
                         }
-                    }
+                    }                    
                     excelPackage.Workbook.Worksheets.Delete(template);
                     MemoryStream stream = new MemoryStream();
                     excelPackage.SaveAs(stream);
-
-                    var content = stream.ToArray();
-                    return File(content, "application/excel", "Output.xlsx");
-
-
+                    byte[] content = stream.ToArray();
+                    return File(content, "application/excel", $"Bank Data {allPayrollDetails.First().PayrollHistory.Month} {allPayrollDetails.First().PayrollHistory.Year}.xlsx");
                 }
-
                 return Ok();
             }
             catch (Exception error)
@@ -232,6 +232,204 @@ namespace Payroll.Controllers
                 throw error;
             }
         }
+
+        [Route("PayrollHistory/Download/Report/{payrollHistoryId}/{districtId}")]
+        public async Task<IActionResult> DownloadReportDistrict(int payrollHistoryId, int districtId)
+        {
+            try
+            {
+                FileInfo excelTemplate = new FileInfo("wwwroot/file/templateReport.xlsx");
+                List<PayrollDetail> allPayrollDetails = await payrollDB.PayrollDetail
+                    .Include(table => table.Employee.Customer)
+                    .Include(table => table.Employee.Location.District)
+                    .Include(table => table.Employee.Position)
+                    .Include(table => table.PayrollHistory)
+                    .Where(column => column.PayrollHistoryId == payrollHistoryId)
+                    .Where(column => column.Employee.Location.DistrictId == districtId)
+                    .OrderBy(column => column.Employee.CustomerId)
+                    .ToListAsync();
+                if (allPayrollDetails.Count() == 0)
+                {
+                    return new JsonResult("No Data Received");
+                }
+
+                List<Customer> customers = await payrollDB.Customer
+                    .Where(column => allPayrollDetails.Select(col => col.Employee.CustomerId).Contains(column.Id))
+                    .ToListAsync();
+                List<Location> allLocations = await payrollDB.Location
+                    .ToListAsync();
+
+                ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+                using (ExcelPackage excelPackage = new ExcelPackage(new FileInfo(excelTemplate.FullName)))
+                {
+                    ExcelWorkbook workbook = excelPackage.Workbook;
+                    ExcelWorksheet template = workbook.Worksheets.FirstOrDefault();
+
+                    foreach (Customer customer in customers)
+                    {
+
+                        List<Location> locations = allLocations
+                          .Where(col => allPayrollDetails.Select(column => column.Employee.LocationId).Contains(col.Id))
+                          .Where(col => allPayrollDetails.Select(column => column.Employee.CustomerId).Contains(customer.Id))
+                          .ToList();
+                        foreach (Location location in locations)
+                        {
+
+                            string worksheetName = $"{customer.Name} {location.Name}";
+                            worksheet = workbook.Worksheets.Copy(template.ToString(), worksheetName);
+                            await Merge($"A1", $"C1");
+                            await SetValue($"A2", $"Tagihan Driver {location.Name} {customer.Name}");
+                            await Merge($"A2", $"C2");
+                            await SetValue($"A3", $"Periode {allPayrollDetails.First().PayrollHistory.Month} {allPayrollDetails.First().PayrollHistory.Year} ");
+                            await Merge($"A3", $"C3");
+                            List<PayrollDetail> payrollDetails = allPayrollDetails
+                              .Where(col => col.Employee.CustomerId == customer.Id)
+                              .Where(col => col.Employee.LocationId == location.Id)
+                              .ToList();
+                            int currentRow = 7;
+                            int no = 1;
+                            foreach (PayrollDetail payrollDetail in payrollDetails)
+                            {
+                                await SetValue($"A{currentRow}", no);
+                                await SetValue($"B{currentRow}", payrollDetail.Employee.NIK);
+                                await SetValue($"C{currentRow}", payrollDetail.Employee.Name);
+                                await SetValue($"D{currentRow}", payrollDetail.Employee.Position.Name);
+                                await SetValue($"E{currentRow}", payrollDetail.Employee.Location.Name);
+                                await SetValue($"F{currentRow}", payrollDetail.Employee.Customer.Name);
+                                await SetValue($"G{currentRow}", payrollDetail.MainSalaryBilling);
+                                await SetValue($"H{currentRow}", payrollDetail.JamsostekBilling);
+                                await SetValue($"I{currentRow}", payrollDetail.BpjsBilling);
+                                await SetValue($"J{currentRow}", payrollDetail.PensionBilling);
+                                await SetValue($"K{currentRow}", payrollDetail.AtributeBilling);
+                                await SetValue($"L{currentRow}", payrollDetail.MainPrice);
+                                await SetValue($"M{currentRow}", payrollDetail.ManagementFeeBilling);
+                                await SetValue($"N{currentRow}", payrollDetail.InsentiveBilling);
+                                await SetValue($"O{currentRow}", payrollDetail.AttendanceBilling);
+                                await SetValue($"P{currentRow}", payrollDetail.OvertimeBilling);
+                                await SetValue($"Q{currentRow}", payrollDetail.SubtotalBilling);
+                                await SetValue($"R{currentRow}", payrollDetail.TaxBilling);
+                                await SetValue($"S{currentRow}", payrollDetail.GrandTotalBilling);
+                                await SetValue($"T{currentRow}", payrollDetail.Employee.JoinCustomerDate);
+
+                                await SetValue($"W{currentRow}", no);
+                                await SetValue($"X{currentRow}", payrollDetail.Employee.NIK);
+                                await SetValue($"Y{currentRow}", payrollDetail.Employee.Name);
+                                await SetValue($"Z{currentRow}", payrollDetail.Employee.FamilyStatusCode);
+                                await SetValue($"AA{currentRow}", payrollDetail.ResultPayroll);
+                                await SetValue($"AB{currentRow}", payrollDetail.FeePayroll);
+                                await SetValue($"AC{currentRow}", payrollDetail.TotalPayroll);
+                                await SetValue($"AD{currentRow}", payrollDetail.TaxPayroll);
+                                await SetValue($"AE{currentRow}", payrollDetail.GrossPayroll);
+                                await SetValue($"AF{currentRow}", payrollDetail.AttributePayroll);
+                                await SetValue($"AG{currentRow}", payrollDetail.BpjsTkDeduction);
+                                await SetValue($"AH{currentRow}", payrollDetail.BpjsKesehatanDeduction);
+                                await SetValue($"AI{currentRow}", payrollDetail.PensionDeduction);
+                                await SetValue($"AJ{currentRow}", payrollDetail.PTKP);
+                                await SetValue($"AK{currentRow}", payrollDetail.PKP1);
+                                await SetValue($"AL{currentRow}", payrollDetail.PKP2);
+                                await SetValue($"AM{currentRow}", payrollDetail.PPH21);
+                                await SetValue($"AN{currentRow}", payrollDetail.PPH23);
+                                await SetValue($"AO{currentRow}", payrollDetail.Netto);
+                                await SetValue($"AP{currentRow}", payrollDetail.AnotherDeduction);
+                                await SetValue($"AQ{currentRow}", payrollDetail.TakeHomePay);
+
+                                await SetValue($"AS{currentRow}", no);
+                                await SetValue($"AT{currentRow}", payrollDetail.Employee.NIK);
+                                await SetValue($"AU{currentRow}", payrollDetail.Employee.Name);
+                                await SetValue($"AV{currentRow}", payrollDetail.TakeHomePay);
+                                currentRow++;
+                                no++;
+                            }
+
+                            await SetValue($"A{currentRow}", $"Total");
+                            await Merge($"A{currentRow}", $"F{currentRow}");
+                            await SetValue($"G{currentRow}", payrollDetails.Sum(column => column.MainSalaryBilling));
+                            await SetValue($"H{currentRow}", payrollDetails.Sum(column => column.JamsostekBilling));
+                            await SetValue($"I{currentRow}", payrollDetails.Sum(column => column.BpjsBilling));
+                            await SetValue($"J{currentRow}", payrollDetails.Sum(column => column.PensionBilling));
+                            await SetValue($"K{currentRow}", payrollDetails.Sum(column => column.AtributeBilling));
+                            await SetValue($"L{currentRow}", payrollDetails.Sum(column => column.MainPrice));
+                            await SetValue($"M{currentRow}", payrollDetails.Sum(column => column.ManagementFeeBilling));
+                            await SetValue($"N{currentRow}", payrollDetails.Sum(column => column.InsentiveBilling));
+                            await SetValue($"O{currentRow}", payrollDetails.Sum(column => column.AttendanceBilling));
+                            await SetValue($"P{currentRow}", payrollDetails.Sum(column => column.OvertimeBilling));
+                            await SetValue($"Q{currentRow}", payrollDetails.Sum(column => column.SubtotalBilling));
+                            await SetValue($"R{currentRow}", payrollDetails.Sum(column => column.TaxBilling));
+                            await SetValue($"S{currentRow}", payrollDetails.Sum(column => column.GrandTotalBilling));
+
+                            await SetValue($"AA{currentRow}", payrollDetails.Sum(column => column.ResultPayroll));
+                            await SetValue($"AB{currentRow}", payrollDetails.Sum(column => column.FeePayroll));
+                            await SetValue($"AC{currentRow}", payrollDetails.Sum(column => column.TotalPayroll));
+                            await SetValue($"AD{currentRow}", payrollDetails.Sum(column => column.TaxPayroll));
+                            await SetValue($"AE{currentRow}", payrollDetails.Sum(column => column.GrossPayroll));
+                            await SetValue($"AF{currentRow}", payrollDetails.Sum(column => column.AttributePayroll));
+                            await SetValue($"AG{currentRow}", payrollDetails.Sum(column => column.BpjsTkDeduction));
+                            await SetValue($"AH{currentRow}", payrollDetails.Sum(column => column.BpjsKesehatanDeduction));
+                            await SetValue($"AI{currentRow}", payrollDetails.Sum(column => column.PensionDeduction));
+                            await SetValue($"AJ{currentRow}", payrollDetails.Sum(column => column.PTKP));
+                            await SetValue($"AK{currentRow}", payrollDetails.Sum(column => column.PKP1));
+                            await SetValue($"AL{currentRow}", payrollDetails.Sum(column => column.PKP2));
+                            await SetValue($"AM{currentRow}", payrollDetails.Sum(column => column.PPH21));
+                            await SetValue($"AN{currentRow}", payrollDetails.Sum(column => column.PPH23));
+                            await SetValue($"AO{currentRow}", payrollDetails.Sum(column => column.Netto));
+                            await SetValue($"AP{currentRow}", payrollDetails.Sum(column => column.AnotherDeduction));
+                            await SetValue($"AQ{currentRow}", payrollDetails.Sum(column => column.TakeHomePay));
+
+                            await SetValue($"AV{currentRow}", payrollDetails.Sum(column => column.TakeHomePay));
+
+                            await Borderize($"A6", $"U{currentRow}");
+                            await Borderize($"W6", $"AQ{currentRow}");
+                            await Borderize($"AS6", $"AV{currentRow}");
+
+                            currentRow = currentRow + 2;
+                            await SetValue($"AB{currentRow}", $"BPJS TK");
+                            await SetValue($"AC{currentRow++}", (payrollDetails.Sum(column => column.JamsostekBilling)) + (payrollDetails.Sum(column => column.PensionBilling)) + (payrollDetails.Sum(column => column.BpjsTkDeduction)) + (payrollDetails.Sum(column => column.PensionDeduction)));
+
+                            await SetValue($"AB{currentRow}", $"BPJS Kes");
+                            await SetValue($"AC{currentRow++}", (payrollDetails.Sum(column => column.BpjsKesehatanDeduction)) + (payrollDetails.Sum(column => column.BpjsBilling)));
+
+                            await SetValue($"AB{currentRow}", $"Perlengkapan");
+                            await SetValue($"AC{currentRow++}", (payrollDetails.Sum(column => column.AtributeBilling)));
+
+                            await SetValue($"AB{currentRow}", $"PPH 21");
+                            await SetValue($"AC{currentRow++}", (payrollDetails.Sum(column => column.PPH21)));
+
+                            await SetValue($"AB{currentRow}", $"Potongan");
+                            await SetValue($"AC{currentRow++}", (payrollDetails.Sum(column => column.AnotherDeduction)));
+
+                            await SetValue($"AB{currentRow}", $"Fee");
+                            await SetValue($"AC{currentRow++}", (payrollDetails.Sum(column => column.ManagementFeeBilling)));
+
+                            await SetValue($"AB{currentRow}", $"PPN");
+                            await SetValue($"AC{currentRow++}", (payrollDetails.Sum(column => column.TaxBilling)));
+
+                            await SetValue($"AB{currentRow}", $"TF");
+                            await SetValue($"AC{currentRow++}", (payrollDetails.Sum(column => column.TakeHomePay)));
+
+                            await SetValue($"AB{currentRow}", $"Total");
+                            await SetValue($"AC{currentRow++}", payrollDetails.Sum(column => column.TakeHomePay) + payrollDetails.Sum(column => column.AtributeBilling) + payrollDetails.Sum(column => column.JamsostekBilling) + (payrollDetails.Sum(column => column.PensionBilling)) + (payrollDetails.Sum(column => column.BpjsTkDeduction)) + payrollDetails.Sum(column => column.PPH21) + payrollDetails.Sum(column => column.ManagementFeeBilling) + payrollDetails.Sum(column => column.TakeHomePay) + payrollDetails.Sum(column => column.TaxBilling) + payrollDetails.Sum(column => column.AnotherDeduction) + (payrollDetails.Sum(column => column.PensionDeduction) + payrollDetails.Sum(column => column.BpjsKesehatanDeduction)) + (payrollDetails.Sum(column => column.BpjsBilling)));
+                            await HideColumn(4);
+                            await HideColumn(5);
+                            await HideColumn(6);
+                            worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
+
+                        }
+                    }
+                    excelPackage.Workbook.Worksheets.Delete(template);
+                    MemoryStream stream = new MemoryStream();
+                    excelPackage.SaveAs(stream);
+                    byte[] content = stream.ToArray();
+                    return File(content, "application/excel", $"Bank Data {allPayrollDetails.First().Employee.Location.District.Name} {allPayrollDetails.First().PayrollHistory.Month} {allPayrollDetails.First().PayrollHistory.Year}.xlsx");
+                }
+                return Ok();
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error, "Payroll History Controller - Download Report");
+                throw error;
+            }
+        }
+
 
         private async Task<IActionResult> Borderize(string start, string end)
         {
@@ -260,7 +458,7 @@ namespace Payroll.Controllers
             }
             catch (Exception error)
             {
-                logger.LogError(error, "Payroll History Controller - Borderize");
+                logger.LogError(error, "Payroll History Controller - Set Value");
                 throw error;
             }
         }
@@ -274,10 +472,23 @@ namespace Payroll.Controllers
             }
             catch (Exception error)
             {
-                logger.LogError(error, "Payroll History Controller - Borderize");
+                logger.LogError(error, "Payroll History Controller - Merge");
                 throw error;
             }
+        }
 
+        private async Task<IActionResult> HideColumn(int cell)
+        {
+            try
+            {
+                worksheet.Column(cell).Hidden = true;
+                return new JsonResult(Ok());
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error, "Payroll History Controller - Hide Column");
+                throw error;
+            }
         }
     }
 }

@@ -29,12 +29,39 @@
 });
 
 function downloadReport() {
-    window.open('PayrollHistory/Download/Report/' + $("#payrollHistoryId").val(), '_blank');
+    if ($('#districtId').val() == 0) {
+        window.open('PayrollHistory/Download/Report/' + $("#payrollHistoryId").val(), '_blank');
+    } else {
+        window.open('PayrollHistory/Download/Report/' + $("#payrollHistoryId").val() + '/' + $('#districtId').val(), '_blank');
+    }
 }
 
 function showAddPayrollDetailForm() {
     $('#addPayrollDetailModal').modal('show');
 }
+
+function showDownloadReportForm() {
+    $.ajax({
+        type: "GET",
+        dataType: "JSON",
+        url: "api/district/read",
+        success: function (result) {
+            var html = "<option value=0> Semua Distrik </option>";
+            result.forEach(function (data) {
+                html = html + "<option value=" + data.id + "> " + data.name + "</option>";
+            });
+            $('#districtId').html(html);
+        },
+        error: function (result) {
+            console.log(result);
+            notify('fas fa-times', 'Gagal', result.responseText, 'danger');
+        }
+    });
+    $('#downloadReportModal').modal('show');
+}
+
+
+
 
 function showEditForm(id) {
     $.ajax({
@@ -87,5 +114,8 @@ function updatePayrollDetail() {
 $(document).ready(function () {
     $('.select2addmodal').select2({
         dropdownParent: $('#addPayrollDetailModal')
+    });
+    $('.select2modal').select2({
+        dropdownParent: $('#downloadReportModal')
     });
 });
