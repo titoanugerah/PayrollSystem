@@ -40,7 +40,7 @@ namespace Payroll.Controllers.Api
             try
             {
                 List<Bank> banks = await payrollDB.Bank.ToListAsync();
-                List<Customer> customers = await payrollDB.Customer.ToListAsync();
+                List<Models.Customer> customers = await payrollDB.Customer.ToListAsync();
                 List<District> districts = await payrollDB.District.ToListAsync();
                 List<Employee> employees = await payrollDB.Employee.ToListAsync();
                 List<EmploymentStatus> employmentStatuses = await payrollDB.EmploymentStatus.ToListAsync();

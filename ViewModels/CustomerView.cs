@@ -7,7 +7,7 @@ namespace Payroll.ViewModels
 {
     public class CustomerView
     {
-        public List<Customer> Data { set; get; }
+        public List<Models.Customer> Data { set; get; }
         public int RecordsFiltered { set; get; }
         public int RecordsTotal
         {

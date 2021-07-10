@@ -29,10 +29,10 @@ namespace Payroll.Controllers.Api
         {
             try
             {
-                Customer customer = new Customer();
+                Models.Customer customer = new Models.Customer();
                 customer.Name = customerInput.Name;
                 customer.Remark = customerInput.Remark;
-                customer.IsExist = true;    
+                customer.IsExist = true;
                 payrollDB.Customer.Add(customer);
                 payrollDB.Entry(customer).State = EntityState.Added;
 

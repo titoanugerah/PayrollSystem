@@ -82,6 +82,7 @@ namespace Payroll.Controllers.Api
             try
             {
                 PayrollDetail payrollDetail = await payrollDB.PayrollDetail
+                    .Include(table => table.PayrollHistory)
                     .Include(table => table.Employee)
                     .Where(column => column.Id == id)
                     .FirstOrDefaultAsync();

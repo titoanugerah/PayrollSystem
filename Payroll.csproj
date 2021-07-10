@@ -19,8 +19,4 @@
     <PackageReference Include="MySql.EntityFrameworkCore" Version="5.0.3.1" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="wwwroot\file\" />
-  </ItemGroup>
-
 </Project>
