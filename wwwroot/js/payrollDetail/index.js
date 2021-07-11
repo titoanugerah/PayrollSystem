@@ -38,6 +38,11 @@ function downloadReport() {
 
 }
 
+function downloadBankReport() {
+    window.open('PayrollHistory/Download/ReportBank/' + $("#payrollHistoryId").val(), '_blank');    
+}
+
+
 function showAddPayrollDetailForm() {
     $('#addPayrollDetailModal').modal('show');
 }
@@ -81,17 +86,17 @@ function showDetailForm(id) {
             console.log(result);
             $('#name').val(result.employee.name);
             $('#nik').val(result.employee.nik);
-            $('#resultPayroll').val(formatter.format(result.resultPayroll));
-            $('#feePayroll').val(formatter.format(result.feePayroll));
-            $('#taxPayroll').val(formatter.format(result.taxPayroll));
-            $('#attributePayroll').val(formatter.format(result.attributePayroll));
+            $('#mainSalaryBilling').val(formatter.format(result.mainSalaryBilling));
+            $('#insentiveBilling').val(formatter.format(result.insentiveBilling));
+            $('#attendanceBilling').val(formatter.format(result.attendanceBilling));
+            $('#overtimeBilling').val(formatter.format(result.overtimeBilling));
+            $('#apreciationBilling').val(formatter.format(result.appreciationBilling));
             $('#bpjsTkDeduction').val(formatter.format(result.bpjsTkDeduction));
             $('#bpjsKesehatanDeduction').val(formatter.format(result.bpjsKesehatanDeduction));
             $('#pensionDeduction').val(formatter.format(result.pensionDeduction));
-            $('#pkp1').val(formatter.format(result.pkP1));
             $('#pph21').val(formatter.format(result.ppH21));
-            $('#pph23').val(formatter.format(result.ppH23));
             $('#anotherDeduction').val(formatter.format(result.anotherDeduction));
+            $('#transferFee').val(formatter.format(result.transferFee));
             $('#takeHomePay').val(formatter.format(result.takeHomePay));
         },
         error: function (result) {
@@ -119,7 +124,7 @@ function updatePayrollDetail() {
         type: 'post',
         success: function (response) {
             reloadTable()
-            $('#addEmployeeModal').modal('hide');
+            $('#addPayrollDetailModal').modal('hide');
             console.log('success', response);
         },
         error: function (result) {
@@ -129,6 +134,19 @@ function updatePayrollDetail() {
     });
 }
 
+function submit() {
+    $.ajax({
+        url: 'api/PayrollHistory/submit/' + $("#payrollHistoryId").val(),
+        type: 'post',
+        success: function (response) {
+            reloadTable()
+        },
+        error: function (result) {
+            console.log('error', result);
+            notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' + result.responseText, 'danger');
+        }
+    });
+}
 
 
 $(document).ready(function () {

@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Payroll.DataAccess;
 
 namespace Payroll.Migrations
 {
     [DbContext(typeof(PayrollDB))]
-    partial class PayrollDBModelSnapshot : ModelSnapshot
+    [Migration("20210711123515_Appreciation")]
+    partial class Appreciation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -436,9 +438,6 @@ namespace Payroll.Migrations
                     b.Property<ulong>("IsExist")
                         .HasColumnType("bit");
 
-                    b.Property<ulong>("IsLateTransfer")
-                        .HasColumnType("bit");
-
                     b.Property<int>("JamsostekBilling")
                         .HasColumnType("int");
 
@@ -506,9 +505,6 @@ namespace Payroll.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("TotalPayroll")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TransferFee")
                         .HasColumnType("int");
 
                     b.HasKey("Id");

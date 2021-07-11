@@ -125,5 +125,49 @@ namespace Payroll.Controllers.Api
                 throw error;
             }
         }
+
+        [HttpPost]
+        [Authorize]
+        [Route("api/payrollHistory/submit/{id}")]
+        public async Task<IActionResult> Submit(int id)
+        {
+            try
+            {
+                PayrollHistory payrollHistory = await payrollDB.PayrollHistory
+                    .Where(column => column.Id == id)
+                    .FirstOrDefaultAsync();
+                List<PayrollDetail> payrollDetails = await payrollDB.PayrollDetail
+                    .Where(column => column.PayrollHistoryId == id)
+                    .ToListAsync();
+                bool isAnyUnUploaded = payrollDetails
+                    .Where(column => column.PayrollDetailStatusId == 1)
+                    .Any();
+                if (!isAnyUnUploaded)
+                {
+                    payrollHistory.StatusId = 3;
+                    payrollDB.Entry(payrollHistory).State = EntityState.Modified;
+                    payrollDB.Update(payrollHistory);
+                    await payrollDB.SaveChangesAsync();
+                    foreach (PayrollDetail payrollDetail in payrollDetails)
+                    {
+                        payrollDetail.PayrollDetailStatusId = 3;
+                        payrollDB.Entry(payrollDetail).State = EntityState.Modified;
+                    }
+                    payrollDB.UpdateRange(payrollDetails);
+                    await payrollDB.SaveChangesAsync();
+
+                    return new JsonResult(Ok());
+                }
+                else
+                {
+                    return new JsonResult(BadRequest("semua belum terupload"));
+                }
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error, $"Payroll History API - Submit {id}");
+                throw error;
+            }
+        }
     }
 }

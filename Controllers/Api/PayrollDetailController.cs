@@ -75,6 +75,35 @@ namespace Payroll.Controllers.Api
         }
 
         [Authorize]
+        [HttpPost]
+        [Route("api/payrollDetail/readPersonalDatatable/{id}")]
+        public async Task<IActionResult> ReadPersonalDatatable(int id)
+        {
+            try
+            {
+                DatatablesRequest request = new DatatablesRequest(Request.Form.Select(column => new InputRequest { Key = column.Key, Value = column.Value }).ToList());
+                PayrollDetailView payrollDetailView = new PayrollDetailView();
+                payrollDetailView.Data = await payrollDB.PayrollDetail
+                    .Include(table => table.Employee)
+                    .Include(table => table.PayrollHistory)
+                    .Where(column => column.PayrollHistoryId == id)
+                    //.Where(column => column.Employee.Id.Contains())
+                    .OrderBy(column => column.Employee.Name)
+                    .Skip(request.Skip)
+                    .Take(request.PageSize)
+                    .ToListAsync();
+                payrollDetailView.RecordsFiltered = await payrollDB.PayrollDetail.CountAsync();
+                return new JsonResult(payrollDetailView);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error, $"Payroll Detail API - Read Datatable");
+                throw error;
+            }
+        }
+
+
+        [Authorize]
         [HttpGet]
         [Route("api/payrollDetail/readDetail/{id}")]
         public async Task<IActionResult> ReadDetail(int id)
@@ -129,10 +158,12 @@ namespace Payroll.Controllers.Api
                         {
                             startRow = 0;
                             endRow = 0;
+                            bool isSetEndRow = false;
                             for (int currentRow = worksheet.Dimension.End.Row; currentRow > 0 ; currentRow--)
                             {
-                                if (GetStringValue(worksheet, "A", currentRow) == "total")
+                                if (GetStringValue(worksheet, "A", currentRow) != "" && GetStringValue(worksheet, "A", currentRow) != "no" && GetStringValue(worksheet, "A", currentRow+1) == "" && !isSetEndRow )
                                 {
+                                    isSetEndRow = true;
                                     endRow = currentRow;
                                 }
                                 if (GetStringValue(worksheet, "A", currentRow) == "no")
@@ -141,7 +172,7 @@ namespace Payroll.Controllers.Api
                                 }
                             }
 
-                            for (int currentRow = startRow; currentRow < endRow; currentRow++)
+                            for (int currentRow = startRow; currentRow <= endRow; currentRow++)
                             {
                                 int employeeId = GetIntValue(worksheet, "B", currentRow);
                                 bool isExist = payrollDetails
@@ -169,34 +200,34 @@ namespace Payroll.Controllers.Api
                                         payrollDetail.ManagementFeeBilling = GetIntValue(worksheet, "M", currentRow); 
                                         payrollDetail.InsentiveBilling = GetIntValue(worksheet, "N", currentRow); 
                                         payrollDetail.AttendanceBilling = GetIntValue(worksheet, "O", currentRow); 
-                                        payrollDetail.OvertimeBilling = GetIntValue(worksheet, "P", currentRow); 
-                                        payrollDetail.SubtotalBilling = GetIntValue(worksheet, "Q", currentRow); 
-                                        payrollDetail.TaxBilling = GetIntValue(worksheet, "R", currentRow); 
-                                        payrollDetail.GrandTotalBilling = GetIntValue(worksheet, "S", currentRow);
+                                        payrollDetail.AppreciationBilling = GetIntValue(worksheet, "P", currentRow); 
+                                        payrollDetail.OvertimeBilling = GetIntValue(worksheet, "Q", currentRow); 
+                                        payrollDetail.SubtotalBilling = GetIntValue(worksheet, "R", currentRow); 
+                                        payrollDetail.TaxBilling = GetIntValue(worksheet, "S", currentRow); 
+                                        payrollDetail.GrandTotalBilling = GetIntValue(worksheet, "T", currentRow);
+                                        payrollDetail.AnotherDeduction = GetIntValue(worksheet, "W", currentRow);
                                         if (payrollDetail.IsValidGrandTotalBilling)
                                         {
                                             payrollDetail.PayrollDetailStatusId = 2;
-                                            payrollDetail.ResultPayroll = Convert.ToInt32(payrollDetail.MainSalaryBilling + payrollDetail.InsentiveBilling + payrollDetail.AttendanceBilling + payrollDetail.OvertimeBilling);
+                                            payrollDetail.ResultPayroll = Convert.ToInt32(payrollDetail.MainSalaryBilling + payrollDetail.InsentiveBilling + payrollDetail.AttendanceBilling + payrollDetail.OvertimeBilling + payrollDetail.AppreciationBilling);
                                             payrollDetail.FeePayroll = Convert.ToInt32(payrollDetail.ManagementFeeBilling);
                                             payrollDetail.TotalPayroll = Convert.ToInt32(payrollDetail.FeePayroll + payrollDetail.ResultPayroll);
-                                            payrollDetail.TaxPayroll = Convert.ToInt32((payrollDetail.ResultPayroll * payrollHistory.PpnPercentage)/100);
+                                            payrollDetail.TaxPayroll = Convert.ToInt32((payrollDetail.FeePayroll * payrollHistory.PpnPercentage)/100);
                                             payrollDetail.GrossPayroll = Convert.ToInt32(payrollDetail.TotalPayroll + payrollDetail.TaxPayroll);
                                             payrollDetail.AttributePayroll = Convert.ToInt32(payrollDetail.AtributeBilling);
                                             payrollDetail.BpjsTkDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * payrollHistory.BpjsTk1Percentage)/100);
                                             payrollDetail.BpjsKesehatanDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * payrollHistory.BpjsPayrollPercentage) / 100);
                                             payrollDetail.PensionDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * payrollHistory.PensionPayrollPercentage) / 100);
                                             payrollDetail.PTKP = Convert.ToInt32(payrollDetail.Employee.FamilyStatus.PTKP); 
-                                            payrollDetail.PKP1 = Convert.ToInt32(payrollDetail.ResultPayroll + payrollDetail.BpjsKesehatanDeduction + payrollDetail.PensionDeduction + payrollDetail.BpjsTkDeduction); ;
-                                            payrollDetail.PKP2 = Convert.ToInt32(payrollDetail.PKP1 + payrollDetail.PTKP);
+                                            payrollDetail.PKP1 = Convert.ToInt32(payrollDetail.ResultPayroll - payrollDetail.BpjsKesehatanDeduction - payrollDetail.PensionDeduction - payrollDetail.BpjsTkDeduction); ;
+                                            payrollDetail.PKP2 = Convert.ToInt32(payrollDetail.PKP1 - payrollDetail.PTKP);
                                             if (payrollDetail.PKP2>1)
                                             {
                                                 payrollDetail.PPH21 = Convert.ToInt32((payrollDetail.PKP2 * payrollDetail.PayrollHistory.Pph21Percentage)/100);
                                             }
                                             payrollDetail.PPH23 = Convert.ToInt32((payrollDetail.FeePayroll * payrollDetail.PayrollHistory.Pph23Percentage) / 100);
                                             payrollDetail.Netto = Convert.ToInt32(payrollDetail.ResultPayroll - payrollDetail.BpjsKesehatanDeduction - payrollDetail.PensionDeduction - payrollDetail.BpjsTkDeduction - payrollDetail.PPH21);
-                                            //payrollDetail.AnotherDeduction = GetIntValue(worksheet, "AQ", currentRow);
-                                            payrollDetail.AnotherDeduction = 0;
-                                            payrollDetail.TakeHomePay = Convert.ToInt32(payrollDetail.Netto - payrollDetail.AnotherDeduction);
+                                            payrollDetail.TakeHomePay = Convert.ToInt32(payrollDetail.Netto - payrollDetail.AnotherDeduction - payrollDetail.TransferFee);
                                             payrollDB.Entry(payrollDetail).State = EntityState.Modified;
                                         }
                                     }
