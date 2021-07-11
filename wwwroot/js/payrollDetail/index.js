@@ -34,6 +34,8 @@ function downloadReport() {
     } else {
         window.open('PayrollHistory/Download/Report/' + $("#payrollHistoryId").val() + '/' + $('#districtId').val(), '_blank');
     }
+    $('#downloadReportModal').modal('hide');
+
 }
 
 function showAddPayrollDetailForm() {
