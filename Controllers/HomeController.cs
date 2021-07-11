@@ -1,29 +1,25 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using Payroll.Models;
-using System;
-using System.Collections.Generic;
+using Payroll.ViewModels;
+using Payroll.WebSockets;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Payroll.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        private readonly ILogger<HomeController> logger;
+        private readonly IHubContext<NotificationHub> notificationHub;
+        public HomeController(ILogger<HomeController> _logger, IHubContext<NotificationHub> _notificationHub)
         {
-            _logger = logger;
+            logger = _logger;
+            notificationHub = _notificationHub;
         }
 
         public IActionResult Index()
-        {
-            return View();
-        }
-
-        public IActionResult Privacy()
         {
             return View();
         }
