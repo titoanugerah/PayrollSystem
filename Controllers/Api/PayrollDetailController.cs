@@ -60,8 +60,8 @@ namespace Payroll.Controllers.Api
                     .Include(table => table.PayrollHistory)
                     .Where(column => column.PayrollHistoryId == id)
                     .Where(column => column.Employee.Name.Contains(request.Keyword))
-                    .Skip(request.Skip)
                     .OrderBy(column => column.Employee.Name)
+                    .Skip(request.Skip)
                     .Take(request.PageSize)
                     .ToListAsync();
                 payrollDetailView.RecordsFiltered = await payrollDB.PayrollDetail.CountAsync();

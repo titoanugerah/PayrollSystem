@@ -60,8 +60,8 @@ namespace Payroll.Controllers.Api
                     .Include(table => table.District)
                     .Where(column => column.IsExist == true)
                     .Where(column => column.Name.Contains(request.Keyword) || column.District.Name.Contains(request.Keyword))
-                    .Skip(request.Skip)
                     .OrderBy(column => column.Name)
+                    .Skip(request.Skip)                    
                     .Take(request.PageSize)
                     .ToListAsync();
                 locationView.RecordsFiltered = await payrollDB.Location

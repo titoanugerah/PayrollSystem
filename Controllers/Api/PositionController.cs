@@ -78,8 +78,8 @@ namespace Payroll.Controllers.Api
                 positionView.Data = await payrollDB.Position
                     .Where(column => column.IsExist == true)
                     .Where(column => column.Name.Contains(request.Keyword) || column.Remark.Contains(request.Keyword))
-                    .Skip(request.Skip)
                     .OrderBy(column => column.Name)
+                    .Skip(request.Skip)
                     .Take(request.PageSize)
                     .ToListAsync();
                 positionView.RecordsFiltered = await payrollDB.Position

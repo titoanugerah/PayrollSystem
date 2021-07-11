@@ -110,8 +110,8 @@ namespace Payroll.Controllers.Api
                 payrollHistoryView.Data = await payrollDB.PayrollHistory
                     .Where(column => column.IsExist == true)
                     .Where(column => column.Month.Contains(request.Keyword) || column.Year.Contains(request.Keyword))
-                    .Skip(request.Skip)
                     .OrderBy(column => column.Month)
+                    .Skip(request.Skip)
                     .Take(request.PageSize)
                     .ToListAsync();
                 payrollHistoryView.RecordsFiltered = await payrollDB.PayrollHistory

@@ -78,8 +78,8 @@ namespace Payroll.Controllers.Api
                 districtView.Data = await payrollDB.District
                     .Where(column => column.IsExist == true)
                     .Where(column => column.Name.Contains(request.Keyword) || column.Remark.Contains(request.Keyword))
-                    .Skip(request.Skip)
                     .OrderBy(column => column.Name)
+                    .Skip(request.Skip)
                     .Take(request.PageSize)
                     .ToListAsync();
                 districtView.RecordsFiltered = await payrollDB.District

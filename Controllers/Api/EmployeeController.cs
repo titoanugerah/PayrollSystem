@@ -567,8 +567,8 @@ namespace Payroll.Controllers.Api
                     .Include(table => table.Position)
                     .Include(table => table.Customer)
                     .Where(column => column.Name.Contains(request.Keyword) || column.Location.Name.Contains(request.Keyword) || column.Customer.Name.Contains(request.Keyword) || column.Position.Name.Contains(request.Keyword) || column.NIK.ToString().Contains(request.Keyword))
-                    .Skip(request.Skip)
                     .OrderBy(column => column.Name)
+                    .Skip(request.Skip)
                     .Take(request.PageSize)
                     .ToListAsync();
                 employeeView.RecordsFiltered = await payrollDB.Employee
