@@ -22,7 +22,7 @@
         { "data": "payrollDetailStatus" },
         {
             "render": function (data, type, row) {
-                return "<button type='button' class='btn btn-info' onclick=showEditForm('" + row.id + "'); >Detail</button>";
+                return "<button type='button' class='btn btn-info' onclick=showDetailForm('" + row.id + "'); >Detail</button>";
             }
         },
     ]
@@ -62,26 +62,44 @@ function showDownloadReportForm() {
     $('#downloadReportModal').modal('show');
 }
 
+var formatter = new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
+
+    // These options are needed to round to whole numbers if that's what you want.
+    //minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
+    //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
+});
 
 
-
-function showEditForm(id) {
+function showDetailForm(id) {
     $.ajax({
         type: "GET",
         dataType: "JSON",
         url: "api/payrollDetail/readDetail/" + id,
         success: function (result) {
             console.log(result);
-            $('#editId').val(result.id);
-            $('#editName').val(result.name);
-            $('#editRemark').val(result.remark);
+            $('#name').val(result.employee.name);
+            $('#nik').val(result.employee.nik);
+            $('#resultPayroll').val(formatter.format(result.resultPayroll));
+            $('#feePayroll').val(formatter.format(result.feePayroll));
+            $('#taxPayroll').val(formatter.format(result.taxPayroll));
+            $('#attributePayroll').val(formatter.format(result.attributePayroll));
+            $('#bpjsTkDeduction').val(formatter.format(result.bpjsTkDeduction));
+            $('#bpjsKesehatanDeduction').val(formatter.format(result.bpjsKesehatanDeduction));
+            $('#pensionDeduction').val(formatter.format(result.pensionDeduction));
+            $('#pkp1').val(formatter.format(result.pkP1));
+            $('#pph21').val(formatter.format(result.ppH21));
+            $('#pph23').val(formatter.format(result.ppH23));
+            $('#anotherDeduction').val(formatter.format(result.anotherDeduction));
+            $('#takeHomePay').val(formatter.format(result.takeHomePay));
         },
         error: function (result) {
             console.log(result);
             notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' + result.responseText, 'danger');
         }
     });
-    $('#editPayrollDetailModal').modal('show');
+    $('#payrollDetailModal').modal('show');
 }
 
 function reloadTable() {

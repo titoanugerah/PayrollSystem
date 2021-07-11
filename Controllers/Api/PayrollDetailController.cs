@@ -84,6 +84,8 @@ namespace Payroll.Controllers.Api
                 PayrollDetail payrollDetail = await payrollDB.PayrollDetail
                     .Include(table => table.PayrollHistory)
                     .Include(table => table.Employee)
+                    .Include(table => table.Employee.Location.District)
+                    .Include(table => table.Employee.FamilyStatus)
                     .Where(column => column.Id == id)
                     .FirstOrDefaultAsync();
                 return new JsonResult(payrollDetail);
@@ -183,8 +185,8 @@ namespace Payroll.Controllers.Api
                                             payrollDetail.BpjsTkDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * payrollHistory.BpjsTk1Percentage)/100);
                                             payrollDetail.BpjsKesehatanDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * payrollHistory.BpjsPayrollPercentage) / 100);
                                             payrollDetail.PensionDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * payrollHistory.PensionPayrollPercentage) / 100);
-                                            payrollDetail.PKP1 = Convert.ToInt32(payrollDetail.ResultPayroll + payrollDetail.BpjsKesehatanDeduction + payrollDetail.PensionDeduction + payrollDetail.BpjsTkDeduction); ;
                                             payrollDetail.PTKP = Convert.ToInt32(payrollDetail.Employee.FamilyStatus.PTKP); 
+                                            payrollDetail.PKP1 = Convert.ToInt32(payrollDetail.ResultPayroll + payrollDetail.BpjsKesehatanDeduction + payrollDetail.PensionDeduction + payrollDetail.BpjsTkDeduction); ;
                                             payrollDetail.PKP2 = Convert.ToInt32(payrollDetail.PKP1 + payrollDetail.PTKP);
                                             if (payrollDetail.PKP2>1)
                                             {

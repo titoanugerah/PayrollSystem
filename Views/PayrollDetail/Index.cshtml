@@ -74,6 +74,122 @@
     </div>
 </div>
 
+<div class="modal fade" id="payrollDetailModal" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <center>
+                    <h4>Rincian Gaji</h4>
+                </center>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Nama</label>
+                            <input type="text" class="form-control" id="name">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>NIK</label>
+                            <input type="text" class="form-control" id="nik">
+                        </div>
+                    </div>
+                    <div class="col-md-12" style="overflow-x: hidden;overflow-y: scroll;height:200px;">
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Gaji Pokok</label>
+                                <input type="text" id="resultPayroll" class="form-control col-md-6">
+                            </div>
+                        </div>
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Management Fee</label>
+                                <input type="text" id="feePayroll" class="form-control col-md-6">
+                            </div>
+                        </div>
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Tunjangan Pajak</label>
+                                <input type="text" id="taxPayroll" class="form-control col-md-6">
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Perlengkapan</label>
+                                <input type="text" id="attributePayroll" class="form-control col-md-6">
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Potongan BPJS TK</label>
+                                <input type="text" id="bpjsTkDeduction" class="form-control col-md-6">
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Potongan BPJS KS</label>
+                                <input type="text" id="bpjsKesehatanDeduction" class="form-control col-md-6">
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Potongan Pensiun</label>
+                                <input type="text" id="pensionDeduction" class="form-control col-md-6">
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Potongan Pajak PKP1</label>
+                                <input type="text" id="pkp1" class="form-control col-md-6">
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">PPH 21</label>
+                                <input type="text" id="pph21" class="form-control col-md-6">
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">PPH 23</label>
+                                <input type="text" id="pph23" class="form-control col-md-6">
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Potongan Lainnya</label>
+                                <input type="text" id="anotherDeduction" class="form-control col-md-6">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 ">
+                        <div class="form-group row">
+                            <label class="col-md-4">Take Home Pay</label>
+                            <input type="text" id="takeHomePay" class="form-control col-md-8">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" data-dismiss="modal" class="btn btn-secondary">Kembali</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="modal fade" id="downloadReportModal" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
