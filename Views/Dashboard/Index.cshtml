@@ -9,7 +9,7 @@
                 <h2 class="text-white pb-2 fw-bold">Rekap gaji</h2>
             </div>
             <div class="ml-md-auto py-2 py-md-0">
-                <button type="button" onclick="reloadTable()" class="btn btn-white btn-border btn-round mr-2">Reload Data</button>
+                @*                <button type="button" onclick="reloadTable()" class="btn btn-white btn-border btn-round mr-2">Reload Data</button>*@
                 <a href="#" class="btn btn-white btn-border btn-round mr-2" hidden>Manage</a>
             </div>
         </div>
@@ -28,7 +28,6 @@
                                 <thead>
                                     <tr>
                                         <td>Bulan</td>
-                                        <td>Tahun</td>
                                         <td>Take Home Pay</td>
                                         <td>Opsi</td>
                                     </tr>
@@ -43,3 +42,123 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="payrollDetailModal" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <center>
+                    <h4>Rincian Gaji</h4>
+                </center>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Nama</label>
+                            <input type="text" class="form-control" id="name">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>NIK</label>
+                            <input type="text" class="form-control" id="nik">
+                        </div>
+                    </div>
+                    <div class="col-md-12" style="overflow-x: hidden;overflow-y: scroll;height:200px;">
+                        <p>Penghasilan</p>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Gaji Pokok</label>
+                                <input type="text" id="mainSalaryBilling" class="form-control col-md-6">
+                            </div>
+                        </div>
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Insentif</label>
+                                <input type="text" id="insentiveBilling" class="form-control col-md-6">
+                            </div>
+                        </div>
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Premi Kehadiran</label>
+                                <input type="text" id="attendanceBilling" class="form-control col-md-6">
+                            </div>
+                        </div>
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Overtime</label>
+                                <input type="text" id="overtimeBilling" class="form-control col-md-6">
+                            </div>
+                        </div>
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Lain Lain</label>
+                                <input type="text" id="apreciationBilling" class="form-control col-md-6">
+                            </div>
+                        </div>
+
+                        <p>Potongan</p>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Potongan BPJS TK</label>
+                                <input type="text" id="bpjsTkDeduction" class="form-control col-md-6">
+                            </div>
+                        </div>
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Potongan BPJS KS</label>
+                                <input type="text" id="bpjsKesehatanDeduction" class="form-control col-md-6">
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Potongan Pensiun</label>
+                                <input type="text" id="pensionDeduction" class="form-control col-md-6">
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">PPH 21</label>
+                                <input type="text" id="pph21" class="form-control col-md-6">
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Potongan Lainnya</label>
+                                <input type="text" id="anotherDeduction" class="form-control col-md-6">
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Biaya Transfer</label>
+                                <input type="text" id="transferFee" class="form-control col-md-6">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12 ">
+                        <div class="form-group row">
+                            <label class="col-md-4">Take Home Pay</label>
+                            <input type="text" id="takeHomePay" class="form-control col-md-8">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" data-dismiss="modal" class="btn btn-secondary">Kembali</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="~/js/dashboard/index.js"></script>

@@ -20,11 +20,13 @@ namespace Payroll.Controllers.Api
     {
         private readonly ILogger<PayrollDetailController> logger;
         private readonly PayrollDB payrollDB;
+        private readonly IHttpContextAccessor httpContextAccessor;
 
-        public PayrollDetailController(ILogger<PayrollDetailController> _logger, PayrollDB _payrollDB)
+        public PayrollDetailController(ILogger<PayrollDetailController> _logger, PayrollDB _payrollDB, IHttpContextAccessor _httpContextAccessor)
         {
             payrollDB = _payrollDB;
             logger = _logger;
+            httpContextAccessor = _httpContextAccessor;
         }
 
         [Authorize]
@@ -76,28 +78,32 @@ namespace Payroll.Controllers.Api
 
         [Authorize]
         [HttpPost]
-        [Route("api/payrollDetail/readPersonalDatatable/{id}")]
-        public async Task<IActionResult> ReadPersonalDatatable(int id)
+        [Route("api/payrollDetail/readPersonalDatatable")]
+        public async Task<IActionResult> ReadPersonalDatatable()
         {
             try
             {
+                string userEmail = httpContextAccessor.HttpContext.User.GetEmail();
                 DatatablesRequest request = new DatatablesRequest(Request.Form.Select(column => new InputRequest { Key = column.Key, Value = column.Value }).ToList());
                 PayrollDetailView payrollDetailView = new PayrollDetailView();
                 payrollDetailView.Data = await payrollDB.PayrollDetail
-                    .Include(table => table.Employee)
                     .Include(table => table.PayrollHistory)
-                    .Where(column => column.PayrollHistoryId == id)
-                    //.Where(column => column.Employee.Id.Contains())
-                    .OrderBy(column => column.Employee.Name)
+                    .Where(column => column.Employee.Email == userEmail)
+                    .Where(column => column.PayrollDetailStatusId == 3)
+                    .OrderBy(column => column.Id)                    
                     .Skip(request.Skip)
                     .Take(request.PageSize)
                     .ToListAsync();
-                payrollDetailView.RecordsFiltered = await payrollDB.PayrollDetail.CountAsync();
+                payrollDetailView.RecordsFiltered = await payrollDB.PayrollDetail
+                    .Include(table => table.Employee)
+                    .Where(column => column.Employee.Email == userEmail)
+                    .Where(column => column.PayrollDetailStatusId == 3)
+                    .CountAsync();
                 return new JsonResult(payrollDetailView);
             }
             catch (Exception error)
             {
-                logger.LogError(error, $"Payroll Detail API - Read Datatable");
+                logger.LogError(error, $"Payroll Detail API - Read Personal Datatable");
                 throw error;
             }
         }
