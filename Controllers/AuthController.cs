@@ -31,14 +31,15 @@ namespace Payroll.Controllers
         {
             try
             {
-                var properties = new AuthenticationProperties
-                {
-                    AllowRefresh = true,
-                    IsPersistent = true,
-                    ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(30),
-                    RedirectUri = Url.Action("Validate")
-                };
-                return Challenge(properties, GoogleDefaults.AuthenticationScheme);
+                //var properties = new AuthenticationProperties
+                //{
+                //    AllowRefresh = true,
+                //    IsPersistent = true,
+                //    ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(30),
+                //    RedirectUri = Url.Action("Validate")
+                //};
+                //return Challenge(properties, GoogleDefaults.AuthenticationScheme);
+                return View();
             }
             catch (Exception error)
             {

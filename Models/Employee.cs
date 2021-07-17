@@ -16,17 +16,17 @@ namespace Payroll.Models
         [MaxLength(1)]
         [DefaultValue("L")]
         public string Sex { set; get; }
-        [Required]
+        //[Required]
         public string BirthPlace { set; get; }
-        [Required]
+        //[Required]
         public DateTime BirthDate { set; get; }
-        [Required]
+        //[Required]
         public string Religion { set; get; }
-        [Required]
+        //[Required]
         public string Address { set; get; }
-        [Required]
+        //[Required]
         public string PhoneNumber { set; get; }
-        [Required]
+        //[Required]
         [MaxLength(16)]
         public string KTP { set; get; }
         //[Required]
@@ -55,7 +55,7 @@ namespace Payroll.Models
         public string DriverLicense { set; get; }
         public DateTime DriverLicenseExpire { set; get; }
         [DefaultValue("L")]
-        [Required]
+        //[Required]
         public string FamilyStatusCode { set; get; }
         public FamilyStatus FamilyStatus { set; get; }
         //[Required]
@@ -69,19 +69,19 @@ namespace Payroll.Models
         public string NPWP { set; get; }
 
 
-        [Required]
+        //[Required]
         public DateTime JoinCompanyDate { set; get; }
-        [Required]
+        //[Required]
         public DateTime StartContract { set; get; }
-        [Required]
+        //[Required]
         public DateTime EndContract { set; get; }
 
-        [Required]
+        //[Required]
         public string BankCode { set; get; }
         public Bank Bank { set; get; }
-        [Required]
+        //[Required]
         public string AccountNumber { set; get; }
-        [Required]
+        //[Required]
         public string AccountName { set; get; }
         [Required]
         public int EmploymentStatusId { set; get; }
@@ -100,15 +100,15 @@ namespace Payroll.Models
         [Required]
         public int PositionId { set; get; }
         public Position Position { set; get; }
-        [Required]
+        //[Required]
         public int LocationId { set; get; }
         public Location Location { set; get; }
-        [Required]
+        //[Required]
         public int CustomerId { set; get; }
         public Customer Customer { set; get; }
-        [Required]
+        //[Required]
         public DateTime JoinCustomerDate { set; get; }
-        [Required]        
+        [DefaultValue(2)]
         public int RoleId { set; get; }
         public Role Role { set; get; }
     }
