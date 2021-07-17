@@ -1,7 +1,7 @@
 ﻿@functions{
     public string GetUserClaim(string type)
     {
-        return User.Claims.Where(x => x.Type == type).Select(x => x.Value).FirstOrDefault();
+        return User.Claims.Where(x => x.Type.Contains(type.ToLower())).Select(x => x.Value).FirstOrDefault();
     }
 }
 
@@ -55,21 +55,13 @@
     <!-- Atlantis JS -->
     <script src="~/js/atlantis.min.js"></script>
 
-    <script type="text/javascript">
-
-        $(document).ready(function () {
-            $('.js-example-basic-single').select2();
-            $('.select2-modal').select2();
-        });
-    </script>
-
 </head>
 <body>
     <div class="wrapper">
         <div class="main-header">
             <!-- Logo Header -->
             <div class="logo-header" data-background-color="blue">
-                <a asp-action="Index" asp-controller="Home" class="logo" style="color:white;">
+                <a asp-action="Index" asp-controller="Dashboard" class="logo" style="color:white;">
                     Payroll
                 </a>
                 <button class="navbar-toggler sidenav-toggler ml-auto" type="button" data-toggle="collapse" data-target="collapse" aria-expanded="false" aria-label="Toggle navigation">
@@ -87,18 +79,7 @@
 
             <nav class="navbar navbar-header navbar-expand-lg" data-background-color="blue2">
                 <div class="container-fluid">
-                    <div class="collapse" id="search-nav">
-                        <div class="navbar-left navbar-form nav-search mr-md-3">
-                            <div class="input-group">
-                                <div class="input-group-prepend">
-                                    <button type="submit" class="btn btn-search pr-1">
-                                        <i class="fa fa-search search-icon"></i>
-                                    </button>
-                                </div>
-                                <input type="text" placeholder="Search ..." id="keyword" class="form-control">
-                            </div>
-                        </div>
-                    </div>
+
                     <ul class="navbar-nav topbar-nav ml-md-auto align-items-center">
                         <li class="nav-item toggle-nav-search hidden-caret">
                             <a class="nav-link" data-toggle="collapse" href="#search-nav" role="button" aria-expanded="false" aria-controls="search-nav">
@@ -134,84 +115,44 @@
                         <li class="nav-item dropdown hidden-caret">
                             <a class="dropdown-toggle profile-pic" data-toggle="dropdown" href="#" aria-expanded="false">
                                 <div class="avatar-sm">
-                                    @if (User.Identity.IsAuthenticated)
-                                    {
-                                    <img src="@GetUserClaim("Image")" alt="..." class="avatar-img rounded-circle">
-                                    }
-                                    else
-                                    {
                                     <img src="~/img/user.jpg" alt="..." class="avatar-img rounded-circle">
-                                    }
                                 </div>
                             </a>
                             <ul class="dropdown-menu dropdown-user animated fadeIn">
                                 <div class="dropdown-user-scroll scrollbar-outer">
                                     <li>
                                         <div class="user-box">
-                                            @if (User.Identity.IsAuthenticated)
-                                            {
-                                            <div class="avatar-lg"><img src="@GetUserClaim("Image")" alt="image profile" class="avatar-img rounded"></div>
+                                            <div class="avatar-lg"><img src="~/img/user.jpg" alt="image profile" class="avatar-img rounded"></div>
                                             <div class="u-text">
                                                 <h4>@GetUserClaim("Name")</h4>
                                                 <p class="text-muted">@GetUserClaim("Role")</p><a asp-action="Index" asp-controller="Account" class="btn btn-xs btn-secondary btn-sm">Profile</a>
                                             </div>
-                                            }
-                                            else
-                                            {
-                                            <div class="avatar-lg"><img src="~/img/user.jpg" alt="image profile" class="avatar-img rounded"></div>
-                                            <div class="u-text">
-                                                <h4>Belum login</h4>
-                                            </div>
-                                            }
                                         </div>
                                     </li>
                                     <li>
                                         <div class="dropdown-divider"></div>
-                                        @if (User.Identity.IsAuthenticated)
-                                        {
                                         <a class="dropdown-item" asp-action="Logout" asp-controller="Auth">Logout</a>
-                                        }
-                                        else
-                                        {
-                                        <a class="dropdown-item" asp-action="Login" asp-controller="Auth">Login</a>
-                                        }
                                     </li>
                                 </div>
                             </ul>
                         </li>
+                    </ul>
                 </div>
             </nav>
-            <!-- End Navbar -->
         </div>
 
-        <!-- Sidebar -->
         <div class="sidebar sidebar-style-2">
             <div class="sidebar-wrapper scrollbar scrollbar-inner">
                 <div class="sidebar-content">
                     <div class="user">
                         <div class="avatar-sm float-left mr-2">
-                            @if (User.Identity.IsAuthenticated)
-                            {
-                            <img src="@GetUserClaim("Image")" alt="..." class="avatar-img rounded-circle">
-                            }
-                            else
-                            {
                             <img src="~/img/user.jpg" class="avatar-img rounded-circle">
-                            }
                         </div>
                         <div class="info">
                             <a data-toggle="collapse" href="#collapseExample" aria-expanded="true">
                                 <span>
-                                    @if (User.Identity.IsAuthenticated)
-                                    {
                                     <b>@GetUserClaim("Name")</b>
-                                    <p>@GetUserClaim("Email") </p>
-                                    }
-                                    else
-                                    {
-                                    <b>Belum login</b>
-                                    <a asp-action="Login" asp-controller="Auth">Silahkan login</a>
-                                    }
+                                    <a asp-action="Logout" asp-controller="Auth"> <b>Logout</b> </a>
                                 </span>
                             </a>
                             <div class="clearfix"></div>
@@ -223,19 +164,17 @@
                         </div>
                     </div>
                     <ul class="nav nav-primary">
-                        @if (User.Identity.IsAuthenticated)
-                        {
                         <partial name="Menu/_@GetUserClaim("Role")" />
-                        }
                     </ul>
                 </div>
             </div>
         </div>
-        <!-- End Sidebar -->
 
         <div class="main-panel">
             <div class="content">
+                <br /><br />
                 @RenderBody()
+                <br /><br />
 
             </div>
             <footer class="footer">
@@ -256,8 +195,6 @@
                 </div>
             </footer>
         </div>
-
-        <!-- End Custom template -->
     </div>
     <!--   Core JS Files   -->
 </body>
