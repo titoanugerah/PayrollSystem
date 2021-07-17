@@ -25,20 +25,17 @@ namespace Payroll.Controllers
             payrollDB = _payrollDB;
         }
 
+        public async Task<IActionResult> Index()
+        {
+            return RedirectToAction("Login", "Auth");
+        }
+
         [Route("Auth/Login")]
         [AllowAnonymous]
         public async Task<IActionResult> Login()
         {
             try
             {
-                //var properties = new AuthenticationProperties
-                //{
-                //    AllowRefresh = true,
-                //    IsPersistent = true,
-                //    ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(30),
-                //    RedirectUri = Url.Action("Validate")
-                //};
-                //return Challenge(properties, GoogleDefaults.AuthenticationScheme);
                 return View();
             }
             catch (Exception error)
@@ -48,64 +45,6 @@ namespace Payroll.Controllers
             }
         }
 
-        [AllowAnonymous]
-        [Route("Auth/Validate")]
-        public async Task<IActionResult> Validate()
-        {
-            try
-            {
-                var response = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-                List<ViewModels.UserClaim> userClaim = response.Principal
-                    .Identities.FirstOrDefault().Claims
-                    .Where(claim => claim.Type == "email" || claim.Type == "name" || claim.Type == "picture")
-                    .Select(claim => new ViewModels.UserClaim
-                    {
-                        Type = claim.Type,
-                        Value = claim.Value
-                    })
-                    .ToList();
-                ViewModels.UserIdentity userIdentity = new ViewModels.UserIdentity();
-                userIdentity.Email = userClaim.Where(claim => claim.Type == "email").Select(claim => claim.Value).FirstOrDefault();
-                userIdentity.Picture = userClaim.Where(claim => claim.Type == "picture").Select(claim => claim.Value).FirstOrDefault();
-                userIdentity.Name = userClaim.Where(claim => claim.Type == "name").Select(claim => claim.Value).FirstOrDefault();
-                var checkUser = payrollDB.Employee
-                    .Any(user => user.Email == userIdentity.Email);
-                if (checkUser)
-                {
-                    var user = payrollDB.Employee                        
-                        .Include(table => table.Role)
-                        .Where(user => user.Email == userIdentity.Email)
-                        .FirstOrDefault();
-                    user.Image = userIdentity.Picture;
-                    //user.Name = userIdentity.Name;
-                    await payrollDB.SaveChangesAsync();
-                    var claims = new List<Claim>
-                    {
-                        new Claim("NIK", user.NIK.ToString()),
-                        new Claim("Name", user.Name),
-                        new Claim("Email", user.Email),
-                        new Claim("Role", user.Role.Name),
-                        new Claim("Image", user.Image),
-                        new Claim("RoleId", user.RoleId.ToString())
-                    };
-                    var claimsIdentity = new ClaimsIdentity(
-                    claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                    var authProperties = new AuthenticationProperties();
-                    await HttpContext.SignInAsync(
-                        CookieAuthenticationDefaults.AuthenticationScheme,
-                        new ClaimsPrincipal(claimsIdentity),
-                        authProperties);
-                    return RedirectToAction("Index", "Home");
-                }
-                return Json("User Not Registered");
-            }
-            catch (Exception error)
-            {
-                logger.LogError(error, "Auth Controller - Validate ");
-                throw;
-            }
-
-        }
 
         [Authorize]
         [Route("Auth/Logout")]

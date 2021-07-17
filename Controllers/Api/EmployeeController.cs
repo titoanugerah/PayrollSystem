@@ -495,16 +495,16 @@ namespace Payroll.Controllers.Api
                                     //isValid = false;
                                 }
 
-                                if (worksheet.Cells[$"AZ{row}"].Value != null)
-                                {
-                                    employee.Email = worksheet.Cells[$"AZ{row}"].Value.ToString();
-                                    value = $"Email : {employee.Email}";
-                                }
-                                else
-                                {
-                                    worksheet.Cells[$"AZ{row}"].Value = "Belum Diisi";
-                                    isValid = false;
-                                }
+                                //if (worksheet.Cells[$"AZ{row}"].Value != null)
+                                //{
+                                //    employee.Email = worksheet.Cells[$"AZ{row}"].Value.ToString();
+                                //    value = $"Email : {employee.Email}";
+                                //}
+                                //else
+                                //{
+                                //    worksheet.Cells[$"AZ{row}"].Value = "Belum Diisi";
+                                //    isValid = false;
+                                //}
                                 
 
                                 if (isValid)

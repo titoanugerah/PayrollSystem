@@ -25,9 +25,9 @@ namespace Payroll
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var connectionString = Configuration.GetConnectionString("PayrollDB");
+            var connectionStrings = Configuration.GetConnectionString("PayrollDev");
             services.AddDbContext<PayrollDB>(options => options
-                .UseMySQL(connectionString));
+                .UseMySQL(connectionStrings));
 
             services.Configure<ViewModels.PayrollConfiguration>(Configuration.GetSection("PayrollConfiguration"));
 
@@ -88,7 +88,7 @@ namespace Payroll
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Auth}/{action=Index}/{id?}");
                 endpoints.MapHub<NotificationHub>("/notificationHub");
             });
         }

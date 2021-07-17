@@ -88,7 +88,7 @@ namespace Payroll.Controllers.Api
                 PayrollDetailView payrollDetailView = new PayrollDetailView();
                 payrollDetailView.Data = await payrollDB.PayrollDetail
                     .Include(table => table.PayrollHistory)
-                    .Where(column => column.Employee.Email == userEmail)
+//                    .Where(column => column.Employee.Email == userEmail)
                     .Where(column => column.PayrollDetailStatusId == 3)
                     .OrderBy(column => column.Id)                    
                     .Skip(request.Skip)
@@ -96,7 +96,7 @@ namespace Payroll.Controllers.Api
                     .ToListAsync();
                 payrollDetailView.RecordsFiltered = await payrollDB.PayrollDetail
                     .Include(table => table.Employee)
-                    .Where(column => column.Employee.Email == userEmail)
+//                    .Where(column => column.Employee.Email == userEmail)
                     .Where(column => column.PayrollDetailStatusId == 3)
                     .CountAsync();
                 return new JsonResult(payrollDetailView);

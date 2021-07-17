@@ -39,7 +39,7 @@ namespace Payroll.DataAccess
         {
             optionsBuilder.UseLoggerFactory(this.logger);
             optionsBuilder.EnableSensitiveDataLogging();
-            optionsBuilder.UseMySQL(configuration.GetConnectionString("PayrollDB"));
+            optionsBuilder.UseMySQL(configuration.GetConnectionString("PayrollDev"));
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -120,7 +120,7 @@ namespace Payroll.DataAccess
                 if (httpContextAccessor != null && httpContextAccessor.HttpContext != null && httpContextAccessor.HttpContext.User != null && httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
                 {
                     var email = httpContextAccessor.HttpContext.User.GetEmail();
-                    Employee employee = Employee.Where(column => column.Email == email).FirstOrDefault();
+                    Employee employee = Employee.FirstOrDefault();
                     if (employee != null)
                     {
                         var entries = ChangeTracker.Entries().ToList();
