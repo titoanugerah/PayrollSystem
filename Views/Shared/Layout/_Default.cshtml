@@ -59,7 +59,7 @@
 <body>
     <div class="wrapper">
         <div class="main-header">
-            <!-- Logo Header -->
+            <div style="position:absolute; top: 0px; left; 0px; transform: rotate(315deg) translate(-50px, 0px); font-size: 14px; color: #ffffff; background: rgb(48, 8, 255, 0.60); width: 160px; height: 22px; text-align: center; z-index: 9999; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">DEVELOPMENT</div>
             <div class="logo-header" data-background-color="blue">
                 <a asp-action="Index" asp-controller="Dashboard" class="logo" style="color:white;">
                     Payroll
@@ -125,7 +125,7 @@
                                             <div class="avatar-lg"><img src="~/img/user.jpg" alt="image profile" class="avatar-img rounded"></div>
                                             <div class="u-text">
                                                 <h4>@GetUserClaim("Name")</h4>
-                                                <p class="text-muted">@GetUserClaim("Role")</p><a asp-action="Index" asp-controller="Account" class="btn btn-xs btn-secondary btn-sm">Profile</a>
+                                                <p class="text-muted">@GetUserClaim("Role")</p>
                                             </div>
                                         </div>
                                     </li>
