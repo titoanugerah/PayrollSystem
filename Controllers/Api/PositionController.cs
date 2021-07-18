@@ -30,14 +30,25 @@ namespace Payroll.Controllers.Api
         {
             try
             {
-                Position position = new Position();
-                position.Name = positionInput.Name;
-                position.Remark = positionInput.Remark;
-                position.IsExist = true;
-                payrollDB.Position.Add(position);                
-                payrollDB.Entry(position).State = EntityState.Added;
-                await payrollDB.SaveChangesAsync();
-                return new JsonResult(position);
+                bool isExist = payrollDB.Position
+                    .Where(column => column.Name == positionInput.Name)
+                    .Any();
+                if (!isExist)
+                {
+                    Position position = new Position();
+                    position.Name = positionInput.Name;
+                    position.Remark = positionInput.Remark;
+                    position.IsExist = true;
+                    payrollDB.Position.Add(position);                
+                    payrollDB.Entry(position).State = EntityState.Added;
+                    await payrollDB.SaveChangesAsync();
+                    return new JsonResult(position);
+                }
+                else
+                {
+                    return BadRequest($"{positionInput.Name} sebelumnya sudah terdaftar");
+                }
+
             }
             catch (Exception error)
             {
