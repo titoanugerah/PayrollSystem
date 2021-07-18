@@ -29,15 +29,25 @@ namespace Payroll.Controllers.Api
         {
             try
             {
-                Models.Customer customer = new Models.Customer();
-                customer.Name = customerInput.Name;
-                customer.Remark = customerInput.Remark;
-                customer.IsExist = true;
-                payrollDB.Customer.Add(customer);
-                payrollDB.Entry(customer).State = EntityState.Added;
+                bool isExist = payrollDB.Customer
+                    .Where(column => column.Name == customerInput.Name)
+                    .Any();
+                if (!isExist)
+                {
+                    Customer customer = new Customer();
+                    customer.Name = customerInput.Name;
+                    customer.Remark = customerInput.Remark;
+                    customer.IsExist = true;
+                    payrollDB.Customer.Add(customer);
+                    payrollDB.Entry(customer).State = EntityState.Added;
 
-                await payrollDB.SaveChangesAsync();
-                return new JsonResult(customer);
+                    await payrollDB.SaveChangesAsync();
+                    return new JsonResult(customer);
+                }
+                else
+                {
+                    return BadRequest($"{customerInput.Name} sebelumnya sudah terdaftar");
+                }
             }
             catch (Exception error)
             {
@@ -173,7 +183,7 @@ namespace Payroll.Controllers.Api
                 customer.IsExist = true;
                 payrollDB.Entry(customer).State = EntityState.Modified;
                 await payrollDB.SaveChangesAsync();
-                return Ok();
+                return new JsonResult(customer);
             }
             catch(Exception error)
             {

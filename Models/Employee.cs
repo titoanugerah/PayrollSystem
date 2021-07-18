@@ -43,6 +43,8 @@ namespace Payroll.Models
                 }
             }
         }
+
+        public string DriverLicenseType { set; get; }
         public string DriverLicense { set; get; }
         public DateTime DriverLicenseExpire { set; get; }
         [DefaultValue("L")]
@@ -70,12 +72,18 @@ namespace Payroll.Models
         [Column(TypeName = "bit")]
         [DefaultValue(false)]
         public bool HasUniform { set; get; }
+        public DateTime UniformDeliveryDate { set; get; }
         [Column(TypeName = "bit")]
         [DefaultValue(false)]
         public bool HasIdCard { set; get; }
+        public DateTime IdCardDeliveryDate { set; get; }
         [Column(TypeName = "bit")]
         [DefaultValue(false)]
         public bool HasTraining { set; get; }
+        public string TrainingName { set; get; }
+        public string TrainingRemark { set; get; }
+        public string TrainingGrade { set; get; }
+        public DateTime TrainingDeliveryDate { set; get; }
 
         [Required]
         public int PositionId { set; get; }
