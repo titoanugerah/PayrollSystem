@@ -50,8 +50,8 @@ function reloadTable() {
 }
 
 function addCustomer() {
-    $('.spinner-border').show();
     if ($("#addName").val()!="") {
+        $('.spinner-border').show();
         $.ajax({
             type: "POST",
             dataType: "JSON",
@@ -77,35 +77,42 @@ function addCustomer() {
             }
         });
     } else {
+        $('#addCustomerModal').modal('hide');
         notify('fas fa-times', 'Gagal', "Mohon lengkapi kolom nama" , 'danger');
     }
 }
 
 
 function updateCustomer() {
-    $('.spinner-border').show();
-    $.ajax({
-        type: "POST",
-        dataType: "json",
-        contentType: "application/x-www-form-urlencoded",
-        url: "api/customer/update/"+$('#editId').val(),
-        data: {
-            Name: $("#editName").val(),
-            Remark: $("#editRemark").val(),
-        },
-        success: function (result) {
-            reloadTable();
-            $('.spinner-border').hide();
-            $('#editCustomerModal').modal('hide');
-            notify('fas fa-check', 'Berhasil', 'Customer berhasil diubah', 'success');
-        },
-        error: function (result) {
-            console.log(result);
-            $('.spinner-border').hide();
-            $('#editCustomerModal').modal('hide');
-            notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' + result.responseText, 'danger');
-        }
-    });
+    if ($("#editName").val() != "") {
+        $('.spinner-border').show();
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            contentType: "application/x-www-form-urlencoded",
+            url: "api/customer/update/"+$('#editId').val(),
+            data: {
+                Name: $("#editName").val(),
+                Remark: $("#editRemark").val(),
+            },
+            success: function (result) {
+                reloadTable();
+                $('.spinner-border').hide();
+                $('#editCustomerModal').modal('hide');
+                notify('fas fa-check', 'Berhasil', 'Customer berhasil diubah', 'success');
+            },
+            error: function (result) {
+                console.log(result);
+                $('.spinner-border').hide();
+                $('#editCustomerModal').modal('hide');
+                notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' + result.responseText, 'danger');
+            }
+        });
+    } else {
+        $('#editCustomerModal').modal('hide');
+        notify('fas fa-times', 'Gagal', "Mohon lengkapi kolom nama", 'danger');
+    }
+
 }
 
 function deleteCustomer() {

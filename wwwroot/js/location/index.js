@@ -11,16 +11,26 @@
         "type": "POST",
         "dataType": 'json'
     },
+    
     "columns": [
         { "data" : "name" },
         { "data" : "district.name" },
-        { "data" : "umk" },
+        {
+            "render": function (data, type, row) {
+                return formatter.format(row.umk);
+            }
+        },
         {
             "render": function (data, type, row) {
                 return "<button type='button' class='btn btn-info' onclick=showEditForm('" + row.id + "'); >Edit</button>";
             }
         },
     ]
+});
+
+var formatter = new Intl.NumberFormat('id-ID', {
+    style: 'currency',
+    currency: 'IDR',
 });
 
 function showAddLocationForm() {
@@ -50,87 +60,115 @@ function showEditForm(id) {
 function reloadTable() {
     table.ajax.reload();
     getDeletedLocation();
-    notify("fa fa-check", "Berhasil", "Data berhasil di reload", "success");
 }
 
 function addLocation() {
-    $.ajax({
-        type: "POST",
-        dataType: "JSON",
-        contentType: "application/x-www-form-urlencoded",
-        url: "api/location/create",
-        data: {
-            Name: $("#addName").val(),
-            UMK: $("#addUMK").val(),
-            DistrictId: $("#addDistrictId").val(),
-        },
-        success: function (result) {
-            $('#addLocationModal').modal('hide');
-            notify('fas fa-check', 'Berhasil', 'Location berhasil ditambahkan', 'success');
-            reloadTable();
-        },
-        error: function (result) {
-            console.log(result);
-            notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' + result.responseText, 'danger');
-        }
-    });
+    if ($("#addName").val() != "" && $("#addUMK").val() != "" && $("#addDistrictId").val() != 0) {
+        $('.spinner-border').show();
+        $.ajax({
+            type: "POST",
+            dataType: "JSON",
+            contentType: "application/x-www-form-urlencoded",
+            url: "api/location/create",
+            data: {
+                Name: $("#addName").val(),
+                UMK: $("#addUMK").val(),
+                DistrictId: $("#addDistrictId").val(),
+            },
+            success: function (result) {
+                $("#addName").val(""); 
+                $("#addUMK").val("");
+                $("#addDistrictId").val(0).change();
+                $('.spinner-border').hide();
+                $('#addLocationModal').modal('hide');
+                notify('fas fa-check', 'Berhasil', 'Location berhasil ditambahkan', 'success');
+                reloadTable();
+            },
+            error: function (result) {
+                console.log(result);
+                $('.spinner-border').hide();
+                $('#addLocationModal').modal('hide');
+                notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' + result.responseText, 'danger');
+            }
+        });
+    } else {
+        $('#addLocationModal').modal('hide');
+        notify('fas fa-times', 'Gagal', "Mohon lengkapi kolom Nama, UMK atau Distrik", 'danger');
+    }
 }
 
 
 function updateLocation() {
-    $.ajax({
-        type: "POST",
-        dataType: "json",
-        contentType: "application/x-www-form-urlencoded",
-        url: "api/location/update/" + $('#editId').val(),
-        data: {
-            Name: $("#editName").val(),
-            UMK: $("#editUMK").val(),
-            DistrictId: $("#editDistrictId").val(),
-        },
-        success: function (result) {
-            $('#editLocationModal').modal('hide');
-            notify('fas fa-check', 'Berhasil', 'Location berhasil diubah', 'success');
-            reloadTable();
-        },
-        error: function (result) {
-            console.log(result);
-            notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' + result.responseText, 'danger');
-        }
-    });
+    if ($("#editName").val() != "" && $("#editUMK").val() != "" && $("#editDistrictId").val() != 0) {
+        $('.spinner-border').show();
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            contentType: "application/x-www-form-urlencoded",
+            url: "api/location/update/" + $('#editId').val(),
+            data: {
+                Name: $("#editName").val(),
+                UMK: $("#editUMK").val(),
+                DistrictId: $("#editDistrictId").val(),
+            },
+            success: function (result) {
+                $('.spinner-border').hide();
+                $('#editLocationModal').modal('hide');
+                notify('fas fa-check', 'Berhasil', 'Location berhasil diubah', 'success');
+                reloadTable();
+            },
+            error: function (result) {
+                console.log(result);
+                $('.spinner-border').hide();
+                $('#editLocationModal').modal('hide');
+                notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' + result.responseText, 'danger');
+            }
+        });
+    } else {
+        $('#editLocationModal').modal('hide');
+        notify('fas fa-times', 'Gagal', "Mohon lengkapi kolom Nama, UMK atau Distrik", 'danger');
+    }
 }
 
 function deleteLocation() {
+    $('.delete').show();
     $.ajax({
         type: "POST",
         contentType: 'application/json; charset=utf-8',
-        //dataType: "JSON",
+        dataType: "JSON",
         url: "api/location/delete/" + $('#editId').val(),
         success: function (result) {
             reloadTable();
+            $('.delete').hide();
             $('#editLocationModal').modal('hide');
             notify('fas fa-check', 'Berhasil', 'Location berhasil dihapus', 'success');
         },
         error: function (result) {
             console.log(result);
+            $('.delete').hide();
+            $('#editLocationModal').modal('hide');
             notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' + result.responseText, 'danger');
         }
     });
 }
 
 function recoverLocation() {
+    $('.spinner-border').show();
     $.ajax({
         type: "POST",
         contentType: 'application/json; charset=utf-8',
-        //dataType: "JSON",
+        dataType: "JSON",
         url: "api/location/recover/" + $('#recoverId').val(),
         success: function (result) {
             reloadTable();
+            $('.spinner-border').hide();
             $('#addLocationModal').modal('hide');
             notify('fas fa-check', 'Berhasil', 'Location berhasil dipulihkan', 'success');
         },
         error: function (result) {
             console.log(result);
+            $('.spinner-border').hide();
+            $('#addLocationModal').modal('hide');
             notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' + result.responseText, 'danger');
         }
     });
@@ -182,7 +220,7 @@ $(document).ready(function () {
     $('.select2editmodal').select2({
         dropdownParent: $('#editLocationModal')
     });
-
+    $('.spinner-border').hide();
     getDeletedLocation();
     getDistrict();
 });

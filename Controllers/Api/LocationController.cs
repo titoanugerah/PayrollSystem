@@ -30,19 +30,30 @@ namespace Payroll.Controllers.Api
         {
             try
             {
-                Location location = new Location();
-                location.Name = locationInput.Name;
-                location.UMK = locationInput.UMK;
-                location.DistrictId = locationInput.DistrictId;
-                location.IsExist = true;
-                payrollDB.Location.Add(location);
-                payrollDB.Entry(location).State = EntityState.Added;
-                await payrollDB.SaveChangesAsync();
-                return new JsonResult(location);
+                bool isExist = payrollDB.Location
+                    .Where(column => column.Name == locationInput.Name)
+                    .Any();
+                if (!isExist)
+                {
+                    Location location = new Location();
+                    location.Name = locationInput.Name;
+                    location.UMK = locationInput.UMK;
+                    location.DistrictId = locationInput.DistrictId;
+                    location.IsExist = true;
+                    payrollDB.Location.Add(location);
+                    payrollDB.Entry(location).State = EntityState.Added;
+                    await payrollDB.SaveChangesAsync();
+                    return new JsonResult(location);
+                }
+                else
+                {
+                    return BadRequest($"{locationInput.Name} sebelumnya sudah terdaftar");
+                }
+
             }
             catch (Exception error)
             {
-                logger.LogError(error, $"Location API - Craete");
+                logger.LogError(error, $"Location API - Create");
                 throw error;
             }
         }
@@ -165,13 +176,21 @@ namespace Payroll.Controllers.Api
         [Route("api/location/recover/{id}")]
         public async Task<IActionResult> Recover(int id)
         {
-            Location location = await payrollDB.Location
-                .Where(column => column.Id == id)
-                .FirstOrDefaultAsync();
-            location.IsExist = true;
-            payrollDB.Entry(location).State = EntityState.Modified;
-            await payrollDB.SaveChangesAsync();
-            return new JsonResult(location);
+            try
+            { 
+                Location location = await payrollDB.Location
+                    .Where(column => column.Id == id)
+                    .FirstOrDefaultAsync();
+                location.IsExist = true;
+                payrollDB.Entry(location).State = EntityState.Modified;
+                await payrollDB.SaveChangesAsync();
+                return new JsonResult(location);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error, $"Location API - Recover {id}");
+                throw error;
+            }
         }
     }
 }

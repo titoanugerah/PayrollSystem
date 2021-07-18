@@ -49,85 +49,110 @@ function showEditForm(id) {
 function reloadTable() {
     table.ajax.reload();
     getDeletedDistrict();
-    notify("fa fa-check", "Berhasil", "Data berhasil di reload", "success");
 }
 
 function addDistrict() {
-    $.ajax({
-        type: "POST",
-        dataType: "JSON",
-        contentType: "application/x-www-form-urlencoded",
-        url: "api/district/create",
-        data: {
-            Name: $("#addName").val(),
-            Remark: $("#addRemark").val(),
-        },
-        success: function (result) {
-            $('#addDistrictModal').modal('hide');
-            notify('fas fa-check', 'Berhasil', 'District berhasil ditambahkan', 'success');
-            reloadTable();
-        },
-        error: function (result) {
-            console.log(result);
-            notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' + result.responseText, 'danger');
-        }
-    });
+    if ($("#addName").val() != "") {
+        $('.spinner-border').show();
+        $.ajax({
+            type: "POST",
+            dataType: "JSON",
+            contentType: "application/x-www-form-urlencoded",
+            url: "api/district/create",
+            data: {
+                Name: $("#addName").val(),
+                Remark: $("#addRemark").val(),
+            },
+            success: function (result) {
+                $('.spinner-border').hide();
+                $('#addDistrictModal').modal('hide');
+                notify('fas fa-check', 'Berhasil', 'District berhasil ditambahkan', 'success');
+                reloadTable();
+            },
+            error: function (result) {
+                console.log(result);
+                $('.spinner-border').hide();
+                $('#addDistrictModal').modal('hide');
+                notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' + result.responseText, 'danger');
+            }
+        });
+    } else {
+        $('#addDistrictModal').modal('hide');
+        notify('fas fa-times', 'Gagal', "Mohon lengkapi kolom nama", 'danger');
+    }
 }
 
 
 function updateDistrict() {
-    $.ajax({
-        type: "POST",
-        dataType: "json",
-        contentType: "application/x-www-form-urlencoded",
-        url: "api/district/update/" + $('#editId').val(),
-        data: {
-            Name: $("#editName").val(),
-            Remark: $("#editRemark").val(),
-        },
-        success: function (result) {
-            $('#editDistrictModal').modal('hide');
-            notify('fas fa-check', 'Berhasil', 'District berhasil diubah', 'success');
-            reloadTable();
-        },
-        error: function (result) {
-            console.log(result);
-            notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' + result.responseText, 'danger');
-        }
-    });
+    if ($("#editName").val() != "") {
+        $('.spinner-border').show();
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            contentType: "application/x-www-form-urlencoded",
+            url: "api/district/update/" + $('#editId').val(),
+            data: {
+                Name: $("#editName").val(),
+                Remark: $("#editRemark").val(),
+            },
+            success: function (result) {
+                $('.spinner-border').hide();
+                $('#editDistrictModal').modal('hide');
+                notify('fas fa-check', 'Berhasil', 'District berhasil diubah', 'success');
+                reloadTable();
+            },
+            error: function (result) {
+                console.log(result);
+                $('.spinner-border').hide();
+                $('#editDistrictModal').modal('hide');
+                notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' + result.responseText, 'danger');
+            }
+        });
+    } else {
+        $('#editDistrictModal').modal('hide');
+        notify('fas fa-times', 'Gagal', "Mohon lengkapi kolom nama", 'danger');
+    }
 }
 
 function deleteDistrict() {
+    $('.delete').show();
     $.ajax({
         type: "POST",
         contentType: 'application/json; charset=utf-8',
-        //dataType: "JSON",
+        dataType: "JSON",
         url: "api/district/delete/" + $('#editId').val(),
         success: function (result) {
             reloadTable();
+            $('.delete').show();
             $('#editDistrictModal').modal('hide');
             notify('fas fa-check', 'Berhasil', 'District berhasil dihapus', 'success');
         },
         error: function (result) {
             console.log(result);
+            $('.delete').show();
+            $('#editDistrictModal').modal('hide');
             notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' + result.responseText, 'danger');
         }
     });
 }
 
 function recoverDistrict() {
+    $('.spinner-border').show();
     $.ajax({
         type: "POST",
         contentType: 'application/json; charset=utf-8',
-        //dataType: "JSON",
+        dataType: "JSON",
         url: "api/district/recover/" + $('#recoverId').val(),
         success: function (result) {
             reloadTable();
+            $('.spinner-border').hide();
             $('#addDistrictModal').modal('hide');
             notify('fas fa-check', 'Berhasil', 'District berhasil dipulihkan', 'success');
         },
         error: function (result) {
             console.log(result);
+            $('.spinner-border').hide();
+            $('#addDistrictModal').modal('hide');
             notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' + result.responseText, 'danger');
         }
     });
@@ -156,5 +181,6 @@ $(document).ready(function () {
     $('.select2addmodal').select2({
         dropdownParent: $('#addDistrictModal')
     });
+    $('.spinner-border').hide();
     getDeletedDistrict();
 });
