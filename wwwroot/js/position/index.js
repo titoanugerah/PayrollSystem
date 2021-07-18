@@ -49,85 +49,116 @@ function showEditForm(id) {
 function reloadTable() {
     table.ajax.reload();
     getDeletedPosition();
-    notify("fa fa-check", "Berhasil", "Data berhasil di reload", "success");
 }
 
 function addPosition() {
-    $.ajax({
-        type: "POST",
-        dataType: "JSON",
-        contentType: "application/x-www-form-urlencoded",
-        url: "api/position/create",
-        data: {
-            Name: $("#addName").val(),
-            Remark: $("#addRemark").val(),
-        },
-        success: function (result) {
-            $('#addPositionModal').modal('hide');
-            notify('fas fa-check', 'Berhasil', 'Position berhasil ditambahkan', 'success');
-            reloadTable();
-        },
-        error: function (result) {
-            console.log(result);
-            notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' + result.responseText, 'danger');
-        }
-    });
+    if ($("#addName").val() != "") {
+        $('.spinner-border').show();
+        $.ajax({
+            type: "POST",
+            dataType: "JSON",
+            contentType: "application/x-www-form-urlencoded",
+            url: "api/position/create",
+            data: {
+                Name: $("#addName").val(),
+                Remark: $("#addRemark").val(),
+            },
+            success: function (result) {
+                $("#addName").val("");
+                $("#addRemark").val("");
+                $('.spinner-border').hide();
+                $('#addPositionModal').modal('hide');
+                notify('fas fa-check', 'Berhasil', 'Position berhasil ditambahkan', 'success');
+                reloadTable();
+            },
+            error: function (result) {
+                console.log(result);
+                $('.spinner-border').hide();
+                $('#addPositionModal').modal('hide');
+                notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' + result.responseText, 'danger');
+            }
+        });
+    }
+    else {
+        $('#addPositionModal').modal('hide');
+        notify('fas fa-times', 'Gagal', "Mohon lengkapi kolom nama", 'danger');
+    }
 }
 
 
 function updatePosition() {
-    $.ajax({
-        type: "POST",
-        dataType: "json",
-        contentType: "application/x-www-form-urlencoded",
-        url: "api/position/update/" + $('#editId').val(),
-        data: {
-            Name: $("#editName").val(),
-            Remark: $("#editRemark").val(),
-        },
-        success: function (result) {
-            $('#editPositionModal').modal('hide');
-            notify('fas fa-check', 'Berhasil', 'Position berhasil diubah', 'success');
-            reloadTable();
-        },
-        error: function (result) {
-            console.log(result);
-            notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' + result.responseText, 'danger');
-        }
-    });
+    if ($("#editName").val() != "") {
+        $('.spinner-border').show();
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            contentType: "application/x-www-form-urlencoded",
+            url: "api/position/update/" + $('#editId').val(),
+            data: {
+                Name: $("#editName").val(),
+                Remark: $("#editRemark").val(),
+            },
+            success: function (result) {
+                $('.spinner-border').hide();
+                $('#editPositionModal').modal('hide');
+                notify('fas fa-check', 'Berhasil', 'Position berhasil diubah', 'success');
+                reloadTable();
+            },
+            error: function (result) {
+                console.log(result);
+                $('.spinner-border').hide();
+                $('#editPositionModal').modal('hide');
+                notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' + result.responseText, 'danger');
+            }
+        });
+    }
+    else
+    {
+        $('#editPositionModal').modal('hide');
+        notify('fas fa-times', 'Gagal', "Mohon lengkapi kolom nama", 'danger');
+    }
+
 }
 
 function deletePosition() {
+    $('.delete').show();
     $.ajax({
         type: "POST",
         contentType: 'application/json; charset=utf-8',
-        //dataType: "JSON",
+        dataType: "JSON",
         url: "api/position/delete/" + $('#editId').val(),
         success: function (result) {
             reloadTable();
+            $('.delete').hide();
             $('#editPositionModal').modal('hide');
             notify('fas fa-check', 'Berhasil', 'Position berhasil dihapus', 'success');
         },
         error: function (result) {
             console.log(result);
+            $('.delete').hide();
+            $('#editPositionModal').modal('hide');
             notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' + result.responseText, 'danger');
         }
     });
 }
 
 function recoverPosition() {
+    $('.spinner-border').show();
     $.ajax({
         type: "POST",
         contentType: 'application/json; charset=utf-8',
-        //dataType: "JSON",
+        dataType: "JSON",
         url: "api/position/recover/" + $('#recoverId').val(),
         success: function (result) {
             reloadTable();
+            $('.spinner-border').hide();
             $('#addPositionModal').modal('hide');
             notify('fas fa-check', 'Berhasil', 'Position berhasil dipulihkan', 'success');
         },
         error: function (result) {
             console.log(result);
+            $('.spinner-border').hide();
+            $('#addPositionModal').modal('hide');
             notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' + result.responseText, 'danger');
         }
     });
@@ -157,4 +188,5 @@ $(document).ready(function () {
         dropdownParent: $('#addPositionModal')
     });
     getDeletedPosition();
+    $('.spinner-border').hide();
 });
