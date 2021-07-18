@@ -15,10 +15,13 @@ namespace Payroll
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment hostingEnvironment)
         {
             Configuration = configuration;
+            CurrentEnvironment = hostingEnvironment;
         }
+
+        public IWebHostEnvironment CurrentEnvironment { set; get; }
 
         public IConfiguration Configuration { get; }
 
