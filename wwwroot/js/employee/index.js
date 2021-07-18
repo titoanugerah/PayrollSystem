@@ -31,9 +31,9 @@ function showAddEmployeeForm() {
 }
 
 function addEmployee() {
+    $('.spinner-border').show();
     var fd = new FormData();
     var files = $('#fileUpload1')[0].files[0];
-    //var files = $('#fileUpload1').files;
     fd.append('file', files);
     $.ajax({
         url: 'api/employee/create/',
@@ -43,11 +43,14 @@ function addEmployee() {
         type: 'post',
         success: function (response) {
             reload()
+            $('.spinner-border').hide();
             $('#addEmployeeModal').modal('hide');
             console.log('success', response);
         },
         error: function (result) {
             console.log('error', result);
+            $('.spinner-border').hide();
+            $('#addEmployeeModal').modal('hide');
             notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' + result.responseText, 'danger');
         }
     });
@@ -55,9 +58,8 @@ function addEmployee() {
 
 function reload() {
     table.ajax.reload();
-    notify("fa fa-check","Berhasil", "Data berhasil di reload", "success");
 }
 
 $(document).ready(function () {
-
+    $('.spinner-border').hide();
 });

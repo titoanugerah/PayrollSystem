@@ -12,6 +12,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Payroll.Controllers.Api
@@ -40,7 +42,7 @@ namespace Payroll.Controllers.Api
             try
             {
                 List<Bank> banks = await payrollDB.Bank.ToListAsync();
-                List<Models.Customer> customers = await payrollDB.Customer.ToListAsync();
+                List<Customer> customers = await payrollDB.Customer.ToListAsync();
                 List<District> districts = await payrollDB.District.ToListAsync();
                 List<Employee> employees = await payrollDB.Employee.ToListAsync();
                 List<EmploymentStatus> employmentStatuses = await payrollDB.EmploymentStatus.ToListAsync();
@@ -49,11 +51,7 @@ namespace Payroll.Controllers.Api
                 List<Position> positions = await payrollDB.Position.ToListAsync();
                 List<Role> roles = await payrollDB.Role.ToListAsync();
                 List<Employee> newEmployees = new List<Employee>();
-
-                //string fileName = "NewEmployee.xlsx";
-                //string filePath = Path.Combine(hostingEnvironment.WebRootPath, "file", fileName);
-                //System.IO.File.Delete(filePath);
-                //file.CopyTo(new FileStream(filePath, FileMode.Create));
+                List<Employee> updateEmployees = new List<Employee>();
 
                 using (var stream = new MemoryStream())
                 {
@@ -70,17 +68,29 @@ namespace Payroll.Controllers.Api
                             for (row = 7; row <= end.Row; row++)
                             {
                                 bool isValid = true;
-                                Employee employee = new Employee();
+                                bool isExist = false;
+                                Employee employee = employees
+                                    .Where(column => column.NIK == int.Parse(worksheet.Cells[$"C{row}"].Value.ToString().Replace(" ", string.Empty)))
+                                    .FirstOrDefault();
+                                if (employee!=null)
+                                {
+                                    isExist = true;
+                                }
+                                else
+                                {
+                                    isExist = false;
+                                    employee = new Employee();
+                                }                 
 
                                 if (worksheet.Cells[$"A{row}"].Value.ToString() == "AKTIF")
                                 {
                                     employee.IsExist = true;
+                                    value = $"IsExist : {employee.IsExist}";
                                 }
                                 else
                                 {
                                     employee.IsExist = false;
                                 }
-                                value = $"IsExist : {employee.IsExist}";
 
                                 if (worksheet.Cells[$"C{row}"].Value != null)
                                 {
@@ -319,6 +329,10 @@ namespace Payroll.Controllers.Api
                                     {
                                         employee.DriverLicenseExpire = DateTime.MaxValue;
                                     }
+                                    else if (worksheet.Cells[$"AC{row}"].Value.ToString().ToLower().Replace(" ", string.Empty) == "nondriver")
+                                    {
+                                        //employee.DriverLicenseExpire ;
+                                    }
                                     else
                                     {
                                         employee.DriverLicenseExpire = DateTime.FromOADate(int.Parse(worksheet.Cells[$"AC{row}"].Value.ToString()));
@@ -484,14 +498,18 @@ namespace Payroll.Controllers.Api
 
                                 if (isValid)
                                 {
-                                    if (employees.Where(column => column.NIK == employee.NIK).Count() > 0)
+                                    if (isExist)
                                     {
-                                        Employee currentEmployee = employees.Where(column => column.NIK == employee.NIK).FirstOrDefault();
-                                        currentEmployee = employee;
+                                        payrollDB.Entry(employee).State = EntityState.Modified;
+                                        updateEmployees.Add(employee);
                                     }
                                     else
                                     {
                                         employee.RoleId = 2;
+                                        using (MD5 md5Hash = MD5.Create())
+                                        {
+                                            employee.Password = GetMd5Hash(md5Hash, employee.NIK.ToString());
+                                        }
                                         payrollDB.Entry(employee).State = EntityState.Added;
                                         newEmployees.Add(employee);
                                     }
@@ -500,12 +518,14 @@ namespace Payroll.Controllers.Api
                                 else
                                 {
                                     isAllValid = false;
-                                    continue;
+                                    return BadRequest($"Data baris ke {row}, pada kolom setelah {value} bermasalah");
                                 }
 
                             }
 
                         }
+                        payrollDB.Employee.UpdateRange(updateEmployees);
+                        await payrollDB.SaveChangesAsync();
                         await payrollDB.Employee.AddRangeAsync(newEmployees);
                         await payrollDB.SaveChangesAsync();
                     }
@@ -522,10 +542,21 @@ namespace Payroll.Controllers.Api
                 }
                 else
                 {
-                    return new OkObjectResult($"Error occured at row {row} for value {value}");
+                    return BadRequest($"Error occured at row {row} for column after {value}");
                 }
                 throw error;
             }
+        }
+
+        static string GetMd5Hash(MD5 md5Hash, string input)
+        {
+            byte[] data = md5Hash.ComputeHash(Encoding.UTF8.GetBytes(input));
+            StringBuilder sBuilder = new StringBuilder();
+            for (int i = 0; i < data.Length; i++)
+            {
+                sBuilder.Append(data[i].ToString("x2"));
+            }
+            return sBuilder.ToString();
         }
 
         [Authorize]
