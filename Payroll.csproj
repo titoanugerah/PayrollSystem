@@ -11,7 +11,7 @@
 	 <EnvironmentName>Development</EnvironmentName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
-     <EnvironmentName>Production</EnvironmentName>
+     <EnvironmentName>Test</EnvironmentName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DefineConstants>DEBUG;TRACE</DefineConstants>

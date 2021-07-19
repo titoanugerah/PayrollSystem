@@ -6,8 +6,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Payroll.DataAccess;
-using System.Security.Claims;
-using System.Threading.Tasks;
 using Payroll.WebSockets;
 using Microsoft.AspNetCore.Http;
 
@@ -56,13 +54,14 @@ namespace Payroll
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
-                app.UseHsts();
+                app.UseExceptionHandler("/Error");
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
+            app.UseStatusCodePagesWithRedirects("/Error/{0}");
+            //app.UseStatusCodePages();
 
             app.UseAuthentication();
             app.UseAuthorization();

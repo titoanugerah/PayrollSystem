@@ -14,7 +14,7 @@ namespace Payroll.Controllers
             logger = _logger;
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using OfficeOpenXml;
@@ -25,6 +26,8 @@ namespace Payroll.Controllers
             logger = _logger;
             payrollDB = _payrollDB;
         }
+
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             try
@@ -39,6 +42,7 @@ namespace Payroll.Controllers
         }
 
         [Route("PayrollHistory/Download/ReportBank/{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DownloadReportBank(int id)
         {
             try
@@ -129,7 +133,8 @@ namespace Payroll.Controllers
             }
         }
 
-       [Route("PayrollHistory/Download/Report/{id}")]
+        [Route("PayrollHistory/Download/Report/{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DownloadReportAll(int id)
         {
             try
@@ -327,6 +332,7 @@ namespace Payroll.Controllers
         }
 
         [Route("PayrollHistory/Download/Report/{payrollHistoryId}/{districtId}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DownloadReportDistrict(int payrollHistoryId, int districtId)
         {
             try

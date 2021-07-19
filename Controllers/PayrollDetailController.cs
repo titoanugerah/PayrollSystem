@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using OfficeOpenXml;
@@ -23,7 +24,8 @@ namespace Payroll.Controllers
             payrollDB = _payrollDB;
         }
 
-        [Route("PayrollDetail")]
+        [Authorize(Roles = "Admin")]
+
         public async Task<IActionResult> Index(int id)
         {
             try
