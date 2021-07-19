@@ -89,6 +89,25 @@ namespace Payroll.Controllers.Api
 
         [Authorize]
         [HttpGet]
+        [Route("api/location/read")]
+        public async Task<IActionResult> Read()
+        {
+            try
+            {
+                List<Location> locations = await payrollDB.Location
+                    .OrderBy(column => column.Name)
+                    .ToListAsync();
+                return new JsonResult(locations);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error, $"Location API - Read");
+                throw error;
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
         [Route("api/location/readDeleted")]
         public async Task<IActionResult> ReadDeleted()
         {

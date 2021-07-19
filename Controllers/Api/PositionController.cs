@@ -66,6 +66,7 @@ namespace Payroll.Controllers.Api
             try
             {
                 List<Position> position = await payrollDB.Position
+                    .OrderBy(column => column.Name)
                     .ToListAsync();
                 return new JsonResult(position);
             }

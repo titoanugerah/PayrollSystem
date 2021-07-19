@@ -66,6 +66,7 @@ namespace Payroll.Controllers.Api
             try
             {
                 List<District> district = await payrollDB.District
+                    .OrderBy(column => column.Name)
                     .ToListAsync();
                 return new JsonResult(district);
             }

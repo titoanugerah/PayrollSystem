@@ -6,6 +6,7 @@ using Payroll.DataAccess;
 using Payroll.Models;
 using Payroll.ViewModels;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -99,6 +100,25 @@ namespace Payroll.Controllers.Api
             catch (Exception error)
             {
                 logger.LogError(error, $"Customer API Controller - Read Detail {id}");
+                throw error;
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("api/customer/read")]
+        public async Task<IActionResult> Read()
+        {
+            try
+            {
+                List<Customer> customers = await payrollDB.Customer
+                    .OrderBy(column => column.Name)
+                    .ToListAsync();
+                return new JsonResult(customers);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error, $"Customer API - Read");
                 throw error;
             }
         }

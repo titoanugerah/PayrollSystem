@@ -73,5 +73,370 @@
     </div>
 </div>
 
+<div class="modal fade" id="editEmployeeModal" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <center>
+                    <h4>Detail Pekerja</h4>
+                </center>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label>NIK</label>
+                            <input type="text" class="form-control" id="editNIK" readonly>
+                        </div>
+                    </div>
+
+                    <div class="col-md-5">
+                        <div class="form-group">
+                            <label>Nama</label>
+                            <input type="text" class="form-control" id="editName">
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-4 ">
+                        <div class="form-group">
+                            <label >Status Pekerja</label>
+                            <select class="form-control " id="editIsExist">
+                                <option value="true">Aktif</option>
+                                <option value="false">Tidak Aktif</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-12" style="overflow-x: hidden;overflow-y: scroll;height:250px;">
+                        <p>Informasi Pribadi</p>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Tempat Lahir</label>
+                                <input type="text" id="editBirthPlace" class="form-control col-md-6">
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Tanggal Lahir</label>
+                                <input type="date" id="editBirthDate" class="form-control col-md-6">
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Agama</label>
+                                @*<input type="text" id="editReligion" class="form-control col-md-6">*@
+                                <select class="form-control col-md-6" id="editReligion">
+                                    <option value="">Silahkan Pilih</option>
+                                    <option value="ISLAM">ISLAM</option>
+                                    <option value="KRISTEN">KRISTEN</option>
+                                    <option value="KATOLIK">KATOLIK</option>
+                                    <option value="HINDU">HINDU</option>
+                                    <option value="BUDHA">BUDHA</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Jenis Kelamin</label>
+                                <select class="form-control col-md-6" id="editSex">
+                                    <option value="">Silahkan Pilih</option>
+                                    <option value="L">PRIA</option>
+                                    <option value="P">WANITA</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Alamat</label>
+                                <input type="text" id="editAddress" class="form-control col-md-6">
+                            </div>
+                        </div>
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Nomor HP </label>
+                                <input type="text" id="editPhoneNumber" class="form-control col-md-6">
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Status Keluarga</label>
+                                <select class="form-control col-md-6" id="editFamilyStatusCode">
+                                    <option value="">Silahkan Pilih</option>
+                                    <option value="L">Lajang</option>
+                                    <option value="K">Kawin</option>
+                                    <option value="K1">Kawin 1 Anak</option>
+                                    <option value="K2">Kawin 2 Anak</option>
+                                    <option value="K3">Kawin 3 Anak</option>
+                                </select>
+                            </div>
+                        </div>
+
+
+                        <p>Pendataan</p>
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Nomor KTP</label>
+                                <input type="text" id="editKTP" class="form-control col-md-6">
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Nomor KK</label>
+                                <input type="text" id="editKK" class="form-control col-md-6">
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Nomor SIM</label>
+                                <input type="text" id="editDriverLicense" class="form-control col-md-6">
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Tipe SIM</label>
+                                <input type="text" id="editDriverLicenseType" class="form-control col-md-6">
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Masa Berlaku SIM</label>
+                                <input type="text" id="editDriverLicenseExpire" class="form-control col-md-6">
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">NPWP</label>
+                                <input type="text" id="editNPWP" class="form-control col-md-6">
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Jamsostek</label>
+                                <input type="text" id="editJamsostekNumber" class="form-control col-md-6">
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Keterangan Jamsostek</label>
+                                <input type="text" id="editJamsostekRemark" class="form-control col-md-6">
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Nomor BPJS</label>
+                                <input type="text" id="editBpjsNumber" class="form-control col-md-6">
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Keterangan BPJS</label>
+                                <input type="text" id="editBpjsRemark" class="form-control col-md-6">
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Bank</label>
+                                <select class="form-control col-md-6" id="editBankCode">
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Nomor Rekening</label>
+                                <input type="text" id="editAccountNumber" class="form-control col-md-6">
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Nama Rekening</label>
+                                <input type="text" id="editAccountName" class="form-control col-md-6">
+                            </div>
+                        </div>
+
+                        <p>Pekerjaan</p>
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Status Kepegawaian</label>
+                                <select class="form-control col-md-6" id="editEmploymentStatusId">
+                                    <option value="">Silahkan Pilih</option>
+                                    <option value="1">PKWT 1</option>
+                                    <option value="2">PKWT 2</option>
+                                    <option value="3">PHL</option>
+                                    <option value="4">TETAP</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Jabatan</label>
+                                <select class="form-control col-md-6" id="editPositionId">
+                                    <option value="">Silahkan Pilih</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Customer</label>
+                                <select class="form-control col-md-6" id="editCustomerId">
+                                    <option value="">Silahkan Pilih</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Lokasi</label>
+                                <select class="form-control col-md-6" id="editLocationId">
+                                    <option value="">Silahkan Pilih</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Hak Akses</label>
+                                <select class="form-control col-md-6" id="editRoleId">
+                                    <option value="">Silahkan Pilih</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Mulai Kontrak</label>
+                                <input type="date" id="editStartContract" class="form-control col-md-6">
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Akhir Kontrak</label>
+                                <input type="date" id="editEndContract" class="form-control col-md-6">
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Mulai Masuk MBK</label>
+                                <input type="date" id="editJoinCompanyDate" class="form-control col-md-6">
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Mulai Masuk Customer</label>
+                                <input type="date" id="editJoinCustomerDate" class="form-control col-md-6">
+                            </div>
+                        </div>
+
+                        <p>Pelatihan</p>
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Seragam</label>
+                                <select class="form-control col-md-6" id="editHasUniform">
+                                    <option value="true">Sudah</option>
+                                    <option value="false">Belum</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Tgl Kirim Seragam</label>
+                                <input type="date" id="editUniformDeliveryDate" class="form-control col-md-6">
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">ID Card</label>
+                                <select class="form-control col-md-6" id="editHasIdCard">
+                                    <option value="true">Sudah</option>
+                                    <option value="false">Belum</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Tgl Kirim ID Card</label>
+                                <input type="date" id="editIdCardDeliveryDate" class="form-control col-md-6">
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Status Training</label>
+                                <select class="form-control col-md-6" id="editHasTraining">
+                                    <option value="true">Sudah</option>
+                                    <option value="false">Belum</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Nama Training</label>
+                                <input type="text" id="editTrainingName" class="form-control col-md-6">
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Tanggal Training</label>
+                                <input type="date" id="editTrainingDeliveryDate" class="form-control col-md-6">
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Keterangan Training</label>
+                                <input type="text" id="editTrainingRemark" class="form-control col-md-6">
+                            </div>
+                        </div>
+
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Nilai Training</label>
+                                <input type="text" id="editTrainingGrade" class="form-control col-md-6">
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" onclick="updateEmployee()" class="btn btn-primary">
+                        <div class="spinner-border spinner-border-sm"></div>
+                        Simpan
+                    </button>
+                    <button type="button" data-dismiss="modal" class="btn btn-secondary">Kembali</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="~/js/employee/index.js"></script>

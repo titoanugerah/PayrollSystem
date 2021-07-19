@@ -588,5 +588,87 @@ namespace Payroll.Controllers.Api
                 throw error;
             }
         }
+
+        [Authorize]
+        [HttpGet]
+        [Route("api/employee/readDetail/{nik}")]
+        public async Task<IActionResult> ReadDetail(int nik)
+        {
+            try
+            {
+                Employee employee = await payrollDB.Employee
+                    .Where(column => column.NIK == nik)
+                    .FirstOrDefaultAsync();
+                return new JsonResult(employee);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error, "Employee API Controller - Read");
+                throw error;
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("api/employee/update/{id}")]
+        public async Task<IActionResult> Update([FromForm]EmployeeInput employeeInput, int id)
+        {
+            try
+            {
+                Employee employee = await payrollDB.Employee
+                    .Where(column => column.NIK == id)
+                    .FirstOrDefaultAsync();
+                employee.Name = employeeInput.Name;
+                employee.BirthPlace = employeeInput.BirthPlace;
+                employee.BirthDate = employeeInput.BirthDate;
+                employee.Sex = employeeInput.Sex;
+                employee.Religion = employeeInput.Religion;
+                employee.Address = employeeInput.Address;
+                employee.PhoneNumber = employeeInput.PhoneNumber;
+                employee.KTP = employeeInput.KTP;
+                employee.KK = employeeInput.KK;
+                employee.NPWP = employeeInput.NPWP;
+                employee.JamsostekNumber = employeeInput.JamsostekNumber;
+                employee.JamsostekRemark = employeeInput.JamsostekRemark;
+                employee.BpjsNumber = employeeInput.BpjsNumber;
+                employee.BpjsRemark = employeeInput.BpjsRemark;
+                employee.DriverLicense = employeeInput.DriverLicense;
+                employee.DriverLicenseType = employeeInput.DriverLicenseType;
+                employee.DriverLicenseExpire = employeeInput.DriverLicenseExpire;
+                employee.AccountNumber = employeeInput.AccountNumber;
+                employee.AccountName = employeeInput.AccountName;
+                employee.BankCode = employeeInput.BankCode;
+                employee.FamilyStatusCode = employeeInput.FamilyStatusCode;
+                employee.EmploymentStatusId = employeeInput.EmploymentStatusId;
+                employee.PositionId = employeeInput.PositionId;
+                employee.CustomerId = employeeInput.CustomerId;
+                employee.LocationId = employeeInput.LocationId;
+                employee.RoleId = employeeInput.RoleId;
+                employee.StartContract = employeeInput.StartContract;
+                employee.EndContract = employeeInput.EndContract;
+                employee.JoinCompanyDate = employeeInput.JoinCompanyDate;
+                employee.JoinCustomerDate = employeeInput.JoinCustomerDate;
+                employee.HasUniform = employeeInput.HasUniform;
+                employee.UniformDeliveryDate = employeeInput.UniformDeliveryDate;
+                employee.HasIdCard = employeeInput.HasIdCard;
+                employee.IdCardDeliveryDate = employeeInput.IdCardDeliveryDate;
+                employee.HasTraining = employeeInput.HasTraining;
+                employee.TrainingDeliveryDate = employeeInput.TrainingDeliveryDate;
+                employee.TrainingName = employeeInput.TrainingName;
+                employee.TrainingRemark = employeeInput.TrainingRemark;
+                employee.TrainingGrade = employeeInput.TrainingGrade;
+                employee.IsExist = employeeInput.IsExist;
+                payrollDB.Entry(employee).State = EntityState.Modified;
+                payrollDB.Employee.Update(employee);
+                await payrollDB.SaveChangesAsync();
+                return new JsonResult(employee);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error, $"Employee API - Update {id}");
+                throw error;
+            }
+        }
+
     }
 }
