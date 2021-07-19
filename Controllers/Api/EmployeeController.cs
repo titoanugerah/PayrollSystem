@@ -525,7 +525,6 @@ namespace Payroll.Controllers.Api
 
                         }
                         payrollDB.Employee.UpdateRange(updateEmployees);
-                        await payrollDB.SaveChangesAsync();
                         await payrollDB.Employee.AddRangeAsync(newEmployees);
                         await payrollDB.SaveChangesAsync();
                     }
