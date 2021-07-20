@@ -22,7 +22,7 @@
         { "data": "payrollDetailStatus" },
         {
             "render": function (data, type, row) {
-                return "<button type='button' class='btn btn-info' onclick=showDetailForm('" + row.id + "'); >Detail</button>" + "<a href='PayrollDetail/Download/Slip/"+row.id+"' class='btn btn-info' >Download</a>";
+                return "<button type='button' class='btn btn-info' onclick=showDetailForm('" + row.id + "'); >Detail</button>" + "<a href='PayrollDetail/Download/Slip/"+row.id+"' class='btn btn-info' target='_blank'>Download</a>";
             }
         },
     ]
