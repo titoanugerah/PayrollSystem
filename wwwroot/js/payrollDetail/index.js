@@ -22,7 +22,7 @@
         { "data": "payrollDetailStatus" },
         {
             "render": function (data, type, row) {
-                return "<button type='button' class='btn btn-info' onclick=showDetailForm('" + row.id + "'); >Detail</button>" + "<a href='PayrollDetail/Download/Slip/"+row.id+"' class='btn btn-info' target='_blank'>Download</a>";
+                return "<button type='button' class='btn btn-info' onclick=showDetailForm('" + row.id + "'); >Detail</button> &nbsp;&nbsp;" +  "<a href='PayrollDetail/Download/Slip/"+row.id+"' class='btn btn-info' target='_blank'>Download</a>";
             }
         },
     ]
@@ -87,6 +87,8 @@ function showDetailForm(id) {
             $('#id').val(result.id);
             $('#nik').val(result.employee.nik);
             $('#mainSalaryBilling').val(formatter.format(result.mainSalaryBilling));
+            $('#bpjsReturn').val(formatter.format(result.bpjsReturn));
+            $('#rapel').val(result.rapel);
             $('#insentiveBilling').val(formatter.format(result.insentiveBilling));
             $('#attendanceBilling').val(formatter.format(result.attendanceBilling));
             $('#overtimeBilling').val(formatter.format(result.overtimeBilling));
@@ -95,21 +97,23 @@ function showDetailForm(id) {
             $('#bpjsKesehatanDeduction').val(formatter.format(result.bpjsKesehatanDeduction));
             $('#pensionDeduction').val(formatter.format(result.pensionDeduction));
             $('#pph21').val(formatter.format(result.ppH21));
-            $('#anotherDeduction').val(formatter.format(result.anotherDeduction));
-            $('#transferFee').val(formatter.format(result.transferFee));
+            $('#anotherDeduction').val(result.anotherDeduction);
+            $('#transferFee').val(result.transferFee);
             $('#takeHomePay').val(formatter.format(result.takeHomePay));
+            if (result.payrollDetailStatusId == 3) {
+                $("#updateBtn").hide();
+            }
         },
         error: function (result) {
             console.log(result);
             notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' + result.responseText, 'danger');
         }
     });
-    $('#payrollDetailModal').modal('show');
+        $('#payrollDetailModal').modal('show');
 }
 
 function reloadTable() {
     table.ajax.reload();
-    notify("fa fa-check", "Berhasil", "Data berhasil di reload", "success");
 }
 
 function updatePayrollDetail() {
@@ -124,7 +128,7 @@ function updatePayrollDetail() {
         type: 'post',
         success: function (response) {
             reloadTable()
-            $('#addPayrollDetailModal').modal('hide');
+            $('#payrollDetailModal').modal('hide');
             console.log('success', response);
         },
         error: function (result) {
@@ -134,10 +138,51 @@ function updatePayrollDetail() {
     });
 }
 
-function submit() {
+function showSubmitForm() {
+    $.ajax({
+        url: 'api/PayrollHistory/check/' + $("#payrollHistoryId").val(),
+        type: 'post',
+        success: function (response) {
+            reloadTable()
+            $("#submitModal").modal('show');
+        },
+        error: function (result) {
+            console.log('error', result);
+            notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' + result.responseText, 'danger');
+        }
+    });
+}
+
+function submit(isLateSubmit) {
     $.ajax({
         url: 'api/PayrollHistory/submit/' + $("#payrollHistoryId").val(),
         type: 'post',
+        data: {
+            IsLateTransfer: isLateSubmit
+        },
+        success: function (response) {
+            reloadTable()
+            $("#submitModal").modal('hide');
+        },
+        error: function (result) {
+            console.log('error', result);
+            $("#submitModal").modal('hide');
+            notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' + result.responseText, 'danger');
+        }
+    });
+}
+
+function updateDetail() {
+    
+    $.ajax({
+        url: 'api/PayrollDetail/updateDetail/' + $("#id").val(),
+        type: 'post',
+        dataType: "json",
+        data: {
+            Rapel : $("#rapel").val(),
+            TransferFee : $("#transferFee").val(),
+            AnotherDeduction : $("#anotherDeduction").val(),
+        },
         success: function (response) {
             reloadTable()
         },

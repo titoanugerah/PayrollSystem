@@ -22,10 +22,9 @@
                 return "Rp. " + row.takeHomePay.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
             }
         },
-        //{ "data": "payrollDetailStatus" },
         {
             "render": function (data, type, row) {
-                return "<button type='button' class='btn btn-info' onclick=showDetailForm('" + row.id + "'); >Detail</button>";
+                return "<button type='button' class='btn btn-info' onclick=showDetailForm('" + row.id + "'); >Detail</button> &nbsp;&nbsp;" + "<a href='PayrollDetail/Download/Slip/" + row.id + "' class='btn btn-info' target='_blank'>Download</a>";
             }
         },
     ]
@@ -42,6 +41,8 @@ function showDetailForm(id) {
             $('#nik').val(result.employee.nik);
             $('#mainSalaryBilling').val(formatter.format(result.mainSalaryBilling));
             $('#insentiveBilling').val(formatter.format(result.insentiveBilling));
+            $('#bpjsReturn').val(formatter.format(result.bpjsReturn));
+            $('#rapel').val(formatter.format(result.rapel));
             $('#attendanceBilling').val(formatter.format(result.attendanceBilling));
             $('#overtimeBilling').val(formatter.format(result.overtimeBilling));
             $('#apreciationBilling').val(formatter.format(result.appreciationBilling));

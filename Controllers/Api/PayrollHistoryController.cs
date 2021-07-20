@@ -111,6 +111,44 @@ namespace Payroll.Controllers.Api
 
         [Authorize]
         [HttpPost]
+        [Route("api/payrollHistory/check/{id}")]
+        public async Task<IActionResult> Check(int id)
+        {
+            try
+            {
+                int notYetUploaded = payrollDB.PayrollDetail
+                    .Include(table => table.Employee)
+                    .Where(column => column.PayrollHistoryId == id)
+                    .Where(column => column.PayrollDetailStatusId == 1)
+                    .Where(column => column.Employee.IsExist == true)
+                    .Count();
+                bool isAlreadySubmitted = payrollDB.PayrollHistory
+                    .Where(column => column.Id == id)
+                    .Where(column => column.StatusId == 3)
+                    .Any();
+                    
+                if (notYetUploaded > 0)
+                {
+                    return BadRequest($"Terdapat {notYetUploaded} pekerja yang belum di upload data gajinya");
+                }
+                else if (isAlreadySubmitted)
+                {
+                    return BadRequest($"Gajian periode ini sudah di submit");
+                }
+                else
+                {
+                    return new JsonResult(Ok());
+                }
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error, $"Payroll History API - Check {id}");
+                throw error;
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
         [Route("api/payrollHistory/readDatatable")]
         public async Task<IActionResult> ReadDatatable()
         {
@@ -140,7 +178,7 @@ namespace Payroll.Controllers.Api
         [HttpPost]
         [Authorize]
         [Route("api/payrollHistory/submit/{id}")]
-        public async Task<IActionResult> Submit(int id)
+        public async Task<IActionResult> Submit(int id, [FromForm] int isLateTransfer)
         {
             try
             {
@@ -148,31 +186,26 @@ namespace Payroll.Controllers.Api
                     .Where(column => column.Id == id)
                     .FirstOrDefaultAsync();
                 List<PayrollDetail> payrollDetails = await payrollDB.PayrollDetail
+                    .Include(table => table.Employee)
                     .Where(column => column.PayrollHistoryId == id)
                     .ToListAsync();
-                bool isAnyUnUploaded = payrollDetails
-                    .Where(column => column.PayrollDetailStatusId == 1)
-                    .Any();
-                if (!isAnyUnUploaded)
+                payrollHistory.StatusId = 3;
+                payrollDB.Entry(payrollHistory).State = EntityState.Modified;
+                payrollDB.Update(payrollHistory);
+                await payrollDB.SaveChangesAsync();
+                foreach (PayrollDetail payrollDetail in payrollDetails)
                 {
-                    payrollHistory.StatusId = 3;
-                    payrollDB.Entry(payrollHistory).State = EntityState.Modified;
-                    payrollDB.Update(payrollHistory);
-                    await payrollDB.SaveChangesAsync();
-                    foreach (PayrollDetail payrollDetail in payrollDetails)
+                    if (payrollDetail.Employee.BankCode == "BCA" & isLateTransfer == 1)
                     {
-                        payrollDetail.PayrollDetailStatusId = 3;
-                        payrollDB.Entry(payrollDetail).State = EntityState.Modified;
+                        payrollDetail.TransferFee = 5000;
                     }
-                    payrollDB.UpdateRange(payrollDetails);
-                    await payrollDB.SaveChangesAsync();
+                    payrollDetail.PayrollDetailStatusId = 3;
+                    payrollDB.Entry(payrollDetail).State = EntityState.Modified;
+                }
+                payrollDB.UpdateRange(payrollDetails);
+                await payrollDB.SaveChangesAsync();
 
-                    return new JsonResult(Ok());
-                }
-                else
-                {
-                    return new JsonResult(BadRequest("semua belum terupload"));
-                }
+                return new JsonResult(Ok());
             }
             catch (Exception error)
             {

@@ -214,7 +214,7 @@ namespace Payroll.Controllers.Api
                                         payrollDetail.AnotherDeduction = GetIntValue(worksheet, "W", currentRow);
                                         if (payrollDetail.IsValidGrandTotalBilling)
                                         {
-                                            payrollDetail.PayrollDetailStatusId = 2;
+                                            payrollDetail.PayrollDetailStatusId = 2;                                            
                                             payrollDetail.ResultPayroll = Convert.ToInt32(payrollDetail.MainSalaryBilling + payrollDetail.InsentiveBilling + payrollDetail.AttendanceBilling + payrollDetail.OvertimeBilling + payrollDetail.AppreciationBilling);
                                             payrollDetail.FeePayroll = Convert.ToInt32(payrollDetail.ManagementFeeBilling);
                                             payrollDetail.TotalPayroll = Convert.ToInt32(payrollDetail.FeePayroll + payrollDetail.ResultPayroll);
@@ -223,16 +223,27 @@ namespace Payroll.Controllers.Api
                                             payrollDetail.AttributePayroll = Convert.ToInt32(payrollDetail.AtributeBilling);
                                             payrollDetail.BpjsTkDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * payrollHistory.BpjsTk1Percentage)/100);
                                             payrollDetail.BpjsKesehatanDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * payrollHistory.BpjsPayrollPercentage) / 100);
+                                            if (payrollDetail.Employee.BpjsNumber == null)
+                                            {
+                                                payrollDetail.BpjsReturn = payrollDetail.BpjsKesehatanDeduction;
+                                            }
+                                            
                                             payrollDetail.PensionDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * payrollHistory.PensionPayrollPercentage) / 100);
                                             payrollDetail.PTKP = Convert.ToInt32(payrollDetail.Employee.FamilyStatus.PTKP); 
                                             payrollDetail.PKP1 = Convert.ToInt32(payrollDetail.ResultPayroll - payrollDetail.BpjsKesehatanDeduction - payrollDetail.PensionDeduction - payrollDetail.BpjsTkDeduction); ;
                                             payrollDetail.PKP2 = Convert.ToInt32(payrollDetail.PKP1 - payrollDetail.PTKP);
-                                            if (payrollDetail.PKP2>1)
+                                            if (payrollDetail.PKP2 > 1)
                                             {
                                                 payrollDetail.PPH21 = Convert.ToInt32((payrollDetail.PKP2 * payrollDetail.PayrollHistory.Pph21Percentage)/100);
                                             }
+
+                                            if (payrollDetail.Employee.Bank.Code != "BCA")
+                                            {
+                                                payrollDetail.TransferFee = 6500;
+                                            }
+
                                             payrollDetail.PPH23 = Convert.ToInt32((payrollDetail.FeePayroll * payrollDetail.PayrollHistory.Pph23Percentage) / 100);
-                                            payrollDetail.Netto = Convert.ToInt32(payrollDetail.ResultPayroll - payrollDetail.BpjsKesehatanDeduction - payrollDetail.PensionDeduction - payrollDetail.BpjsTkDeduction - payrollDetail.PPH21);
+                                            payrollDetail.Netto = Convert.ToInt32(payrollDetail.ResultPayroll + payrollDetail.Rapel + payrollDetail.BpjsReturn - payrollDetail.BpjsKesehatanDeduction - payrollDetail.PensionDeduction - payrollDetail.BpjsTkDeduction - payrollDetail.PPH21);
                                             payrollDetail.TakeHomePay = Convert.ToInt32(payrollDetail.Netto - payrollDetail.AnotherDeduction - payrollDetail.TransferFee);
                                             payrollDB.Entry(payrollDetail).State = EntityState.Modified;
                                         }
@@ -264,6 +275,45 @@ namespace Payroll.Controllers.Api
                 throw error;
             }
 
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("api/payrollDetail/updateDetail/{id}")]
+        public async Task<IActionResult> updateDetail([FromForm]PayrollDetailInput payrollDetailInput, int id)
+        {
+            try
+            {
+                PayrollDetail payrollDetail = payrollDB.PayrollDetail
+                    .Where(column => column.Id == id)
+                    .FirstOrDefault();
+                if (payrollDetail.PayrollDetailStatusId == 1)
+                {
+                    return BadRequest("Silahkan upload terlebih dahulu");
+                }
+                else if (payrollDetail.PayrollDetailStatusId == 2)
+                {
+                    payrollDetail.Rapel = payrollDetailInput.Rapel;
+                    payrollDetail.AnotherDeduction = payrollDetailInput.AnotherDeduction;
+                    payrollDetail.TransferFee = payrollDetailInput.TransferFee;
+                    payrollDetail.Netto = Convert.ToInt32(payrollDetail.ResultPayroll + payrollDetail.Rapel + payrollDetail.BpjsReturn - payrollDetail.BpjsKesehatanDeduction - payrollDetail.PensionDeduction - payrollDetail.BpjsTkDeduction - payrollDetail.PPH21);
+                    payrollDetail.TakeHomePay = Convert.ToInt32(payrollDetail.Netto - payrollDetail.AnotherDeduction - payrollDetail.TransferFee);
+                    payrollDB.Entry(payrollDetail).State = EntityState.Modified;
+                    payrollDB.PayrollDetail.Update(payrollDetail);
+                    await payrollDB.SaveChangesAsync();
+                    return new JsonResult(Ok());
+                }
+                else
+                {
+                    return BadRequest("Data yang sudah di submit tidak boleh dirubah");
+
+                }
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error, "Payroll Detail API - Update Detail");
+                throw error;
+            }
         }
 
         private string GetStringValue(ExcelWorksheet excelWorksheet, string column, int row)
@@ -319,7 +369,6 @@ namespace Payroll.Controllers.Api
                 {
                     var decimalValue = GetDecimalValue(excelWorksheet, column, row);
                     intResult = Convert.ToInt32(decimalValue);
-                    //intResult = Convert.ToInt32(excelWorksheet.Cells[$"{column}{row}"].Value.ToString());
                 }
                 else
                 {

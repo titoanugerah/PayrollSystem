@@ -102,6 +102,10 @@ namespace Payroll.Models
         [DefaultValue(0)]
         public int AtributeBilling { set; get; }
         [DefaultValue(0)]
+        public int Rapel { set; get; }
+        [DefaultValue(0)]
+        public int BpjsReturn { set; get; }
+        [DefaultValue(0)]
         public int AppreciationBilling { set; get; }
         [DefaultValue(0)]
         public int TransferFee { set; get; }

@@ -74,10 +74,10 @@
         </div>
         <div class="row">
             <div class="col-md-3">
-                Rapel
+                Retur BPJS Kesehatan
             </div>
             <div class="col-md-3">
-                : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.MainSalaryBilling);
+                : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.Rapel);
             </div>
             <div class="col-md-3">
                 BPJS Kesehatan
@@ -119,7 +119,7 @@
                 Insentif Lainnya
             </div>
             <div class="col-md-3">
-                : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.AppreciationBilling);
+                : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.InsentiveBilling);
             </div>
             <div class="col-md-3">
                 Potongan Lainnya
@@ -129,7 +129,11 @@
             </div>
         </div>
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-3">
+                Lain Lain
+            </div>
+            <div class="col-md-3">
+                : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.AppreciationBilling);
             </div>
             <div class="col-md-3">
                 Biaya Transfer
@@ -140,10 +144,19 @@
         </div>
         <div class="row">
             <div class="col-md-3">
+                Rapel
+            </div>
+            <div class="col-md-9">
+                : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.Rapel);
+            </div>
+        </div>
+        <br />
+        <div class="row">
+            <div class="col-md-3">
                 <b>Total Pendapatan</b>
             </div>
             <div class="col-md-3">
-                <b>: @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", (@ViewBag.payrollDetail.MainSalaryBilling + @ViewBag.payrollDetail.OvertimeBilling + @ViewBag.payrollDetail.AttendanceBilling + @ViewBag.payrollDetail.InsentiveBilling + @ViewBag.payrollDetail.AppreciationBilling))</b>
+                <b>: @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", (@ViewBag.payrollDetail.MainSalaryBilling + @ViewBag.payrollDetail.OvertimeBilling + @ViewBag.payrollDetail.AttendanceBilling + @ViewBag.payrollDetail.InsentiveBilling + @ViewBag.payrollDetail.AppreciationBilling + @ViewBag.payrollDetail.Rapel))</b>
             </div>
             <div class="col-md-3">
                 <b>Total Potongan</b>
