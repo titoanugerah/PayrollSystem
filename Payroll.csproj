@@ -4,8 +4,22 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <CopyRefAssembliesToPublishDirectory>false</CopyRefAssembliesToPublishDirectory>
     <UserSecretsId>6a64f09e-1e83-4b9f-b862-93af9b0d3868</UserSecretsId>
+    <!--<IsTransformWebConfigDisabled>true</IsTransformWebConfigDisabled>-->
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
   </PropertyGroup>
-
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+	 <EnvironmentName>Development</EnvironmentName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+     <EnvironmentName>Test</EnvironmentName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <Optimize>false</Optimize>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+  </PropertyGroup>
+	
   <ItemGroup>
     <PackageReference Include="EPPlus" Version="5.7.0" />
     <PackageReference Include="ExcelDataReader" Version="3.6.0" />

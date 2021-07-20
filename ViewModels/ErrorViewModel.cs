@@ -1,6 +1,4 @@
-using System;
-
-namespace Payroll.Models
+namespace Payroll.ViewModels
 {
     public class ErrorViewModel
     {

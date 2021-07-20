@@ -34,44 +34,55 @@ namespace Payroll.Controllers.Api
         {
             try
             {
-                PayrollHistory payrollHistory = new PayrollHistory();
-                payrollHistory.JamsostekPercentage = payrollConfiguration.Value.JamsostekPercentage;
-                payrollHistory.BpjsPercentage = payrollConfiguration.Value.BpjsPercentage;
-                payrollHistory.PensionPercentage = payrollConfiguration.Value.PensionPercentage;
-                payrollHistory.ManagementFeePercentage = payrollConfiguration.Value.ManagementFeePercentage;
-                payrollHistory.PpnPercentage = payrollConfiguration.Value.PpnPercentage;
-                payrollHistory.BpjsTk1Percentage = payrollConfiguration.Value.BpjsTk1Percentage;
-                payrollHistory.BpjsKesehatanPercentage = payrollConfiguration.Value.BpjsKesehatanPercentage;
-                payrollHistory.Pension1Percentage = payrollConfiguration.Value.Pension1Percentage;
-                payrollHistory.Pph21Percentage = payrollConfiguration.Value.PPH21Percentage;
-                payrollHistory.Pph23Percentage = payrollConfiguration.Value.PPH23Percentage;
-                payrollHistory.BpjsPayrollPercentage= payrollConfiguration.Value.BpjsPayrollPercentage;
-                payrollHistory.PensionPayrollPercentage = payrollConfiguration.Value.PensionPayrollPercentage;
-                payrollHistory.Month = payrollInput.Month;
-                payrollHistory.Year = payrollInput.Year;
-                payrollHistory.StatusId = 1;
-                payrollHistory.IsExist = true;
-                payrollDB.Entry(payrollHistory).State = EntityState.Added;
-                await payrollDB.PayrollHistory.AddAsync(payrollHistory);
-                await payrollDB.SaveChangesAsync();
-
-                List<Employee> employees = await payrollDB.Employee
-                    .Where(column => column.IsExist == true)
-                    .ToListAsync();
-                List<PayrollDetail> payrollDetails = new List<PayrollDetail>();
-                foreach (Employee employee in employees)
+                bool isExist = payrollDB.PayrollHistory
+                    .Where(column => column.Month == payrollInput.Month)
+                    .Where(column => column.Year == payrollInput.Year)
+                    .Any();
+                if (!isExist)
                 {
-                    PayrollDetail payrollDetail = new PayrollDetail();
-                    payrollDetail.EmployeeId = employee.NIK;
-                    payrollDetail.PayrollHistoryId = payrollHistory.Id;
-                    payrollDetail.MainPrice = 0;
-                    payrollDetail.PayrollDetailStatusId = 1;
-                    payrollDetails.Add(payrollDetail);
-                    payrollDB.Entry(payrollDetail).State = EntityState.Added;
+                    PayrollHistory payrollHistory = new PayrollHistory();
+                    payrollHistory.JamsostekPercentage = payrollConfiguration.Value.JamsostekPercentage;
+                    payrollHistory.BpjsPercentage = payrollConfiguration.Value.BpjsPercentage;
+                    payrollHistory.PensionPercentage = payrollConfiguration.Value.PensionPercentage;
+                    payrollHistory.ManagementFeePercentage = payrollConfiguration.Value.ManagementFeePercentage;
+                    payrollHistory.PpnPercentage = payrollConfiguration.Value.PpnPercentage;
+                    payrollHistory.BpjsTk1Percentage = payrollConfiguration.Value.BpjsTk1Percentage;
+                    payrollHistory.BpjsKesehatanPercentage = payrollConfiguration.Value.BpjsKesehatanPercentage;
+                    payrollHistory.Pension1Percentage = payrollConfiguration.Value.Pension1Percentage;
+                    payrollHistory.Pph21Percentage = payrollConfiguration.Value.PPH21Percentage;
+                    payrollHistory.Pph23Percentage = payrollConfiguration.Value.PPH23Percentage;
+                    payrollHistory.BpjsPayrollPercentage= payrollConfiguration.Value.BpjsPayrollPercentage;
+                    payrollHistory.PensionPayrollPercentage = payrollConfiguration.Value.PensionPayrollPercentage;
+                    payrollHistory.Month = payrollInput.Month;
+                    payrollHistory.Year = payrollInput.Year;
+                    payrollHistory.StatusId = 1;
+                    payrollHistory.IsExist = true;
+                    payrollDB.Entry(payrollHistory).State = EntityState.Added;
+                    await payrollDB.PayrollHistory.AddAsync(payrollHistory);
+                    await payrollDB.SaveChangesAsync();
+
+                    List<Employee> employees = await payrollDB.Employee
+                        .Where(column => column.IsExist == true)
+                        .ToListAsync();
+                    List<PayrollDetail> payrollDetails = new List<PayrollDetail>();
+                    foreach (Employee employee in employees)
+                    {
+                        PayrollDetail payrollDetail = new PayrollDetail();
+                        payrollDetail.EmployeeId = employee.NIK;
+                        payrollDetail.PayrollHistoryId = payrollHistory.Id;
+                        payrollDetail.MainPrice = 0;
+                        payrollDetail.PayrollDetailStatusId = 1;
+                        payrollDetails.Add(payrollDetail);
+                        payrollDB.Entry(payrollDetail).State = EntityState.Added;
+                    }
+                    await payrollDB.PayrollDetail.AddRangeAsync(payrollDetails);
+                    await payrollDB.SaveChangesAsync();
+                    return new JsonResult(payrollHistory);
                 }
-                await payrollDB.PayrollDetail.AddRangeAsync(payrollDetails);
-                await payrollDB.SaveChangesAsync();
-                return new JsonResult(payrollHistory);
+                else
+                {
+                    return BadRequest($"Periode {payrollInput.Month} {payrollInput.Year} sudah ada");
+                }
             }
             catch (Exception error)
             {
@@ -122,6 +133,50 @@ namespace Payroll.Controllers.Api
             catch (Exception error)
             {
                 logger.LogError(error, $"Payroll API - ReadDatatable");
+                throw error;
+            }
+        }
+
+        [HttpPost]
+        [Authorize]
+        [Route("api/payrollHistory/submit/{id}")]
+        public async Task<IActionResult> Submit(int id)
+        {
+            try
+            {
+                PayrollHistory payrollHistory = await payrollDB.PayrollHistory
+                    .Where(column => column.Id == id)
+                    .FirstOrDefaultAsync();
+                List<PayrollDetail> payrollDetails = await payrollDB.PayrollDetail
+                    .Where(column => column.PayrollHistoryId == id)
+                    .ToListAsync();
+                bool isAnyUnUploaded = payrollDetails
+                    .Where(column => column.PayrollDetailStatusId == 1)
+                    .Any();
+                if (!isAnyUnUploaded)
+                {
+                    payrollHistory.StatusId = 3;
+                    payrollDB.Entry(payrollHistory).State = EntityState.Modified;
+                    payrollDB.Update(payrollHistory);
+                    await payrollDB.SaveChangesAsync();
+                    foreach (PayrollDetail payrollDetail in payrollDetails)
+                    {
+                        payrollDetail.PayrollDetailStatusId = 3;
+                        payrollDB.Entry(payrollDetail).State = EntityState.Modified;
+                    }
+                    payrollDB.UpdateRange(payrollDetails);
+                    await payrollDB.SaveChangesAsync();
+
+                    return new JsonResult(Ok());
+                }
+                else
+                {
+                    return new JsonResult(BadRequest("semua belum terupload"));
+                }
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error, $"Payroll History API - Submit {id}");
                 throw error;
             }
         }

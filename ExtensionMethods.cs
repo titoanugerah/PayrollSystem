@@ -1,20 +1,42 @@
-﻿using System.Linq;
+﻿using Payroll.ViewModels;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 
 namespace Payroll
 {
     public static class ExtensionMethods
     {
-        public static string GetEmail(this ClaimsPrincipal user)
+        public static int GetNIK(this ClaimsPrincipal user)
         {
-            var claims = user.Claims.ToList();
-            var email = claims.Where(x => x.Type == "Email");
-            return (email.Count() > 0) ? email.FirstOrDefault().Value : "";
+            return Convert.ToInt32(GetClaim(user, "NIK"));
         }
 
-        public static object GetAllClaims(this ClaimsPrincipal user)
+        public static string GetRole(this ClaimsPrincipal user)
         {
-            return user.Claims.ToList();
+            return GetClaim(user, "role").ToString();
+        }
+
+        public static string GetName(this ClaimsPrincipal user)
+        {
+            return GetClaim(user, "name").ToString();
+        }
+
+        public static UserIdentity GetUserIdentity(this ClaimsPrincipal user)
+        {
+            UserIdentity userIdentity = new UserIdentity();
+            userIdentity.NIK = GetNIK(user);
+            userIdentity.Name = GetName(user);
+            userIdentity.Role = GetRole(user);
+            return userIdentity;
+        }
+
+        public static object GetClaim(this ClaimsPrincipal user, string type)
+        {
+            List<Claim> claims = user.Claims.ToList();
+            var claimValue = claims.Where(claim => claim.Type.Contains(type)).FirstOrDefault().Value;
+            return claimValue != null ? claimValue : "";
         }
 
     }

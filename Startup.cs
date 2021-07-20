@@ -6,28 +6,30 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Payroll.DataAccess;
-using System.Security.Claims;
-using System.Threading.Tasks;
 using Payroll.WebSockets;
 using Microsoft.AspNetCore.Http;
+using System.Globalization;
+using Microsoft.AspNetCore.Localization;
 
 namespace Payroll
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment hostingEnvironment)
         {
             Configuration = configuration;
+            CurrentEnvironment = hostingEnvironment;
         }
+
+        public IWebHostEnvironment CurrentEnvironment { set; get; }
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            var connectionString = Configuration.GetConnectionString("PayrollDB");
+            var connectionStrings = Configuration.GetConnectionString("PayrollDev");
             services.AddDbContext<PayrollDB>(options => options
-                .UseMySQL(connectionString));
+                .UseMySQL(connectionStrings));
 
             services.Configure<ViewModels.PayrollConfiguration>(Configuration.GetSection("PayrollConfiguration"));
 
@@ -41,26 +43,8 @@ namespace Payroll
             }).AddCookie(options =>
             {
                 options.LoginPath = Configuration["Login:Path"];
-            }).AddGoogle(options =>
-            {
-                options.ClientId = Configuration["Login:ClientId"];
-                options.ClientSecret = Configuration["Login:ClientSecret"];
-                options.Scope.Add("profile");
-                options.Events.OnCreatingTicket = (context) =>
-                {
-                    var picture = context.User.GetProperty("picture").GetString();
-                    context.Identity.AddClaim(new Claim("picture", picture));
-                    var name = context.User.GetProperty("name").GetString();
-                    context.Identity.AddClaim(new Claim("name", name));
-                    var email = context.User.GetProperty("email").GetString();
-                    context.Identity.AddClaim(new Claim("email", email));
-                    return Task.CompletedTask;
-                };
             });
-
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-
-
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();           
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -72,14 +56,14 @@ namespace Payroll
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
+                app.UseExceptionHandler("/Error");
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
+            app.UseStatusCodePagesWithRedirects("/Error/{0}");
+            //app.UseStatusCodePages();
 
             app.UseAuthentication();
             app.UseAuthorization();
@@ -88,7 +72,7 @@ namespace Payroll
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Auth}/{action=Index}/{id?}");
                 endpoints.MapHub<NotificationHub>("/notificationHub");
             });
         }

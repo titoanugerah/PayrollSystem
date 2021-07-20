@@ -22,7 +22,7 @@
         { "data": "payrollDetailStatus" },
         {
             "render": function (data, type, row) {
-                return "<button type='button' class='btn btn-info' onclick=showDetailForm('" + row.id + "'); >Detail</button>";
+                return "<button type='button' class='btn btn-info' onclick=showDetailForm('" + row.id + "'); >Detail</button>" + "<a href='PayrollDetail/Download/Slip/"+row.id+"' class='btn btn-info' target='_blank'>Download</a>";
             }
         },
     ]
@@ -35,8 +35,16 @@ function downloadReport() {
         window.open('PayrollHistory/Download/Report/' + $("#payrollHistoryId").val() + '/' + $('#districtId').val(), '_blank');
     }
     $('#downloadReportModal').modal('hide');
-
 }
+
+function downloadSlip() {
+    window.open('PayrollDetail/Download/Slip/' + $("#id").val() , '_blank');
+}
+
+function downloadBankReport() {
+    window.open('PayrollHistory/Download/ReportBank/' + $("#payrollHistoryId").val(), '_blank');    
+}
+
 
 function showAddPayrollDetailForm() {
     $('#addPayrollDetailModal').modal('show');
@@ -65,10 +73,6 @@ function showDownloadReportForm() {
 var formatter = new Intl.NumberFormat('id-ID', {
     style: 'currency',
     currency: 'IDR',
-
-    // These options are needed to round to whole numbers if that's what you want.
-    //minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
-    //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
 });
 
 
@@ -80,18 +84,19 @@ function showDetailForm(id) {
         success: function (result) {
             console.log(result);
             $('#name').val(result.employee.name);
+            $('#id').val(result.id);
             $('#nik').val(result.employee.nik);
-            $('#resultPayroll').val(formatter.format(result.resultPayroll));
-            $('#feePayroll').val(formatter.format(result.feePayroll));
-            $('#taxPayroll').val(formatter.format(result.taxPayroll));
-            $('#attributePayroll').val(formatter.format(result.attributePayroll));
+            $('#mainSalaryBilling').val(formatter.format(result.mainSalaryBilling));
+            $('#insentiveBilling').val(formatter.format(result.insentiveBilling));
+            $('#attendanceBilling').val(formatter.format(result.attendanceBilling));
+            $('#overtimeBilling').val(formatter.format(result.overtimeBilling));
+            $('#apreciationBilling').val(formatter.format(result.appreciationBilling));
             $('#bpjsTkDeduction').val(formatter.format(result.bpjsTkDeduction));
             $('#bpjsKesehatanDeduction').val(formatter.format(result.bpjsKesehatanDeduction));
             $('#pensionDeduction').val(formatter.format(result.pensionDeduction));
-            $('#pkp1').val(formatter.format(result.pkP1));
             $('#pph21').val(formatter.format(result.ppH21));
-            $('#pph23').val(formatter.format(result.ppH23));
             $('#anotherDeduction').val(formatter.format(result.anotherDeduction));
+            $('#transferFee').val(formatter.format(result.transferFee));
             $('#takeHomePay').val(formatter.format(result.takeHomePay));
         },
         error: function (result) {
@@ -119,7 +124,7 @@ function updatePayrollDetail() {
         type: 'post',
         success: function (response) {
             reloadTable()
-            $('#addEmployeeModal').modal('hide');
+            $('#addPayrollDetailModal').modal('hide');
             console.log('success', response);
         },
         error: function (result) {
@@ -129,6 +134,19 @@ function updatePayrollDetail() {
     });
 }
 
+function submit() {
+    $.ajax({
+        url: 'api/PayrollHistory/submit/' + $("#payrollHistoryId").val(),
+        type: 'post',
+        success: function (response) {
+            reloadTable()
+        },
+        error: function (result) {
+            console.log('error', result);
+            notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' + result.responseText, 'danger');
+        }
+    });
+}
 
 
 $(document).ready(function () {

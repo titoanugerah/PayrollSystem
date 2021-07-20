@@ -52,29 +52,36 @@ function showEditForm(id) {
 function reloadTable() {
     table.ajax.reload();
     //getDeletedPayrollHistory();
-    notify("fa fa-check", "Berhasil", "Data berhasil di reload", "success");
 }
 
 function addPayrollHistory() {
-    $.ajax({
-        type: "POST",
-        dataType: "JSON",
-        contentType: "application/x-www-form-urlencoded",
-        url: "api/payrollHistory/create",
-        data: {
-            Month: $("#addMonth").val(),
-            Year: $("#addYear").val(),
-        },
-        success: function (result) {
-            $('#addPayrollHistoryModal').modal('hide');
-            notify('fas fa-check', 'Berhasil', 'PayrollHistory berhasil ditambahkan', 'success');
-            reloadTable();
-        },
-        error: function (result) {
-            console.log(result);
-            notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' + result.responseText, 'danger');
-        }
-    });
+    if ($("#addMonth").val() != "" && $("#addYear").val() != "" ) {
+        $('.spinner-border').show();
+        $.ajax({
+            type: "POST",
+            dataType: "JSON",
+            contentType: "application/x-www-form-urlencoded",
+            url: "api/payrollHistory/create",
+            data: {
+                Month: $("#addMonth").val(),
+                Year: $("#addYear").val(),
+            },
+            success: function (result) {
+                $('.spinner-border').hide();
+                $('#addPayrollHistoryModal').modal('hide');
+                notify('fas fa-check', 'Berhasil', 'PayrollHistory berhasil ditambahkan', 'success');
+                reloadTable();
+            },
+            error: function (result) {
+                console.log(result);
+                $('.spinner-border').hide();
+                $('#addPayrollHistoryModal').modal('hide');
+                notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' + result.responseText, 'danger');
+            }
+        });
+    } else {
+        notify('fas fa-times', 'Gagal', "Mohon lengkapi kolom bulan dan tahun", 'danger');
+    }
 }
 
 
@@ -159,6 +166,7 @@ $(document).ready(function () {
     $('.select2addmodal').select2({
         dropdownParent: $('#addPayrollHistoryModal')
     });
+    $('.spinner-border').hide();
     //getDeletedPayrollHistory();
 });
 

@@ -30,14 +30,25 @@ namespace Payroll.Controllers.Api
         {
             try
             {
-                District district = new District();
-                district.Name = districtInput.Name;
-                district.Remark = districtInput.Remark;
-                district.IsExist = true;
-                payrollDB.District.Add(district);                
-                payrollDB.Entry(district).State = EntityState.Added;
-                await payrollDB.SaveChangesAsync();
-                return new JsonResult(district);
+                bool isExist = payrollDB.District
+                    .Where(column => column.Name == districtInput.Name)
+                    .Any();
+                if (!isExist)
+                {
+                    District district = new District();
+                    district.Name = districtInput.Name;
+                    district.Remark = districtInput.Remark;
+                    district.IsExist = true;
+                    payrollDB.District.Add(district);                
+                    payrollDB.Entry(district).State = EntityState.Added;
+                    await payrollDB.SaveChangesAsync();
+                    return new JsonResult(district);
+                }
+                else
+                {
+                    return BadRequest($"{districtInput.Name} sebelumnya sudah terdaftar");
+                }
+
             }
             catch (Exception error)
             {
@@ -55,6 +66,7 @@ namespace Payroll.Controllers.Api
             try
             {
                 List<District> district = await payrollDB.District
+                    .OrderBy(column => column.Name)
                     .ToListAsync();
                 return new JsonResult(district);
             }

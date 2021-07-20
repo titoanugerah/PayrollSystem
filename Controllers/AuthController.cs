@@ -1,15 +1,18 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Payroll.DataAccess;
+using Payroll.Models;
+using Payroll.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Payroll.Controllers
@@ -25,85 +28,116 @@ namespace Payroll.Controllers
             payrollDB = _payrollDB;
         }
 
+        public async Task<IActionResult> Index()
+        {
+            return RedirectToAction("Login", "Auth");
+        }
+
         [Route("Auth/Login")]
         [AllowAnonymous]
         public async Task<IActionResult> Login()
         {
             try
             {
-                var properties = new AuthenticationProperties
-                {
-                    AllowRefresh = true,
-                    IsPersistent = true,
-                    ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(30),
-                    RedirectUri = Url.Action("Validate")
-                };
-                return Challenge(properties, GoogleDefaults.AuthenticationScheme);
+                return View();
             }
             catch (Exception error)
             {
                 logger.LogError(error, "Auth Controller - Login");
-                throw;
+                throw error;
+            }
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        [Route("Auth/Validate")]
+        public async Task<IActionResult> Validate(LoginInput loginInput)
+        {
+            try
+            {
+                string encryptedPassword = null;
+                using (MD5 md5Hash = MD5.Create())
+                {
+                    encryptedPassword = GetMd5Hash(md5Hash, loginInput.Password);
+                }
+                    Employee employee = await payrollDB.Employee
+                    .Include(table => table.Role)
+                    .Where(column => column.NIK == loginInput.NIK)
+                    .Where(column => column.Password == encryptedPassword)
+                    .FirstOrDefaultAsync();
+
+
+                if (employee != null)
+                {
+                    List<Claim> userClaims = new List<Claim>()
+                    {
+                        new Claim("NIK", employee.NIK.ToString()),
+                        new Claim(ClaimTypes.Name, employee.Name),
+                        new Claim(ClaimTypes.Role, employee.Role.Name),
+                    };
+                    ClaimsIdentity userIdentity = new ClaimsIdentity(userClaims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    ClaimsPrincipal userPrincipal = new ClaimsPrincipal(userIdentity);
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, userPrincipal);
+                    return RedirectToAction("Index", "Dashboard");
+                }
+                else
+                {
+                    ViewBag.Message = $"Kombinasi nik dan password anda keliru, silahkan cek kembali";
+                    return View("Login");
+                }
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error, "Auth Controller - Validation");
+                ViewBag.Message = $"Error : {error.Message}";
+                return View("Login");
             }
         }
 
         [AllowAnonymous]
-        [Route("Auth/Validate")]
-        public async Task<IActionResult> Validate()
+        [HttpPost]
+        [Route("Auth/Reset")]
+        public async Task<IActionResult> Reset(ResetInput resetInput)
         {
             try
             {
-                var response = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-                List<ViewModels.UserClaim> userClaim = response.Principal
-                    .Identities.FirstOrDefault().Claims
-                    .Where(claim => claim.Type == "email" || claim.Type == "name" || claim.Type == "picture")
-                    .Select(claim => new ViewModels.UserClaim
-                    {
-                        Type = claim.Type,
-                        Value = claim.Value
-                    })
-                    .ToList();
-                ViewModels.UserIdentity userIdentity = new ViewModels.UserIdentity();
-                userIdentity.Email = userClaim.Where(claim => claim.Type == "email").Select(claim => claim.Value).FirstOrDefault();
-                userIdentity.Picture = userClaim.Where(claim => claim.Type == "picture").Select(claim => claim.Value).FirstOrDefault();
-                userIdentity.Name = userClaim.Where(claim => claim.Type == "name").Select(claim => claim.Value).FirstOrDefault();
-                var checkUser = payrollDB.Employee
-                    .Any(user => user.Email == userIdentity.Email);
-                if (checkUser)
+                Employee employee = await payrollDB.Employee
+                    .Where(column => column.NIK == resetInput.NIK)
+                    .Where(column => column.KTP == resetInput.KTP)
+                    .FirstOrDefaultAsync();
+                if (employee != null)
                 {
-                    var user = payrollDB.Employee                        
-                        .Include(table => table.Role)
-                        .Where(user => user.Email == userIdentity.Email)
-                        .FirstOrDefault();
-                    user.Image = userIdentity.Picture;
-                    //user.Name = userIdentity.Name;
-                    await payrollDB.SaveChangesAsync();
-                    var claims = new List<Claim>
+                    using (MD5 md5Hash = MD5.Create())
                     {
-                        new Claim("NIK", user.NIK.ToString()),
-                        new Claim("Name", user.Name),
-                        new Claim("Email", user.Email),
-                        new Claim("Role", user.Role.Name),
-                        new Claim("Image", user.Image),
-                        new Claim("RoleId", user.RoleId.ToString())
-                    };
-                    var claimsIdentity = new ClaimsIdentity(
-                    claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                    var authProperties = new AuthenticationProperties();
-                    await HttpContext.SignInAsync(
-                        CookieAuthenticationDefaults.AuthenticationScheme,
-                        new ClaimsPrincipal(claimsIdentity),
-                        authProperties);
-                    return RedirectToAction("Index", "Home");
+                        employee.Password = GetMd5Hash(md5Hash, resetInput.Password);
+                        payrollDB.Entry(employee).State = EntityState.Modified;
+                        payrollDB.Employee.Update(employee);
+                        await payrollDB.SaveChangesAsync();
+                        ViewBag.Message = $"Password berhasil direset sesuai dengan NIK";
+                    }
                 }
-                return Json("User Not Registered");
+                else
+                {
+                    ViewBag.Message = $"Kombinasi NIK dan nomor KTP anda salah, silahkan ulangi kembali";
+                }
             }
             catch (Exception error)
             {
-                logger.LogError(error, "Auth Controller - Validate ");
-                throw;
+                logger.LogError(error, $"Auth Controller - Reset");
+                ViewBag.Message = error.Message;
             }
+            return View("Login");
+        }
 
+        static string GetMd5Hash(MD5 md5Hash, string input)
+        {
+            byte[] data = md5Hash.ComputeHash(Encoding.UTF8.GetBytes(input));
+            StringBuilder sBuilder = new StringBuilder();
+            for (int i = 0; i < data.Length; i++)
+            {
+                sBuilder.Append(data[i].ToString("x2"));
+            }
+            return sBuilder.ToString();
         }
 
         [Authorize]
@@ -113,12 +147,12 @@ namespace Payroll.Controllers
             try
             {
                 await HttpContext.SignOutAsync();
-                return RedirectToAction("Index", "Home");
+                return RedirectToAction("Login", "Auth");
             }
             catch (Exception error)
             {
                 logger.LogError(error, "Account Controller - Logout");
-                throw;
+                throw error;
             }
         }
 

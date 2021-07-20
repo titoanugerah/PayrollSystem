@@ -101,7 +101,13 @@ namespace Payroll.Models
 
         [DefaultValue(0)]
         public int AtributeBilling { set; get; }
-
+        [DefaultValue(0)]
+        public int AppreciationBilling { set; get; }
+        [DefaultValue(0)]
+        public int TransferFee { set; get; }
+        [Column(TypeName = "bit")]
+        [DefaultValue(false)]
+        public bool IsLateTransfer { set; get; }
         [DefaultValue(0)]
         public int MainPrice { set; get; }
         [NotMapped]
@@ -168,7 +174,7 @@ namespace Payroll.Models
         {
             get
             {
-                return Convert.ToInt32(MainPrice + ManagementFeeBilling + InsentiveBilling + AttendanceBilling + OvertimeBilling);
+                return Convert.ToInt32(MainPrice + ManagementFeeBilling + InsentiveBilling + AttendanceBilling + AppreciationBilling + OvertimeBilling);
             }
         }
         [NotMapped]

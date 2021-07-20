@@ -9,6 +9,41 @@
     border: 0px;
 }
 
+@keyframes spinner-border {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+.spinner-border {
+	position: relative;
+	display: inline-block;
+	width: 2rem;
+	height: 2rem;
+	overflow: hidden;
+	text-indent: -999em;
+	vertical-align: text-bottom;
+	border: .25em solid;
+	border-color: currentColor transparent currentColor currentColor;
+	border-radius: 50%;
+	animation-name: spinner-border;
+	animation-duration: .75s;
+	animation-timing-function: linear;
+	animation-iteration-count: infinite;
+}
+
+
+.spinner-border-sm {
+	width: 1rem;
+	height: 1rem;
+	border-width: .2em;
+
+	&.spinner-border-reverse::after
+	{
+	border-width: .2em;
+	}
+}
+
 @body-bg: #ffffff;
 @text-color: #373737;
 @gray-base: #494949;
@@ -22,6 +57,25 @@
 @brand-info: #5bc0de;
 @brand-warning: #d1bd10;
 @brand-danger: #ba1f1f;
+
+.env-notice {
+	position: absolute;
+	width: 300px;
+	height: 30px;
+	line-height: 30px;
+	font-size: 14px;
+	text-align: center;
+	font-weight: bold;
+	top: 36px;
+	right: -100px;
+	z-index: 2000;
+	background-color: gold;
+	color: black;
+	opacity: .8;
+	transform: rotate(45deg);
+}
+
+
 
 /* Timeline */
 .timeline {
@@ -196,3 +250,4 @@
 		
 	}
 }
+

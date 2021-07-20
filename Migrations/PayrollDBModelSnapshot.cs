@@ -121,26 +121,21 @@ namespace Payroll.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("AccountName")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("AccountNumber")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Address")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("BankCode")
-                        .IsRequired()
                         .HasColumnType("varchar(4)");
 
                     b.Property<DateTime>("BirthDate")
                         .HasColumnType("datetime");
 
                     b.Property<string>("BirthPlace")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("BpjsNumber")
@@ -165,8 +160,7 @@ namespace Payroll.Migrations
                     b.Property<DateTime>("DriverLicenseExpire")
                         .HasColumnType("datetime");
 
-                    b.Property<string>("Email")
-                        .IsRequired()
+                    b.Property<string>("DriverLicenseType")
                         .HasColumnType("text");
 
                     b.Property<int>("EmploymentStatusId")
@@ -176,7 +170,6 @@ namespace Payroll.Migrations
                         .HasColumnType("datetime");
 
                     b.Property<string>("FamilyStatusCode")
-                        .IsRequired()
                         .HasColumnType("varchar(2)");
 
                     b.Property<ulong>("HasIdCard")
@@ -188,8 +181,8 @@ namespace Payroll.Migrations
                     b.Property<ulong>("HasUniform")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Image")
-                        .HasColumnType("text");
+                    b.Property<DateTime>("IdCardDeliveryDate")
+                        .HasColumnType("datetime");
 
                     b.Property<ulong>("IsExist")
                         .HasColumnType("bit");
@@ -232,15 +225,17 @@ namespace Payroll.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("PhoneNumber")
+                    b.Property<string>("Password")
                         .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PhoneNumber")
                         .HasColumnType("text");
 
                     b.Property<int>("PositionId")
                         .HasColumnType("int");
 
                     b.Property<string>("Religion")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("RoleId")
@@ -251,6 +246,21 @@ namespace Payroll.Migrations
                         .HasColumnType("varchar(1)");
 
                     b.Property<DateTime>("StartContract")
+                        .HasColumnType("datetime");
+
+                    b.Property<DateTime>("TrainingDeliveryDate")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("TrainingGrade")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TrainingName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TrainingRemark")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UniformDeliveryDate")
                         .HasColumnType("datetime");
 
                     b.HasKey("NIK");
@@ -391,6 +401,9 @@ namespace Payroll.Migrations
                     b.Property<string>("AnotherDeductionRemark")
                         .HasColumnType("text");
 
+                    b.Property<int>("AppreciationBilling")
+                        .HasColumnType("int");
+
                     b.Property<int>("AtributeBilling")
                         .HasColumnType("int");
 
@@ -431,6 +444,9 @@ namespace Payroll.Migrations
                         .HasColumnType("int");
 
                     b.Property<ulong>("IsExist")
+                        .HasColumnType("bit");
+
+                    b.Property<ulong>("IsLateTransfer")
                         .HasColumnType("bit");
 
                     b.Property<int>("JamsostekBilling")
@@ -500,6 +516,9 @@ namespace Payroll.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("TotalPayroll")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TransferFee")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -654,9 +673,7 @@ namespace Payroll.Migrations
                 {
                     b.HasOne("Payroll.Models.Bank", "Bank")
                         .WithMany()
-                        .HasForeignKey("BankCode")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("BankCode");
 
                     b.HasOne("Payroll.Models.Customer", "Customer")
                         .WithMany()
@@ -672,9 +689,7 @@ namespace Payroll.Migrations
 
                     b.HasOne("Payroll.Models.FamilyStatus", "FamilyStatus")
                         .WithMany()
-                        .HasForeignKey("FamilyStatusCode")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("FamilyStatusCode");
 
                     b.HasOne("Payroll.Models.Location", "Location")
                         .WithMany()

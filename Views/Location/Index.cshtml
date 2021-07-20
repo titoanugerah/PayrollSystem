@@ -84,7 +84,10 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-primary" onclick="addLocation()">Simpan</button>
+                            <button type="button" class="btn btn-primary" onclick="addLocation()">
+                                <div class="spinner-border spinner-border-sm"></div>
+                                Simpan
+                            </button>
                             <button type="button" data-dismiss="modal" class="btn btn-secondary">Kembali</button>
                         </div>
                     </div>
@@ -96,7 +99,10 @@
                             </select>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-primary" onclick="recoverLocation()">Pulihkan</button>
+                            <button type="button" class="btn btn-primary" onclick="recoverLocation()">
+                                <div class="spinner-border spinner-border-sm"></div>
+                                Pulihkan
+                            </button>
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Kembali</button>
                         </div>
                     </div>
@@ -138,8 +144,14 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" onclick="updateLocation()">Simpan</button>
-                    <button type="button" class="btn btn-danger" onclick="deleteLocation()">Hapus</button>
+                    <button type="button" class="btn btn-primary" onclick="updateLocation()">
+                        <div class="spinner-border spinner-border-sm"></div>
+                        Simpan
+                    </button>
+                    <button type="button" class="btn btn-danger" onclick="deleteLocation()">
+                        <div class="spinner-border delete spinner-border-sm"></div>
+                        Hapus
+                    </button>
                     <button type="button" data-dismiss="modal" class="btn btn-secondary">Kembali</button>
                 </div>
             </div>

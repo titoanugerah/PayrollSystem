@@ -6,6 +6,7 @@ using Payroll.DataAccess;
 using Payroll.Models;
 using Payroll.ViewModels;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -29,15 +30,25 @@ namespace Payroll.Controllers.Api
         {
             try
             {
-                Models.Customer customer = new Models.Customer();
-                customer.Name = customerInput.Name;
-                customer.Remark = customerInput.Remark;
-                customer.IsExist = true;
-                payrollDB.Customer.Add(customer);
-                payrollDB.Entry(customer).State = EntityState.Added;
+                bool isExist = payrollDB.Customer
+                    .Where(column => column.Name == customerInput.Name)
+                    .Any();
+                if (!isExist)
+                {
+                    Customer customer = new Customer();
+                    customer.Name = customerInput.Name;
+                    customer.Remark = customerInput.Remark;
+                    customer.IsExist = true;
+                    payrollDB.Customer.Add(customer);
+                    payrollDB.Entry(customer).State = EntityState.Added;
 
-                await payrollDB.SaveChangesAsync();
-                return new JsonResult(customer);
+                    await payrollDB.SaveChangesAsync();
+                    return new JsonResult(customer);
+                }
+                else
+                {
+                    return BadRequest($"{customerInput.Name} sebelumnya sudah terdaftar");
+                }
             }
             catch (Exception error)
             {
@@ -89,6 +100,25 @@ namespace Payroll.Controllers.Api
             catch (Exception error)
             {
                 logger.LogError(error, $"Customer API Controller - Read Detail {id}");
+                throw error;
+            }
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("api/customer/read")]
+        public async Task<IActionResult> Read()
+        {
+            try
+            {
+                List<Customer> customers = await payrollDB.Customer
+                    .OrderBy(column => column.Name)
+                    .ToListAsync();
+                return new JsonResult(customers);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error, $"Customer API - Read");
                 throw error;
             }
         }
@@ -173,7 +203,7 @@ namespace Payroll.Controllers.Api
                 customer.IsExist = true;
                 payrollDB.Entry(customer).State = EntityState.Modified;
                 await payrollDB.SaveChangesAsync();
-                return Ok();
+                return new JsonResult(customer);
             }
             catch(Exception error)
             {

@@ -7,6 +7,7 @@
             <div class="ml-md-auto py-2 py-md-0">
                 <input type="number" id="payrollHistoryId" value="@ViewBag.Id" hidden />
                 <button type="button" onclick="submit()" class="btn btn-white btn-border btn-round mr-2">Submit</button>
+                <button type="button" onclick="downloadBankReport()" class="btn btn-white btn-border btn-round mr-2">Report Bank</button>
                 <button type="button" onclick="showDownloadReportForm()" class="btn btn-white btn-border btn-round mr-2">Download</button>
                 <button type="button" onclick="showAddPayrollDetailForm()" class="btn btn-white btn-border btn-round mr-2">Upload Gaji</button>
                 <button type="button" onclick="reloadTable()" class="btn btn-white btn-border btn-round mr-2">Reload Data</button>
@@ -64,7 +65,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <a href="~/file/templateEmployee.xlsx" class="btn btn-success pull-left">Download Format Excel</a>
+                    <a href="~/file/TemplateBilling.xlsx" class="btn btn-success pull-left">Download Format Excel</a>
                     <button type="button" class="btn btn-primary" onclick="updatePayrollDetail()">Simpan</button>
                     <button type="button" data-dismiss="modal" class="btn btn-secondary">Kembali</button>
                 </div>
@@ -89,6 +90,7 @@
                         <div class="form-group">
                             <label>Nama</label>
                             <input type="text" class="form-control" id="name">
+                            <input type="text" class="form-control" id="id">
                         </div>
                     </div>
                     <div class="col-md-6">
@@ -98,31 +100,40 @@
                         </div>
                     </div>
                     <div class="col-md-12" style="overflow-x: hidden;overflow-y: scroll;height:200px;">
-                        <div class="col-md-12 ">
-                            <div class="form-group row">
-                                <label class="col-md-6">Gaji Pokok</label>
-                                <input type="text" id="resultPayroll" class="form-control col-md-6">
-                            </div>
-                        </div>
-                        <div class="col-md-12 ">
-                            <div class="form-group row">
-                                <label class="col-md-6">Management Fee</label>
-                                <input type="text" id="feePayroll" class="form-control col-md-6">
-                            </div>
-                        </div>
-                        <div class="col-md-12 ">
-                            <div class="form-group row">
-                                <label class="col-md-6">Tunjangan Pajak</label>
-                                <input type="text" id="taxPayroll" class="form-control col-md-6">
-                            </div>
-                        </div>
+                        <p>Penghasilan</p>
 
                         <div class="col-md-12 ">
                             <div class="form-group row">
-                                <label class="col-md-6">Perlengkapan</label>
-                                <input type="text" id="attributePayroll" class="form-control col-md-6">
+                                <label class="col-md-6">Gaji Pokok</label>
+                                <input type="text" id="mainSalaryBilling" class="form-control col-md-6">
                             </div>
                         </div>
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Insentif</label>
+                                <input type="text" id="insentiveBilling" class="form-control col-md-6">
+                            </div>
+                        </div>
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Premi Kehadiran</label>
+                                <input type="text" id="attendanceBilling" class="form-control col-md-6">
+                            </div>
+                        </div>
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Overtime</label>
+                                <input type="text" id="overtimeBilling" class="form-control col-md-6">
+                            </div>
+                        </div>
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Lain Lain</label>
+                                <input type="text" id="apreciationBilling" class="form-control col-md-6">
+                            </div>
+                        </div>
+
+                        <p>Potongan</p>
 
                         <div class="col-md-12 ">
                             <div class="form-group row">
@@ -130,7 +141,6 @@
                                 <input type="text" id="bpjsTkDeduction" class="form-control col-md-6">
                             </div>
                         </div>
-
                         <div class="col-md-12 ">
                             <div class="form-group row">
                                 <label class="col-md-6">Potongan BPJS KS</label>
@@ -147,13 +157,6 @@
 
                         <div class="col-md-12 ">
                             <div class="form-group row">
-                                <label class="col-md-6">Potongan Pajak PKP1</label>
-                                <input type="text" id="pkp1" class="form-control col-md-6">
-                            </div>
-                        </div>
-
-                        <div class="col-md-12 ">
-                            <div class="form-group row">
                                 <label class="col-md-6">PPH 21</label>
                                 <input type="text" id="pph21" class="form-control col-md-6">
                             </div>
@@ -161,15 +164,15 @@
 
                         <div class="col-md-12 ">
                             <div class="form-group row">
-                                <label class="col-md-6">PPH 23</label>
-                                <input type="text" id="pph23" class="form-control col-md-6">
+                                <label class="col-md-6">Potongan Lainnya</label>
+                                <input type="text" id="anotherDeduction" class="form-control col-md-6">
                             </div>
                         </div>
 
                         <div class="col-md-12 ">
                             <div class="form-group row">
-                                <label class="col-md-6">Potongan Lainnya</label>
-                                <input type="text" id="anotherDeduction" class="form-control col-md-6">
+                                <label class="col-md-6">Biaya Transfer</label>
+                                <input type="text" id="transferFee" class="form-control col-md-6">
                             </div>
                         </div>
                     </div>
@@ -182,6 +185,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
+                    <button type="button" onclick="downloadSlip()" class="btn btn-primary">Download</button>
                     <button type="button" data-dismiss="modal" class="btn btn-secondary">Kembali</button>
                 </div>
 

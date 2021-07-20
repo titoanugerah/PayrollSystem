@@ -12,6 +12,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Payroll.Controllers.Api
@@ -40,7 +42,7 @@ namespace Payroll.Controllers.Api
             try
             {
                 List<Bank> banks = await payrollDB.Bank.ToListAsync();
-                List<Models.Customer> customers = await payrollDB.Customer.ToListAsync();
+                List<Customer> customers = await payrollDB.Customer.ToListAsync();
                 List<District> districts = await payrollDB.District.ToListAsync();
                 List<Employee> employees = await payrollDB.Employee.ToListAsync();
                 List<EmploymentStatus> employmentStatuses = await payrollDB.EmploymentStatus.ToListAsync();
@@ -49,11 +51,7 @@ namespace Payroll.Controllers.Api
                 List<Position> positions = await payrollDB.Position.ToListAsync();
                 List<Role> roles = await payrollDB.Role.ToListAsync();
                 List<Employee> newEmployees = new List<Employee>();
-
-                //string fileName = "NewEmployee.xlsx";
-                //string filePath = Path.Combine(hostingEnvironment.WebRootPath, "file", fileName);
-                //System.IO.File.Delete(filePath);
-                //file.CopyTo(new FileStream(filePath, FileMode.Create));
+                List<Employee> updateEmployees = new List<Employee>();
 
                 using (var stream = new MemoryStream())
                 {
@@ -70,17 +68,29 @@ namespace Payroll.Controllers.Api
                             for (row = 7; row <= end.Row; row++)
                             {
                                 bool isValid = true;
-                                Employee employee = new Employee();
+                                bool isExist = false;
+                                Employee employee = employees
+                                    .Where(column => column.NIK == int.Parse(worksheet.Cells[$"C{row}"].Value.ToString().Replace(" ", string.Empty)))
+                                    .FirstOrDefault();
+                                if (employee!=null)
+                                {
+                                    isExist = true;
+                                }
+                                else
+                                {
+                                    isExist = false;
+                                    employee = new Employee();
+                                }                 
 
                                 if (worksheet.Cells[$"A{row}"].Value.ToString() == "AKTIF")
                                 {
                                     employee.IsExist = true;
+                                    value = $"IsExist : {employee.IsExist}";
                                 }
                                 else
                                 {
                                     employee.IsExist = false;
                                 }
-                                value = $"IsExist : {employee.IsExist}";
 
                                 if (worksheet.Cells[$"C{row}"].Value != null)
                                 {
@@ -104,15 +114,10 @@ namespace Payroll.Controllers.Api
                                     isValid = false;
                                 }
 
-                                if (worksheet.Cells[$"E{row}"].Value != null)
+                                if (worksheet.Cells[$"F{row}"].Value != null)
                                 {
-                                    employee.PhoneNumber = worksheet.Cells[$"E{row}"].Value.ToString().Replace(" ", string.Empty); ;
+                                    employee.PhoneNumber = worksheet.Cells[$"F{row}"].Value.ToString().Replace(" ", string.Empty);
                                     value = $"PhoneNumber : {employee.PhoneNumber}";
-                                }
-                                else
-                                {
-                                    worksheet.Cells[$"E{row}"].Value = "Belum Diisi";
-                                    isValid = false;
                                 }
 
                                 if (worksheet.Cells[$"G{row}"].Value != null)
@@ -146,26 +151,15 @@ namespace Payroll.Controllers.Api
 
                                 if (worksheet.Cells[$"K{row}"].Value != null)
                                 {
-
                                     string locationName = worksheet.Cells[$"K{row}"].Value.ToString().Replace(" ",string.Empty);
                                     employee.LocationId = locations.Where(column => column.Name.ToLower().Replace(" ", string.Empty) == locationName.ToLower()).FirstOrDefault().Id;
                                     value = $"LocationId : {employee.LocationId}";
-                                }
-                                else
-                                {
-                                    worksheet.Cells[$"K{row}"].Value = "Belum Diisi";
-                                    isValid = false;
                                 }
 
                                 if (worksheet.Cells[$"L{row}"].Value != null)
                                 {
                                     employee.CustomerId = customers.Where(column => column.Name.ToLower().Replace(" ", string.Empty) == worksheet.Cells[$"L{row}"].Value.ToString().ToLower().Replace(" ", string.Empty)).FirstOrDefault().Id;
                                     value = $"CustomerId: {employee.CustomerId}";
-                                }
-                                else
-                                {
-                                    worksheet.Cells[$"L{row}"].Value = "Belum Diisi";
-                                    isValid = false;
                                 }
 
                                 if (worksheet.Cells[$"N{row}"].Value != null)
@@ -207,7 +201,7 @@ namespace Payroll.Controllers.Api
                                 {
                                     worksheet.Cells[$"P{row}"].Value = "Belum Diisi";
                                     isValid = false;
-                                    }
+                                }
 
                                 if (worksheet.Cells[$"Q{row}"].Value != null)
                                 {
@@ -313,97 +307,138 @@ namespace Payroll.Controllers.Api
 
                                 if (worksheet.Cells[$"AA{row}"].Value != null)
                                 {
-                                    employee.DriverLicense = worksheet.Cells[$"AA{row}"].Value.ToString().Replace(" ", string.Empty);
-                                    value = $"DriverLicense : {employee.DriverLicense}";
+                                    employee.DriverLicenseType = worksheet.Cells[$"AA{row}"].Value.ToString().Replace(" ", string.Empty);
+                                    value = $"DriverLicense : {employee.DriverLicenseType}";
                                 }
-                                //else
-                                //{
-                                //    worksheet.Cells[$"AA{row}"].Value = "Belum Diisi";
-                                //    isValid = false;
-                                //}
+
 
                                 if (worksheet.Cells[$"AB{row}"].Value != null)
                                 {
-                                    DateTime dateTimeString;
-                                    if (DateTime.TryParse(worksheet.Cells[$"AB{row}"].Value.ToString(), out dateTimeString))
-                                    {
-                                        employee.DriverLicenseExpire = dateTimeString;
-                                    }
-                                    else if(worksheet.Cells[$"AB{row}"].Value.ToString().ToLower().Replace(" ", string.Empty) == "seumurhidup")
-                                    {
-                                        employee.DriverLicenseExpire = DateTime.MaxValue;
-                                    }
-                                    else
-                                    {
-                                        employee.DriverLicenseExpire = DateTime.FromOADate(int.Parse(worksheet.Cells[$"AB{row}"].Value.ToString()));
-                                    }
-                                    value = $"DriverLicenseExpire : {employee.DriverLicenseExpire}";
+                                    employee.DriverLicense = worksheet.Cells[$"AB{row}"].Value.ToString().Replace(" ", string.Empty);
+                                    value = $"DriverLicense : {employee.DriverLicense}";
                                 }
-                                //else
-                                //{
-                                //    worksheet.Cells[$"AB{row}"].Value = "Belum Diisi";
-                                //    isValid = false;
-                                //}
 
                                 if (worksheet.Cells[$"AC{row}"].Value != null)
                                 {
+                                    DateTime dateTimeString;
+                                    if (DateTime.TryParse(worksheet.Cells[$"AC{row}"].Value.ToString(), out dateTimeString))
+                                    {
+                                        employee.DriverLicenseExpire = dateTimeString;
+                                    }
+                                    else if(worksheet.Cells[$"AC{row}"].Value.ToString().ToLower().Replace(" ", string.Empty) == "seumurhidup")
+                                    {
+                                        employee.DriverLicenseExpire = DateTime.MaxValue;
+                                    }
+                                    else if (worksheet.Cells[$"AC{row}"].Value.ToString().ToLower().Replace(" ", string.Empty) == "nondriver")
+                                    {
+                                        //employee.DriverLicenseExpire ;
+                                    }
+                                    else
+                                    {
+                                        employee.DriverLicenseExpire = DateTime.FromOADate(int.Parse(worksheet.Cells[$"AC{row}"].Value.ToString()));
+                                    }
+                                    value = $"DriverLicenseExpire : {employee.DriverLicenseExpire}";
+                                }
+
+                                if (worksheet.Cells[$"AD{row}"].Value != null)
+                                {
                                     employee.HasUniform = true;
                                     value = $"HasUniform : {employee.HasUniform}";
-
                                 }
-                                if (worksheet.Cells[$"AD{row}"].Value != null)
+
+                                if (worksheet.Cells[$"AE{row}"].Value != null)
+                                {
+                                    DateTime dateTimeString;
+                                    if (DateTime.TryParse(worksheet.Cells[$"AE{row}"].Value.ToString(), out dateTimeString))
+                                    {
+                                        employee.UniformDeliveryDate = dateTimeString;
+                                    }
+                                    else
+                                    {
+                                        employee.UniformDeliveryDate = DateTime.FromOADate(int.Parse(worksheet.Cells[$"AE{row}"].Value.ToString()));
+                                    }
+                                    value = $"Uniform Delivery Date : {employee.UniformDeliveryDate}";
+                                }
+
+                                if (worksheet.Cells[$"AF{row}"].Value != null)
                                 {
                                     employee.HasIdCard = true;
                                     value = $"HasIDCard : {employee.HasIdCard}";
                                 }
-                                if (worksheet.Cells[$"AE{row}"].Value != null)
+
+                                if (worksheet.Cells[$"AG{row}"].Value != null)
+                                {
+                                    DateTime dateTimeString;
+                                    if (DateTime.TryParse(worksheet.Cells[$"AG{row}"].Value.ToString(), out dateTimeString))
+                                    {
+                                        employee.IdCardDeliveryDate = dateTimeString;
+                                    }
+                                    else
+                                    {
+                                        employee.IdCardDeliveryDate = DateTime.FromOADate(int.Parse(worksheet.Cells[$"AG{row}"].Value.ToString()));
+                                    }
+                                    value = $"ID Card Delivery Date : {employee.IdCardDeliveryDate}";
+                                }
+
+                                if (worksheet.Cells[$"AH{row}"].Value != null)
+                                {
+                                    employee.TrainingName = worksheet.Cells[$"AH{row}"].Value.ToString().Replace(" ", string.Empty);
+                                    value = $"Training Name: {employee.TrainingName}";
+                                }
+
+                                if (worksheet.Cells[$"AI{row}"].Value != null)
+                                {
+                                    employee.TrainingRemark = worksheet.Cells[$"AI{row}"].Value.ToString().Replace(" ", string.Empty);
+                                    value = $"Training Remark: {employee.TrainingRemark}";
+                                }
+
+                                if (worksheet.Cells[$"AJ{row}"].Value != null)
+                                {
+                                    DateTime dateTimeString;
+                                    if (DateTime.TryParse(worksheet.Cells[$"AJ{row}"].Value.ToString(), out dateTimeString))
+                                    {
+                                        employee.TrainingDeliveryDate = dateTimeString;
+                                    }
+                                    else
+                                    {
+                                        employee.TrainingDeliveryDate = DateTime.FromOADate(int.Parse(worksheet.Cells[$"AJ{row}"].Value.ToString()));
+                                    }
+                                    value = $"Training Date : {employee.TrainingDeliveryDate}";
+                                }
+
+                                if (worksheet.Cells[$"AK{row}"].Value != null)
                                 {
                                     employee.HasTraining = true;
                                     value = $"HasTraining: {employee.HasTraining}";
                                 }
-                                //else
-                                //{
-                                //    worksheet.Cells[$"AC{row}"].Value = "Belum Diisi";
-                                //    worksheet.Cells[$"AD{row}"].Value = "Belum Diisi";
-                                //    worksheet.Cells[$"AE{row}"].Value = "Belum Diisi";
-                                //    isValid = false;
-                                //}
 
-                                if (worksheet.Cells[$"AG{row}"].Value != null)
+                                if (worksheet.Cells[$"AL{row}"].Value != null)
                                 {
-                                    employee.BpjsNumber = worksheet.Cells[$"AG{row}"].Value == null ? worksheet.Cells[$"AG{row}"].Value.ToString().Replace(" ", string.Empty) : null;
+                                    employee.TrainingGrade = worksheet.Cells[$"AL{row}"].Value.ToString().Replace(" ", string.Empty);
+                                    value = $"Training Grade: {employee.TrainingGrade}";
+                                }
+
+                                if (worksheet.Cells[$"AM{row}"].Value != null)
+                                {
+                                    employee.BpjsNumber = worksheet.Cells[$"AM{row}"].Value == null ? worksheet.Cells[$"AM{row}"].Value.ToString().Replace(" ", string.Empty) : null;
                                     value = $"BpjsNumber : {employee.BpjsNumber}";
                                 }
-                                //else
-                                //{
-                                //    worksheet.Cells[$"AG{row}"].Value = "Belum Diisi";
-                                //    isValid = false;
-                                //}
 
-                                if (worksheet.Cells[$"AH{row}"].Value != null)
+                                if (worksheet.Cells[$"AN{row}"].Value != null)
                                 {
-                                    employee.BpjsRemark = worksheet.Cells[$"AH{row}"].Value == null ? worksheet.Cells[$"AH{row}"].Value.ToString() : null;
+                                    employee.BpjsRemark = worksheet.Cells[$"AN{row}"].Value == null ? worksheet.Cells[$"AN{row}"].Value.ToString() : null;
                                     value = $"BpjsRemark : {employee.BpjsRemark}";
                                 }
-                                //else
-                                //{
-                                //    employee.BpjsRemark = "";
-                                //}
 
-                                if (worksheet.Cells[$"AI{row}"].Value != null)
+                                if (worksheet.Cells[$"AP{row}"].Value != null)
                                 {
-                                    employee.JamsostekNumber = worksheet.Cells[$"AI{row}"].Value.ToString().Replace(" ", string.Empty);
+                                    employee.JamsostekNumber = worksheet.Cells[$"AP{row}"].Value.ToString().Replace(" ", string.Empty);
                                     value = $"JamsostekNumber : {employee.JamsostekNumber}";
                                 }
-                                //else
-                                //{
-                                //    worksheet.Cells[$"AI{row}"].Value = "Belum Diisi";
-                                //    isValid = false;
-                                //}
 
-                                if (worksheet.Cells[$"AJ{row}"].Value != null)
+                                if (worksheet.Cells[$"AQ{row}"].Value != null)
                                 {
-                                    employee.JamsostekRemark = worksheet.Cells[$"AJ{row}"].Value.ToString();
+                                    employee.JamsostekRemark = worksheet.Cells[$"AQ{row}"].Value.ToString();
                                     value = $"JamsostekRemark : {employee.JamsostekRemark}";
                                 }
                                 else
@@ -411,9 +446,9 @@ namespace Payroll.Controllers.Api
                                     employee.JamsostekRemark = null;
                                 }
 
-                                if (worksheet.Cells[$"AL{row}"].Value != null)
+                                if (worksheet.Cells[$"AS{row}"].Value != null)
                                 {
-                                    employee.NPWP = worksheet.Cells[$"AL{row}"].Value.ToString().Replace(" ", string.Empty);
+                                    employee.NPWP = worksheet.Cells[$"AS{row}"].Value.ToString().Replace(" ", string.Empty);
                                     value = $"NPWP : {employee.NPWP}";
                                 }
                                 else
@@ -421,102 +456,60 @@ namespace Payroll.Controllers.Api
                                     employee.NPWP = null;
                                 }
 
-                                if (worksheet.Cells[$"AM{row}"].Value != null)
+                                if (worksheet.Cells[$"AT{row}"].Value != null)
                                 {
-                                    employee.KTP = worksheet.Cells[$"AM{row}"].Value.ToString().Replace(" ", string.Empty);
+                                    employee.KTP = worksheet.Cells[$"AT{row}"].Value.ToString().Replace(" ", string.Empty);
                                     value = $"KTP : {employee.KTP}";
                                 }
                                 else
                                 {
-                                    worksheet.Cells[$"AM{row}"].Value = "Belum Diisi";
+                                    worksheet.Cells[$"AT{row}"].Value = "Belum Diisi";
                                     isValid = false;
                                 }
 
-                                if (worksheet.Cells[$"AO{row}"].Value != null)
+                                if (worksheet.Cells[$"AV{row}"].Value != null)
                                 {
-                                    employee.AccountName = worksheet.Cells[$"AO{row}"].Value.ToString();
+                                    employee.AccountName = worksheet.Cells[$"AV{row}"].Value.ToString();
                                     value = $"AccountName : {employee.AccountName}";
                                 }
-                                else
-                                {
-                                    worksheet.Cells[$"AO{row}"].Value = "Belum Diisi";
-                                    isValid = false;
-                                }
 
-                                if (worksheet.Cells[$"AP{row}"].Value != null)
+                                if (worksheet.Cells[$"AW{row}"].Value != null)
                                 {
-                                    employee.BankCode = banks.Where(column => column.Code.ToLower().Replace(" ", string.Empty) == worksheet.Cells[$"AP{row}"].Value.ToString().ToLower().Replace(" ", string.Empty)).FirstOrDefault().Code;
+                                    employee.BankCode = banks.Where(column => column.Code.ToLower().Replace(" ", string.Empty) == worksheet.Cells[$"AW{row}"].Value.ToString().ToLower().Replace(" ", string.Empty)).FirstOrDefault().Code;
                                     value = $"BankCode : {employee.BankCode}";
                                 }
-                                else
-                                {
-                                    worksheet.Cells[$"AP{row}"].Value = "Belum Diisi";
-                                    isValid = false;
-                                }
 
-                                if (worksheet.Cells[$"AQ{row}"].Value != null)
+                                if (worksheet.Cells[$"AX{row}"].Value != null)
                                 {
-                                    employee.AccountNumber = worksheet.Cells[$"AQ{row}"].Value.ToString().Replace(" ", string.Empty);
+                                    employee.AccountNumber = worksheet.Cells[$"AX{row}"].Value.ToString().Replace(" ", string.Empty);
                                     value = $"AccountNumber : {employee.AccountNumber}";
                                 }
                                 else
                                 {
-                                    worksheet.Cells[$"AQ{row}"].Value = "Belum Diisi";
+                                    worksheet.Cells[$"AX{row}"].Value = "Belum Diisi";
                                     isValid = false;
                                 }
 
-                                if (worksheet.Cells[$"AR{row}"].Value != null)
+                                if (worksheet.Cells[$"AY{row}"].Value != null)
                                 {
-                                    employee.KK = worksheet.Cells[$"AR{row}"].Value.ToString().Replace(" ", string.Empty);
+                                    employee.KK = worksheet.Cells[$"AY{row}"].Value.ToString().Replace(" ", string.Empty);
                                     value = $"KK : {employee.KK}";
                                 }
-                                //else
-                                //{
-                                //    worksheet.Cells[$"AR{row}"].Value = "Belum Diisi";
-                                //    isValid = false;
-                                //}
-
-                                if (worksheet.Cells[$"AX{row}"].Value != null)
-                                {
-                                    DateTime dateTimeString;
-                                    if (DateTime.TryParse(worksheet.Cells[$"AX{row}"].Value.ToString(), out dateTimeString))
-                                    {
-                                        employee.JoinCustomerDate = dateTimeString;
-                                    }
-                                    else
-                                    {
-                                        employee.JoinCustomerDate = DateTime.FromOADate(int.Parse(worksheet.Cells[$"AX{row}"].Value.ToString()));
-                                    }
-                                    value = $"JoinCustomerDate : {employee.JoinCustomerDate}";
-                                }
-                                else
-                                {
-                                    //worksheet.Cells[$"AX{row}"].Value = "Belum Diisi";
-                                    //isValid = false;
-                                }
-
-                                if (worksheet.Cells[$"AZ{row}"].Value != null)
-                                {
-                                    employee.Email = worksheet.Cells[$"AZ{row}"].Value.ToString();
-                                    value = $"Email : {employee.Email}";
-                                }
-                                else
-                                {
-                                    worksheet.Cells[$"AZ{row}"].Value = "Belum Diisi";
-                                    isValid = false;
-                                }
-                                
 
                                 if (isValid)
                                 {
-                                    if (employees.Where(column => column.NIK == employee.NIK).Count() > 0)
+                                    if (isExist)
                                     {
-                                        Employee currentEmployee = employees.Where(column => column.NIK == employee.NIK).FirstOrDefault();
-                                        currentEmployee = employee;
+                                        payrollDB.Entry(employee).State = EntityState.Modified;
+                                        updateEmployees.Add(employee);
                                     }
                                     else
                                     {
                                         employee.RoleId = 2;
+                                        using (MD5 md5Hash = MD5.Create())
+                                        {
+                                            employee.Password = GetMd5Hash(md5Hash, employee.NIK.ToString());
+                                        }
                                         payrollDB.Entry(employee).State = EntityState.Added;
                                         newEmployees.Add(employee);
                                     }
@@ -525,12 +518,13 @@ namespace Payroll.Controllers.Api
                                 else
                                 {
                                     isAllValid = false;
-                                    continue;
+                                    return BadRequest($"Data baris ke {row}, pada kolom setelah {value} bermasalah");
                                 }
 
                             }
 
                         }
+                        payrollDB.Employee.UpdateRange(updateEmployees);
                         await payrollDB.Employee.AddRangeAsync(newEmployees);
                         await payrollDB.SaveChangesAsync();
                     }
@@ -547,10 +541,21 @@ namespace Payroll.Controllers.Api
                 }
                 else
                 {
-                    return new OkObjectResult($"Error occured at row {row} for value {value}");
+                    return BadRequest($"Error occured at row {row} for column after {value}");
                 }
                 throw error;
             }
+        }
+
+        static string GetMd5Hash(MD5 md5Hash, string input)
+        {
+            byte[] data = md5Hash.ComputeHash(Encoding.UTF8.GetBytes(input));
+            StringBuilder sBuilder = new StringBuilder();
+            for (int i = 0; i < data.Length; i++)
+            {
+                sBuilder.Append(data[i].ToString("x2"));
+            }
+            return sBuilder.ToString();
         }
 
         [Authorize]
@@ -582,5 +587,87 @@ namespace Payroll.Controllers.Api
                 throw error;
             }
         }
+
+        [Authorize]
+        [HttpGet]
+        [Route("api/employee/readDetail/{nik}")]
+        public async Task<IActionResult> ReadDetail(int nik)
+        {
+            try
+            {
+                Employee employee = await payrollDB.Employee
+                    .Where(column => column.NIK == nik)
+                    .FirstOrDefaultAsync();
+                return new JsonResult(employee);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error, "Employee API Controller - Read");
+                throw error;
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        [Route("api/employee/update/{id}")]
+        public async Task<IActionResult> Update([FromForm]EmployeeInput employeeInput, int id)
+        {
+            try
+            {
+                Employee employee = await payrollDB.Employee
+                    .Where(column => column.NIK == id)
+                    .FirstOrDefaultAsync();
+                employee.Name = employeeInput.Name;
+                employee.BirthPlace = employeeInput.BirthPlace;
+                employee.BirthDate = employeeInput.BirthDate;
+                employee.Sex = employeeInput.Sex;
+                employee.Religion = employeeInput.Religion;
+                employee.Address = employeeInput.Address;
+                employee.PhoneNumber = employeeInput.PhoneNumber;
+                employee.KTP = employeeInput.KTP;
+                employee.KK = employeeInput.KK;
+                employee.NPWP = employeeInput.NPWP;
+                employee.JamsostekNumber = employeeInput.JamsostekNumber;
+                employee.JamsostekRemark = employeeInput.JamsostekRemark;
+                employee.BpjsNumber = employeeInput.BpjsNumber;
+                employee.BpjsRemark = employeeInput.BpjsRemark;
+                employee.DriverLicense = employeeInput.DriverLicense;
+                employee.DriverLicenseType = employeeInput.DriverLicenseType;
+                employee.DriverLicenseExpire = employeeInput.DriverLicenseExpire;
+                employee.AccountNumber = employeeInput.AccountNumber;
+                employee.AccountName = employeeInput.AccountName;
+                employee.BankCode = employeeInput.BankCode;
+                employee.FamilyStatusCode = employeeInput.FamilyStatusCode;
+                employee.EmploymentStatusId = employeeInput.EmploymentStatusId;
+                employee.PositionId = employeeInput.PositionId;
+                employee.CustomerId = employeeInput.CustomerId;
+                employee.LocationId = employeeInput.LocationId;
+                employee.RoleId = employeeInput.RoleId;
+                employee.StartContract = employeeInput.StartContract;
+                employee.EndContract = employeeInput.EndContract;
+                employee.JoinCompanyDate = employeeInput.JoinCompanyDate;
+                employee.JoinCustomerDate = employeeInput.JoinCustomerDate;
+                employee.HasUniform = employeeInput.HasUniform;
+                employee.UniformDeliveryDate = employeeInput.UniformDeliveryDate;
+                employee.HasIdCard = employeeInput.HasIdCard;
+                employee.IdCardDeliveryDate = employeeInput.IdCardDeliveryDate;
+                employee.HasTraining = employeeInput.HasTraining;
+                employee.TrainingDeliveryDate = employeeInput.TrainingDeliveryDate;
+                employee.TrainingName = employeeInput.TrainingName;
+                employee.TrainingRemark = employeeInput.TrainingRemark;
+                employee.TrainingGrade = employeeInput.TrainingGrade;
+                employee.IsExist = employeeInput.IsExist;
+                payrollDB.Entry(employee).State = EntityState.Modified;
+                payrollDB.Employee.Update(employee);
+                await payrollDB.SaveChangesAsync();
+                return new JsonResult(employee);
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error, $"Employee API - Update {id}");
+                throw error;
+            }
+        }
+
     }
 }
