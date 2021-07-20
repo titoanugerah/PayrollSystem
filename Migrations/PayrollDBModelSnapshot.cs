@@ -20,8 +20,8 @@ namespace Payroll.Migrations
             modelBuilder.Entity("Payroll.Models.Bank", b =>
                 {
                     b.Property<string>("Code")
-                        .HasMaxLength(4)
-                        .HasColumnType("varchar(4)");
+                        .HasMaxLength(12)
+                        .HasColumnType("varchar(12)");
 
                     b.Property<int>("CreateBy")
                         .HasColumnType("int");
@@ -130,7 +130,7 @@ namespace Payroll.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("BankCode")
-                        .HasColumnType("varchar(4)");
+                        .HasColumnType("varchar(12)");
 
                     b.Property<DateTime>("BirthDate")
                         .HasColumnType("datetime");
