@@ -1,12 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using OfficeOpenXml;
 using Payroll.DataAccess;
 using Payroll.Models;
+using Payroll.ViewModels;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -17,11 +18,13 @@ namespace Payroll.Controllers
     {
         private readonly ILogger<PayrollDetailController> logger;
         private readonly PayrollDB payrollDB;
+        private readonly IHttpContextAccessor httpContextAccessor;
         private ExcelWorksheet worksheet;
-        public PayrollDetailController(ILogger<PayrollDetailController> _logger, PayrollDB _payrollDB)
+        public PayrollDetailController(ILogger<PayrollDetailController> _logger, PayrollDB _payrollDB, IHttpContextAccessor _httpContextAccessor)
         {
             logger = _logger;
             payrollDB = _payrollDB;
+            httpContextAccessor = _httpContextAccessor;
         }
 
         [Authorize(Roles = "Admin")]
@@ -102,6 +105,38 @@ namespace Payroll.Controllers
             catch (Exception error)
             {
                 logger.LogError(error, $"Payrolll History Controller - Download Report Bank {id}");
+                throw error;
+            }
+        }
+
+        [Route("PayrollDetail/Download/Slip/{id}")]
+        public async Task<IActionResult> DownloadSlip(int id)
+        {
+            try
+            {
+                if (id == 0)
+                {
+                    return new JsonResult("");
+                }
+                UserIdentity userIdentity = httpContextAccessor.HttpContext.User.GetUserIdentity();
+                PayrollDetail payrollDetail = payrollDB.PayrollDetail
+                    .Include(table => table.Employee.Location)
+                    .Include(table => table.PayrollHistory)
+                    .Where(column => column.Id == id)
+                    .FirstOrDefault();
+                if (payrollDetail.EmployeeId == userIdentity.NIK || userIdentity.Role.ToLower() == "admin")
+                {
+                    ViewBag.payrollDetail = payrollDetail;
+                    return View();
+                }
+                else
+                {
+                    return RedirectToAction("error/401", "error");
+                }
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error, $"Payroll Detail Controller - Download Slip {id}");
                 throw error;
             }
         }

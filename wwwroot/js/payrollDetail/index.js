@@ -22,7 +22,7 @@
         { "data": "payrollDetailStatus" },
         {
             "render": function (data, type, row) {
-                return "<button type='button' class='btn btn-info' onclick=showDetailForm('" + row.id + "'); >Detail</button>";
+                return "<button type='button' class='btn btn-info' onclick=showDetailForm('" + row.id + "'); >Detail</button>" + "<a href='PayrollDetail/Download/Slip/"+row.id+"' class='btn btn-info' >Download</a>";
             }
         },
     ]
@@ -35,7 +35,10 @@ function downloadReport() {
         window.open('PayrollHistory/Download/Report/' + $("#payrollHistoryId").val() + '/' + $('#districtId').val(), '_blank');
     }
     $('#downloadReportModal').modal('hide');
+}
 
+function downloadSlip() {
+    window.open('PayrollDetail/Download/Slip/' + $("#id").val() , '_blank');
 }
 
 function downloadBankReport() {
@@ -81,6 +84,7 @@ function showDetailForm(id) {
         success: function (result) {
             console.log(result);
             $('#name').val(result.employee.name);
+            $('#id').val(result.id);
             $('#nik').val(result.employee.nik);
             $('#mainSalaryBilling').val(formatter.format(result.mainSalaryBilling));
             $('#insentiveBilling').val(formatter.format(result.insentiveBilling));

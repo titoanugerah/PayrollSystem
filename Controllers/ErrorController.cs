@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Payroll.ViewModels;
-using System.ComponentModel.Design;
 using System.Diagnostics;
 
 namespace Payroll.Controllers

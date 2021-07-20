@@ -8,6 +8,8 @@ using Microsoft.Extensions.Hosting;
 using Payroll.DataAccess;
 using Payroll.WebSockets;
 using Microsoft.AspNetCore.Http;
+using System.Globalization;
+using Microsoft.AspNetCore.Localization;
 
 namespace Payroll
 {
@@ -42,7 +44,7 @@ namespace Payroll
             {
                 options.LoginPath = Configuration["Login:Path"];
             });
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();           
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

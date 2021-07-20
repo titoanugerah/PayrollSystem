@@ -1,0 +1,172 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="~/css/slip.css">
+    <link rel="stylesheet" href="~/css/bootstrap.min.css">
+</head>
+<body onload="window.print()">
+
+    <div class="container" style="width: 21cm; height: 14cm; padding: 2rem; margin: 0 auto;">
+        <div class="row">
+            <div class="col-md-4">
+                Slip Gaji Periode : @ViewBag.payrollDetail.PayrollHistory.Month, @ViewBag.payrollDetail.PayrollHistory.Year
+            </div>
+            <div class="col-md-4">
+            </div>
+            <div class="col-md-1">
+                NIK
+            </div>
+            <div class="col-md-3">
+                : @ViewBag.payrollDetail.Employee.NIK
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8">
+            </div>
+            <div class="col-md-1">
+                Nama
+            </div>
+            <div class="col-md-3">
+                : @ViewBag.payrollDetail.Employee.Name
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-8">
+            </div>
+            <div class="col-md-1">
+                Lokasi
+            </div>
+            <div class="col-md-3">
+                : @ViewBag.payrollDetail.Employee.Location.Name
+            </div>
+        </div>
+
+        <br />
+        <div class="row">
+            <div class="col-md-6">
+                <center>
+                    Pendapatan
+                </center>
+            </div>
+            <div class="col-md-6">
+                <center>
+                    Potongan
+                </center>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                Gaji Pokok
+            </div>
+            <div class="col-md-3">
+                : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.MainSalaryBilling);
+            </div>
+            <div class="col-md-3">
+                BPJS Ketenagakerjaan
+            </div>
+            <div class="col-md-3">
+                : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.BpjsTkDeduction);
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                Rapel
+            </div>
+            <div class="col-md-3">
+                : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.MainSalaryBilling);
+            </div>
+            <div class="col-md-3">
+                BPJS Kesehatan
+            </div>
+            <div class="col-md-3">
+                : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.BpjsKesehatanDeduction);
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                Lembur
+            </div>
+            <div class="col-md-3">
+                : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.OvertimeBilling);
+            </div>
+            <div class="col-md-3">
+                Jaminan Pensiun
+            </div>
+            <div class="col-md-3">
+                : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.PensionDeduction);
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                Premi Hadir
+            </div>
+            <div class="col-md-3">
+                : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.AttendanceBilling);
+            </div>
+            <div class="col-md-3">
+                PPH 21
+            </div>
+            <div class="col-md-3">
+                : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.PPH21);
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                Insentif Lainnya
+            </div>
+            <div class="col-md-3">
+                : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.AppreciationBilling);
+            </div>
+            <div class="col-md-3">
+                Potongan Lainnya
+            </div>
+            <div class="col-md-3">
+                : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.AnotherDeduction);
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+            </div>
+            <div class="col-md-3">
+                Biaya Transfer
+            </div>
+            <div class="col-md-3">
+                : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.TransferFee);
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">
+                <b>Total Pendapatan</b>
+            </div>
+            <div class="col-md-3">
+                <b>: @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", (@ViewBag.payrollDetail.MainSalaryBilling + @ViewBag.payrollDetail.OvertimeBilling + @ViewBag.payrollDetail.AttendanceBilling + @ViewBag.payrollDetail.InsentiveBilling + @ViewBag.payrollDetail.AppreciationBilling))</b>
+            </div>
+            <div class="col-md-3">
+                <b>Total Potongan</b>
+            </div>
+            <div class="col-md-3">
+                <b>: @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", (@ViewBag.payrollDetail.BpjsTkDeduction + @ViewBag.payrollDetail.BpjsKesehatanDeduction + @ViewBag.payrollDetail.PensionDeduction + @ViewBag.payrollDetail.PPH21 + @ViewBag.payrollDetail.AnotherDeduction + @ViewBag.payrollDetail.TransferFee))</b>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+            </div>
+            <div class="col-md-3">
+                <b>Take Home Pay</b>
+            </div>
+            <div class="col-md-3">
+                <b>
+                    : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.TakeHomePay);
+                </b>
+            </div>
+
+        </div>
+
+    </div>
+</body>
+</html>

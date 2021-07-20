@@ -2,8 +2,8 @@
 {
     public class UserIdentity
     {
-        public string Email { set; get; }
+        public int NIK { set; get; }
         public string Name { set; get; }
-        public string Picture { set; get; }
+        public string Role { set; get; }
     }
 }
