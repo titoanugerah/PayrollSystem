@@ -72,6 +72,7 @@ namespace Payroll.Controllers.Api
                                 Employee employee = employees
                                     .Where(column => column.NIK == int.Parse(worksheet.Cells[$"C{row}"].Value.ToString().Replace(" ", string.Empty)))
                                     .FirstOrDefault();
+
                                 if (employee!=null)
                                 {
                                     isExist = true;
@@ -82,10 +83,9 @@ namespace Payroll.Controllers.Api
                                     employee = new Employee();
                                 }                 
 
-                                if (worksheet.Cells[$"A{row}"].Value.ToString() == "AKTIF")
+                                if (worksheet.Cells[$"A{row}"].Value.ToString().ToLower() == "aktif")
                                 {
                                     employee.IsExist = true;
-                                    value = $"IsExist : {employee.IsExist}";
                                 }
                                 else
                                 {
@@ -340,7 +340,7 @@ namespace Payroll.Controllers.Api
                                     value = $"DriverLicenseExpire : {employee.DriverLicenseExpire}";
                                 }
 
-                                if (worksheet.Cells[$"AD{row}"].Value != null)
+                                if (worksheet.Cells[$"AD{row}"].Value.ToString().ToLower() == "sudah")
                                 {
                                     employee.HasUniform = true;
                                     value = $"HasUniform : {employee.HasUniform}";
@@ -360,7 +360,7 @@ namespace Payroll.Controllers.Api
                                     value = $"Uniform Delivery Date : {employee.UniformDeliveryDate}";
                                 }
 
-                                if (worksheet.Cells[$"AF{row}"].Value != null)
+                                if (worksheet.Cells[$"AF{row}"].Value.ToString().ToLower() == "sudah")
                                 {
                                     employee.HasIdCard = true;
                                     value = $"HasIDCard : {employee.HasIdCard}";
