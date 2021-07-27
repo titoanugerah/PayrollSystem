@@ -121,6 +121,7 @@ namespace Payroll.Controllers
                 UserIdentity userIdentity = httpContextAccessor.HttpContext.User.GetUserIdentity();
                 PayrollDetail payrollDetail = payrollDB.PayrollDetail
                     .Include(table => table.Employee.Location)
+                    .Include(table => table.Employee.Customer)
                     .Include(table => table.PayrollHistory)
                     .Where(column => column.Id == id)
                     .FirstOrDefault();

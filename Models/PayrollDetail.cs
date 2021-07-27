@@ -52,7 +52,7 @@ namespace Payroll.Models
         { 
             get
             {
-                return Convert.ToInt32(MainSalaryBilling * PayrollHistory.BpjsPercentage / 100);
+                return Convert.ToInt32(Employee.Location.UMK * PayrollHistory.BpjsPercentage / 100);
             }
         }
         [NotMapped]
@@ -320,13 +320,13 @@ namespace Payroll.Models
                 switch (PayrollDetailStatusId)
                 {
                     case 1:
-                        result = "Perincian gaji belum diupload";
+                        result = "Belum Upload";
                         break;
                     case 2:
-                        result = "Perincian gaji sudah diupload";
+                        result = "Sudah Upload";
                         break;
                     case 3:
-                        result = "Gaji sudah dikirim";
+                        result = "Gaji Dikirim";
                         break;
                     default:
                         result = null;

@@ -38,6 +38,7 @@ namespace Payroll.Controllers.Api
             {
                 List<PayrollDetail> payrollDetail = await payrollDB.PayrollDetail
                     .Include(table => table.PayrollHistory)
+                    .Include(table => table.Employee.Location)
                     .Where(column => column.PayrollHistoryId == id)
                     .ToListAsync();
                 return new JsonResult(payrollDetail);
@@ -58,11 +59,12 @@ namespace Payroll.Controllers.Api
                 DatatablesRequest request = new DatatablesRequest(Request.Form.Select(column => new InputRequest { Key = column.Key, Value = column.Value }).ToList());
                 PayrollDetailView payrollDetailView = new PayrollDetailView();
                 payrollDetailView.Data = await payrollDB.PayrollDetail
-                    .Include(table => table.Employee)
+                    .Include(table => table.Employee.Location)
                     .Include(table => table.PayrollHistory)
+                    .Where(column => column.IsExist == true)
                     .Where(column => column.PayrollHistoryId == id)
                     .Where(column => column.Employee.Name.Contains(request.Keyword))
-                    .OrderBy(column => column.Employee.Name)
+                    .OrderBy(column => column.PayrollDetailStatusId)
                     .Skip(request.Skip)
                     .Take(request.PageSize)
                     .ToListAsync();
@@ -87,8 +89,10 @@ namespace Payroll.Controllers.Api
                 DatatablesRequest request = new DatatablesRequest(Request.Form.Select(column => new InputRequest { Key = column.Key, Value = column.Value }).ToList());
                 PayrollDetailView payrollDetailView = new PayrollDetailView();
                 payrollDetailView.Data = await payrollDB.PayrollDetail
+                    .Include(table => table.Employee.Location)
                     .Include(table => table.PayrollHistory)
                     .Where(column => column.Employee.NIK == userNIK)
+                    .Where(column => column.IsExist == true)
                     .Where(column => column.PayrollDetailStatusId == 3)
                     .OrderBy(column => column.Id)                    
                     .Skip(request.Skip)
@@ -139,6 +143,8 @@ namespace Payroll.Controllers.Api
         {
             int startRow = 0;
             int endRow = 0;
+            List<Employee> FailedBillingEmployee = new List<Employee>();
+            List<Employee> SuccessBillingEmployee = new List<Employee>();
             try
             {
                 List<PayrollDetail> payrollDetails = await payrollDB.PayrollDetail
@@ -222,10 +228,14 @@ namespace Payroll.Controllers.Api
                                             payrollDetail.GrossPayroll = Convert.ToInt32(payrollDetail.TotalPayroll + payrollDetail.TaxPayroll);
                                             payrollDetail.AttributePayroll = Convert.ToInt32(payrollDetail.AtributeBilling);
                                             payrollDetail.BpjsTkDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * payrollHistory.BpjsTk1Percentage)/100);
-                                            payrollDetail.BpjsKesehatanDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * payrollHistory.BpjsPayrollPercentage) / 100);
-                                            if (payrollDetail.Employee.BpjsNumber == null)
+                                            if (payrollDetail.Employee.BpjsRemark.ToLower().Replace(" ", string.Empty) != "bumbk")
                                             {
+                                                payrollDetail.BpjsKesehatanDeduction = 0;
                                                 payrollDetail.BpjsReturn = payrollDetail.BpjsKesehatanDeduction;
+                                            }
+                                            else
+                                            {
+                                                payrollDetail.BpjsKesehatanDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * payrollHistory.BpjsPayrollPercentage) / 100);
                                             }
                                             
                                             payrollDetail.PensionDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * payrollHistory.PensionPayrollPercentage) / 100);
@@ -237,7 +247,7 @@ namespace Payroll.Controllers.Api
                                                 payrollDetail.PPH21 = Convert.ToInt32((payrollDetail.PKP2 * payrollDetail.PayrollHistory.Pph21Percentage)/100);
                                             }
 
-                                            if (payrollDetail.Employee.Bank.Code != "BCA")
+                                            if (payrollDetail.Employee.BankCode != "BCA")
                                             {
                                                 payrollDetail.TransferFee = 6500;
                                             }
@@ -247,16 +257,21 @@ namespace Payroll.Controllers.Api
                                             payrollDetail.TakeHomePay = Convert.ToInt32(payrollDetail.Netto - payrollDetail.AnotherDeduction - payrollDetail.TransferFee);
                                             payrollDB.Entry(payrollDetail).State = EntityState.Modified;
                                         }
+                                        SuccessBillingEmployee.Add(employee);
                                     }
                                     else
                                     {
+                                        FailedBillingEmployee.Add(employee);
                                         continue;
                                     }
                                 }                                
                             }
                             payrollDB.PayrollDetail.UpdateRange(payrollDetails.Where(column => column.IsExist));
                             await payrollDB.SaveChangesAsync();
-                            bool isAnyUnUpdated = payrollDetails.Where(column => column.PayrollDetailStatusId == 1).Any();
+                            bool isAnyUnUpdated = payrollDetails
+                                .Where(column => column.PayrollDetailStatusId == 1)
+                                .Where(column => column.IsExist == true)
+                                .Any();
                             if (!isAnyUnUpdated)
                             {
                                 payrollHistory.StatusId = 2;
@@ -264,10 +279,15 @@ namespace Payroll.Controllers.Api
                                 payrollDB.PayrollHistory.Update(payrollHistory);
                                 await payrollDB.SaveChangesAsync();
                             }
+
+                            if (FailedBillingEmployee.Count() > 0 )
+                            {
+                                return BadRequest(FailedBillingEmployee.Select(column => new { column.Name, column.NIK }));
+                            }
                         }
                     }
                 }
-                return new JsonResult(Ok());
+                                return new JsonResult(Ok());
             }
             catch (Exception error)
             {
@@ -279,8 +299,39 @@ namespace Payroll.Controllers.Api
 
         [Authorize]
         [HttpPost]
+        [Route("api/payrollDetail/delete/{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            try
+            {
+                PayrollDetail payrollDetail = payrollDB.PayrollDetail
+                    .Where(column => column.Id == id)
+                    .FirstOrDefault();
+                if (httpContextAccessor.HttpContext.User.GetRole() == "Admin")
+                {
+                    payrollDetail.IsExist = false;
+                    payrollDB.Entry(payrollDetail).State = EntityState.Modified;
+                    payrollDB.PayrollDetail.Update(payrollDetail);
+                    await payrollDB.SaveChangesAsync();
+                    return new JsonResult(Ok());
+                }
+                else 
+                {
+                    return BadRequest("Anda tidak memiliki hak akses");
+                }
+
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error, "Payroll Detail API - Delete Detail");
+                throw error;
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
         [Route("api/payrollDetail/updateDetail/{id}")]
-        public async Task<IActionResult> updateDetail([FromForm]PayrollDetailInput payrollDetailInput, int id)
+        public async Task<IActionResult> UpdateDetail([FromForm]PayrollDetailInput payrollDetailInput, int id)
         {
             try
             {

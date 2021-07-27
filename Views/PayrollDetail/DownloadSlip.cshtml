@@ -12,36 +12,35 @@
 
     <div class="container" style="width: 21cm; height: 14cm; padding: 2rem; margin: 0 auto;">
         <div class="row">
-            <div class="col-md-4">
-                Slip Gaji Periode : @ViewBag.payrollDetail.PayrollHistory.Month, @ViewBag.payrollDetail.PayrollHistory.Year
-            </div>
-            <div class="col-md-4">
+            <div class="col-md-6">
+                <b style="color:red;">Mulia Bintang Kejora</b>
             </div>
             <div class="col-md-1">
                 NIK
             </div>
-            <div class="col-md-3">
+            <div class="col-md-5">
                 : @ViewBag.payrollDetail.Employee.NIK
             </div>
         </div>
         <div class="row">
-            <div class="col-md-8">
+            <div class="col-md-6">
+                <p style="color:blue;">Melayani Berkarya Komitmen</p>
             </div>
             <div class="col-md-1">
                 Nama
             </div>
-            <div class="col-md-3">
+            <div class="col-md-5">
                 : @ViewBag.payrollDetail.Employee.Name
             </div>
         </div>
         <div class="row">
-            <div class="col-md-8">
+            <div class="col-md-6">
             </div>
             <div class="col-md-1">
                 Lokasi
             </div>
-            <div class="col-md-3">
-                : @ViewBag.payrollDetail.Employee.Location.Name
+            <div class="col-md-5">
+                : @ViewBag.payrollDetail.Employee.Location.Name - @ViewBag.payrollDetail.Employee.Customer.Name
             </div>
         </div>
 
@@ -72,20 +71,7 @@
                 : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.BpjsTkDeduction);
             </div>
         </div>
-        <div class="row">
-            <div class="col-md-3">
-                Retur BPJS Kesehatan
-            </div>
-            <div class="col-md-3">
-                : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.Rapel);
-            </div>
-            <div class="col-md-3">
-                BPJS Kesehatan
-            </div>
-            <div class="col-md-3">
-                : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.BpjsKesehatanDeduction);
-            </div>
-        </div>
+
         <div class="row">
             <div class="col-md-3">
                 Lembur
@@ -142,6 +128,22 @@
                 : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.TransferFee);
             </div>
         </div>
+        @if (@ViewBag.payrollDetail.Employee.BpjsRemark  == "BUMBK") {
+        <div class="row">
+            <div class="col-md-3">
+                Retur BPJS Kesehatan
+            </div>
+            <div class="col-md-3">
+                : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.Rapel);
+            </div>
+            <div class="col-md-3">
+                BPJS Kesehatan
+            </div>
+            <div class="col-md-3">
+                : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.BpjsKesehatanDeduction);
+            </div>
+        </div>
+        }
         <div class="row">
             <div class="col-md-3">
                 Rapel
@@ -176,6 +178,15 @@
                 <b>
                     : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.TakeHomePay);
                 </b>
+            </div>
+        </div>
+
+        <br />
+        <div class="row">
+            <div class="col-md-6">
+            </div>
+            <div class="col-md-6" style="">
+                Slip Gaji Periode : @ViewBag.payrollDetail.PayrollHistory.Month, @ViewBag.payrollDetail.PayrollHistory.Year
             </div>
 
         </div>

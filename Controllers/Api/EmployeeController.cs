@@ -10,6 +10,7 @@ using Payroll.Models;
 using Payroll.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -39,6 +40,9 @@ namespace Payroll.Controllers.Api
         {
             int row = 0;
             string value = null;
+            MappingExcelEmployee cellAddress;
+            ExcelWorksheet worksheet = null;
+            string currentCell;
             try
             {
                 List<Bank> banks = await payrollDB.Bank.ToListAsync();
@@ -61,8 +65,10 @@ namespace Payroll.Controllers.Api
                     using (var excelPackage = new ExcelPackage(stream))
                     {
                         bool isAllValid = true;
-                        foreach (ExcelWorksheet worksheet in excelPackage.Workbook.Worksheets)
+                        foreach (ExcelWorksheet currentWorksheet in excelPackage.Workbook.Worksheets)
                         {
+                            worksheet = currentWorksheet;
+                            cellAddress = new MappingExcelEmployee(worksheet); 
                             ExcelCellAddress start = worksheet.Dimension.Start;
                             ExcelCellAddress end = worksheet.Dimension.End;
                             for (row = 7; row <= end.Row; row++)
@@ -81,9 +87,11 @@ namespace Payroll.Controllers.Api
                                 {
                                     isExist = false;
                                     employee = new Employee();
-                                }                 
+                                }
 
-                                if (worksheet.Cells[$"A{row}"].Value.ToString().ToLower() == "aktif")
+
+                                currentCell = $"{cellAddress.IsExist}{row}";
+                                if (worksheet.Cells[currentCell].Value.ToString().ToLower() == "aktif")
                                 {
                                     employee.IsExist = true;
                                 }
@@ -92,32 +100,32 @@ namespace Payroll.Controllers.Api
                                     employee.IsExist = false;
                                 }
 
-                                if (worksheet.Cells[$"C{row}"].Value != null)
+                                currentCell = $"{cellAddress.NIK}{row}";
+                                if (worksheet.Cells[currentCell].Value != null)
                                 {
-                                    employee.NIK = int.Parse(worksheet.Cells[$"C{row}"].Value.ToString().Replace(" ", string.Empty));
-                                    value = $"NIK : {employee.NIK}";
+                                    employee.NIK = int.Parse(worksheet.Cells[currentCell].Value.ToString().Replace(" ", string.Empty));
                                 }
                                 else
                                 {
-                                    worksheet.Cells[$"C{row}"].Value = "Belum Diisi";
-                                    isValid = false;
+                                    worksheet.Cells[currentCell].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                    worksheet.Cells[currentCell].Style.Fill.BackgroundColor.SetColor(Color.Red);                                    
                                 }
 
-                                if (worksheet.Cells[$"D{row}"].Value != null)
+                                currentCell = $"{cellAddress.Name}{row}";
+                                if (worksheet.Cells[currentCell].Value != null)
                                 {
-                                    employee.Name = worksheet.Cells[$"D{row}"].Value.ToString();
-                                    value = $"Name : {employee.Name}";
+                                    employee.Name = worksheet.Cells[currentCell].Value.ToString();
                                 }
                                 else
                                 {
-                                    worksheet.Cells[$"D{row}"].Value = "Belum Diisi";
-                                    isValid = false;
+                                    worksheet.Cells[currentCell].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                    worksheet.Cells[currentCell].Style.Fill.BackgroundColor.SetColor(Color.Red);
                                 }
 
-                                if (worksheet.Cells[$"F{row}"].Value != null)
+                                currentCell = $"{cellAddress.PhoneNumber}{row}";
+                                if (worksheet.Cells[currentCell].Value != null)
                                 {
-                                    employee.PhoneNumber = worksheet.Cells[$"F{row}"].Value.ToString().Replace(" ", string.Empty);
-                                    value = $"PhoneNumber : {employee.PhoneNumber}";
+                                    employee.PhoneNumber = worksheet.Cells[currentCell].Value.ToString().Replace(" ", string.Empty);
                                 }
 
                                 if (worksheet.Cells[$"G{row}"].Value != null)
@@ -321,17 +329,17 @@ namespace Payroll.Controllers.Api
                                 if (worksheet.Cells[$"AC{row}"].Value != null)
                                 {
                                     DateTime dateTimeString;
-                                    if (DateTime.TryParse(worksheet.Cells[$"AC{row}"].Value.ToString(), out dateTimeString))
-                                    {
-                                        employee.DriverLicenseExpire = dateTimeString;
-                                    }
-                                    else if(worksheet.Cells[$"AC{row}"].Value.ToString().ToLower().Replace(" ", string.Empty) == "seumurhidup")
+                                    if(worksheet.Cells[$"AC{row}"].Value.ToString().ToLower().Replace(" ", string.Empty) == "seumurhidup")
                                     {
                                         employee.DriverLicenseExpire = DateTime.MaxValue;
                                     }
                                     else if (worksheet.Cells[$"AC{row}"].Value.ToString().ToLower().Replace(" ", string.Empty) == "nondriver")
                                     {
                                         //employee.DriverLicenseExpire ;
+                                    }
+                                    else if (DateTime.TryParse(worksheet.Cells[$"AC{row}"].Value.ToString(), out dateTimeString))
+                                    {
+                                        employee.DriverLicenseExpire = dateTimeString;
                                     }
                                     else
                                     {
@@ -340,16 +348,23 @@ namespace Payroll.Controllers.Api
                                     value = $"DriverLicenseExpire : {employee.DriverLicenseExpire}";
                                 }
 
-                                if (worksheet.Cells[$"AD{row}"].Value.ToString().ToLower() == "sudah")
-                                {
-                                    employee.HasUniform = true;
-                                    value = $"HasUniform : {employee.HasUniform}";
+                                if (worksheet.Cells[$"AD{row}"].Value != null)
+                                { 
+                                    if (worksheet.Cells[$"AD{row}"].Value.ToString().ToLower() == "sudah")
+                                    {
+                                        employee.HasUniform = true;
+                                        value = $"HasUniform : {employee.HasUniform}";
+                                    }
                                 }
 
                                 if (worksheet.Cells[$"AE{row}"].Value != null)
                                 {
                                     DateTime dateTimeString;
-                                    if (DateTime.TryParse(worksheet.Cells[$"AE{row}"].Value.ToString(), out dateTimeString))
+                                    if (worksheet.Cells[$"AE{row}"].Value.ToString().ToLower().Replace(" ", string.Empty) == "sudah" || worksheet.Cells[$"AE{row}"].Value.ToString().ToLower().Replace(" ", string.Empty) == "onprogress")
+                                    {
+                                        employee.UniformDeliveryDate = DateTime.Now;
+                                    }
+                                    else if (DateTime.TryParse(worksheet.Cells[$"AE{row}"].Value.ToString(), out dateTimeString))
                                     {
                                         employee.UniformDeliveryDate = dateTimeString;
                                     }
@@ -360,16 +375,27 @@ namespace Payroll.Controllers.Api
                                     value = $"Uniform Delivery Date : {employee.UniformDeliveryDate}";
                                 }
 
-                                if (worksheet.Cells[$"AF{row}"].Value.ToString().ToLower() == "sudah")
+                                if (worksheet.Cells[$"AF{row}"].Value != null)
                                 {
-                                    employee.HasIdCard = true;
-                                    value = $"HasIDCard : {employee.HasIdCard}";
+                                    if (worksheet.Cells[$"AF{row}"].Value.ToString().ToLower() == "sudah")
+                                    {
+                                        employee.HasIdCard = true;
+                                        value = $"HasIDCard : {employee.HasIdCard}";                                        
+                                    }
                                 }
 
                                 if (worksheet.Cells[$"AG{row}"].Value != null)
                                 {
                                     DateTime dateTimeString;
-                                    if (DateTime.TryParse(worksheet.Cells[$"AG{row}"].Value.ToString(), out dateTimeString))
+                                    if (worksheet.Cells[$"AG{row}"].Value.ToString().ToLower().Replace(" ", string.Empty) == "sudah" || worksheet.Cells[$"AG{row}"].Value.ToString().ToLower().Replace(" ", string.Empty) == "onprogress")
+                                    {
+                                        employee.IdCardDeliveryDate = DateTime.Now;
+                                    } 
+                                    else if (worksheet.Cells[$"AG{row}"].Value.ToString().ToLower().Replace(" ", string.Empty) == "belum")
+                                    {
+                                        //employee.IdCardDeliveryDate = DateTime.Now;
+                                    }
+                                    else if (DateTime.TryParse(worksheet.Cells[$"AG{row}"].Value.ToString(), out dateTimeString))
                                     {
                                         employee.IdCardDeliveryDate = dateTimeString;
                                     }
@@ -395,7 +421,11 @@ namespace Payroll.Controllers.Api
                                 if (worksheet.Cells[$"AJ{row}"].Value != null)
                                 {
                                     DateTime dateTimeString;
-                                    if (DateTime.TryParse(worksheet.Cells[$"AJ{row}"].Value.ToString(), out dateTimeString))
+                                    if (worksheet.Cells[$"AJ{row}"].Value.ToString().ToLower().Replace(" ", string.Empty) == "sudah" || worksheet.Cells[$"AG{row}"].Value.ToString().ToLower().Replace(" ", string.Empty) == "onprogress")
+                                    {
+                                        employee.TrainingDeliveryDate = DateTime.Now;
+                                    }
+                                    else if (DateTime.TryParse(worksheet.Cells[$"AJ{row}"].Value.ToString(), out dateTimeString))
                                     {
                                         employee.TrainingDeliveryDate = dateTimeString;
                                     }
@@ -541,7 +571,7 @@ namespace Payroll.Controllers.Api
                 }
                 else
                 {
-                    return BadRequest($"Error occured at row {row} for column after {value}");
+                    return BadRequest($"Ada error di sheet {worksheet.Name} for at row {row}");
                 }
                 throw error;
             }

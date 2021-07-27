@@ -22,7 +22,7 @@
         { "data": "payrollDetailStatus" },
         {
             "render": function (data, type, row) {
-                return "<button type='button' class='btn btn-info' onclick=showDetailForm('" + row.id + "'); >Detail</button> &nbsp;&nbsp;" +  "<a href='PayrollDetail/Download/Slip/"+row.id+"' class='btn btn-info' target='_blank'>Download</a>";
+                return "<button type='button' class='btn btn-info' onclick=showDetailForm('" + row.id + "'); >Detail</button> &nbsp;&nbsp;" + "<a href='PayrollDetail/Download/Slip/" + row.id + "' class='btn btn-info' target='_blank'>Download</a> &nbsp;&nbsp;"  + "<button type='button' onclick='deletePayrollDetail(" + row.id + ")' class='btn btn-danger'>Hapus</button>";
             }
         },
     ]
@@ -43,6 +43,22 @@ function downloadSlip() {
 
 function downloadBankReport() {
     window.open('PayrollHistory/Download/ReportBank/' + $("#payrollHistoryId").val(), '_blank');    
+}
+
+function deletePayrollDetail(id) {
+    $.ajax({
+        type: "POST",
+        dataType: "JSON",
+        url: "api/payrollDetail/delete/"+id,
+        success: function (result) {
+            notify('fas fa-check', 'Sukses', "data berhasil dihapus", 'success');
+            reloadTable();
+        },
+        error: function (result) {
+            console.log(result);
+            notify('fas fa-times', 'Gagal', result.responseText, 'danger');
+        }
+    });
 }
 
 
@@ -128,11 +144,12 @@ function updatePayrollDetail() {
         type: 'post',
         success: function (response) {
             reloadTable()
-            $('#payrollDetailModal').modal('hide');
             console.log('success', response);
+            $('#addPayrollDetailModal').modal('hide');
         },
         error: function (result) {
             console.log('error', result);
+            $('#addPayrollDetailModal').modal('hide');
             notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' + result.responseText, 'danger');
         }
     });
