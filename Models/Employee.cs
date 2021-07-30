@@ -24,7 +24,6 @@ namespace Payroll.Models
         public string Address { set; get; }
         public string PhoneNumber { set; get; }
         [MaxLength(16)]
-        [Required]
         public string KTP { set; get; }
         [MaxLength(16)]
         public string KK { set; get; }

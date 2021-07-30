@@ -1,67 +1,94 @@
 ﻿using OfficeOpenXml;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.ComponentModel;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Payroll.ViewModels
 {
     public class MappingExcelEmployee
     {
-        public MappingExcelEmployee(ExcelWorksheet worksheet)
+        public MappingExcelEmployee(ExcelWorksheet worksheet, int initialRow = 1)
         {
             Worksheet = worksheet;
             if (Worksheet!=null)
             {
                 StartCell = worksheet.Dimension.Start;
                 EndCell = worksheet.Dimension.End;
-                NIK = FindCell("NIK");
-                Name = FindCell("NAMA");
-                PhoneNumber = FindCell("NOHANDPHONE");
-                LocationId = FindCell("LOKASI");
-                CustomerId = FindCell("COSTUMER");
-                JoinCustomerDate = FindCell("TANGGALBERGABUNGDICUSTOMER");
-                Address = FindCell("ALAMAT");
-                FamilyStatusCode = FindCell("STATUSL-K1,2,3");
-                Religion = FindCell("AGAMA");
-                Sex = FindCell("JENISKELAMIN");
-                BirthPlace = FindCell("TEMPATLAHIR");
-                BirthDate = FindCell("TANGGALLAHIR");
-                StartContract = FindCell("START");
-                JoinCompanyDate = FindCell("START");
-                EndContract = FindCell("FINISH");
-                EmploymentStatusId = FindCell("STATUSKONTRAKPKWT");
-                DriverLicenseType = FindCell("SIM");
-                DriverLicense = FindCell("NOSIM");
-                DriverLicenseExpire = FindCell("SIMBERLAKU");
-                HasUniform = FindCell("SERAGAM");
-                UniformDeliveryDate = FindCell("TGLPENGIRIMAN");
-                HasIdCard = FindCell("IDCARD");
-                IdCardDeliveryDate = FindCell("TGLPENGIRIMAN");
-                TrainingName = FindCell("TRAINING");
-                TrainingRemark = FindCell("KETTRAINING");
-                TrainingGrade = FindCell("NILAITRAINING");
-                HasTraining = FindCell("STATUSTRAINING");
-                BpjsNumber = FindCell("BPJSKESEHATAN");
-                BpjsRemark = FindCell("KETERANGANPROSESBPJSKesehatan");
-                JamsostekNumber= FindCell("Jamsostek");
-                JamsostekRemark = FindCell("KETJAMSOSTEK");
-                NPWP = FindCell("NPWP");
-                AccountName = FindCell("NAMADIBANK");
-                BankCode = FindCell("BANK");
-                AccountNumber = FindCell("NO.ACCOUNT");
-                KK = FindCell("NOKK");
-                KTP = FindCell("No.KTP");
-                PositionId = FindCell("JABATAN");
-                IsExist = FindCell("AKTIF");
+                No = FindCell("NO", initialRow);
+                InRowStart = FindRow(No, "1", initialRow);
+                NIK = FindCell("NIK", initialRow);
+                Name = FindCell("NAMA", initialRow);
+                PhoneNumber = FindCell("NOHANDPHONE", initialRow);
+                LocationId = FindCell("LOKASI", initialRow);
+                CustomerId = FindCell("COSTUMER", initialRow);
+                JoinCustomerDate = FindCell("TANGGALBERGABUNGDICUSTOMER", initialRow);
+                Address = FindCell("ALAMAT", initialRow);
+                FamilyStatusCode = FindCell("STATUSL-K1,2,3", initialRow);
+                Religion = FindCell("AGAMA", initialRow);
+                Sex = FindCell("JENISKELAMIN", initialRow);
+                BirthPlace = FindCell("TEMPATLAHIR", initialRow);
+                BirthDate = FindCell("TANGGALLAHIR", initialRow);
+                StartContract = FindCell("START", initialRow);
+                JoinCompanyDate = FindCell("START", initialRow);
+                EndContract = FindCell("FINISH", initialRow);
+                EmploymentStatusId = FindCell("STATUSKONTRAKPKWT", initialRow);
+                DriverLicenseType = FindCell("SIM", initialRow);
+                DriverLicense = FindCell("NOSIM", initialRow);
+                DriverLicenseExpire = FindCell("SIMBERLAKU", initialRow);
+                HasUniform = FindCell("SERAGAM", initialRow);
+                UniformDeliveryDate = FindCell("TGLPENGIRIMAN", initialRow);
+                HasIdCard = FindCell("IDCARD", initialRow);
+                IdCardDeliveryDate = FindCell("TGLPENGIRIMAN", initialRow);
+                TrainingName = FindCell("TRAINING", initialRow);
+                TrainingRemark = FindCell("KETTRAINING", initialRow);
+                TrainingGrade = FindCell("NILAITRAINING", initialRow);
+                HasTraining = FindCell("STATUSTRAINING", initialRow);
+                BpjsNumber = FindCell("BPJSKESEHATAN", initialRow);
+                BpjsRemark = FindCell("KETERANGANPROSESBPJSKesehatan", initialRow);
+                JamsostekNumber= FindCell("Jamsostek", initialRow);
+                JamsostekRemark = FindCell("KETJAMSOSTEK", initialRow);
+                NPWP = FindCell("NPWP", initialRow);
+                AccountName = FindCell("NAMADIBANK", initialRow);
+                BankCode = FindCell("BANK", initialRow);
+                AccountNumber = FindCell("NO.ACCOUNT", initialRow);
+                KK = FindCell("NOKK", initialRow);
+                KTP = FindCell("No.KTP", initialRow);
+                IsDriverPosition = FindCell("DRIVER", initialRow);
+                IsHelperPosition = FindCell("HELPER", initialRow);
+                IsCheckerPosition = FindCell("CHECKER", initialRow);
+                IsNonDriverPosition = FindCell("NONDRIVER", initialRow);
+                IsExist = FindCell("AKTIF", initialRow);
+
+
+                for (int currentRow = InRowStart; currentRow < EndCell.Row;  currentRow++)
+                {
+                    ExcelRange selectedCell = Worksheet.Cells[$"{No}{currentRow}"];
+                    if (selectedCell.Value == null)
+                    {
+                        InRowEnd = currentRow;
+                        break;
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+
+                if (NIK != null && Name != null && FamilyStatusCode != null )
+                {
+                    IsAcceptable = true;
+                }
+                else
+                {
+                    IsAcceptable = false;
+
+                }
             }
         }
 
-        private string FindCell(string name)
+        private string FindCell(string name, int row = 1)
         {
             string cell = null;
-            for (int currentRow = 1; currentRow < EndCell.Row; currentRow++)
+            for (int currentRow = row; currentRow < EndCell.Row; currentRow++)
             {
                 for (int currentCollumn = 1; currentCollumn < EndCell.Column; currentCollumn++)
                 {
@@ -83,15 +110,42 @@ namespace Payroll.ViewModels
                 }
             }
             return cell;
-
         }
 
+        private int FindRow(string cell, string value, int startRow = 1)
+        {
+            int suspectedRow = 0;
+            for (int row = startRow; row < EndCell.Row ; row++)
+            {
+                ExcelRange selectedCell = Worksheet.Cells[$"{cell}{row}"];
+                if (selectedCell.Value != null)
+                {
+                    string cellValue = selectedCell.Value.ToString().ToLower().Replace(" ", string.Empty);
+                    string inputValue = value.ToString().ToLower().Replace(" ", string.Empty);
+                    if (cellValue == inputValue)
+                    {
+                        suspectedRow = row;
+                        break;
+                    }
+                }
+                else
+                {
+                    continue;
+                }
+            }
+            return suspectedRow;
+        }
+
+        public bool IsAcceptable { set; get; }
         public ExcelCellAddress? StartCell{ set; get; }
         public ExcelCellAddress? EndCell{ set; get; }
+        public int InRowStart { set; get; }
+        public int InRowEnd { set; get; }
         public int Row { set; get; }
 
         public ExcelWorksheet? Worksheet { set; get; }
         public string IsExist { set; get; }
+        public string No { set; get; }
         public string NIK { set; get; }
         public string Name { set; get; }
         public string Sex { set; get; }
@@ -131,7 +185,10 @@ namespace Payroll.ViewModels
         public string TrainingGrade { set; get; }
         public string TrainingDeliveryDate { set; get; }
 
-        public string PositionId { set; get; }
+        public string IsDriverPosition { set; get; }
+        public string IsHelperPosition { set; get; }
+        public string IsCheckerPosition { set; get; }
+        public string IsNonDriverPosition { set; get; }
         public string LocationId { set; get; }
         public string CustomerId { set; get; }
         public string JoinCustomerDate { set; get; }
