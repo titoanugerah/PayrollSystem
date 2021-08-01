@@ -9,7 +9,7 @@ namespace Payroll.ViewModels
         public MappingExcelEmployee(ExcelWorksheet worksheet, int initialRow = 1)
         {
             Worksheet = worksheet;
-            if (Worksheet!=null)
+            if (Worksheet!=null && Worksheet.Dimension != null)
             {
                 StartCell = worksheet.Dimension.Start;
                 EndCell = worksheet.Dimension.End;
@@ -59,12 +59,12 @@ namespace Payroll.ViewModels
                 IsExist = FindCell("AKTIF", initialRow);
 
 
-                for (int currentRow = InRowStart; currentRow < EndCell.Row;  currentRow++)
+                for (int currentRow = InRowStart; currentRow <= EndCell.Row+1;  currentRow++)
                 {
                     ExcelRange selectedCell = Worksheet.Cells[$"{No}{currentRow}"];
                     if (selectedCell.Value == null)
                     {
-                        InRowEnd = currentRow;
+                        InRowEnd = currentRow-1;
                         break;
                     }
                     else
@@ -83,12 +83,16 @@ namespace Payroll.ViewModels
 
                 }
             }
+            else
+            {
+                IsAcceptable = false;
+            }
         }
 
         private string FindCell(string name, int row = 1)
         {
             string cell = null;
-            for (int currentRow = row; currentRow < EndCell.Row; currentRow++)
+            for (int currentRow = row; currentRow <= EndCell.Row; currentRow++)
             {
                 for (int currentCollumn = 1; currentCollumn < EndCell.Column; currentCollumn++)
                 {
@@ -115,7 +119,7 @@ namespace Payroll.ViewModels
         private int FindRow(string cell, string value, int startRow = 1)
         {
             int suspectedRow = 0;
-            for (int row = startRow; row < EndCell.Row ; row++)
+            for (int row = startRow; row <= EndCell.Row ; row++)
             {
                 ExcelRange selectedCell = Worksheet.Cells[$"{cell}{row}"];
                 if (selectedCell.Value != null)

@@ -10,6 +10,8 @@ using Payroll.WebSockets;
 using Microsoft.AspNetCore.Http;
 using System.Globalization;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace Payroll
 {
@@ -33,7 +35,12 @@ namespace Payroll
 
             services.Configure<ViewModels.PayrollConfiguration>(Configuration.GetSection("PayrollConfiguration"));
 
-            services.AddControllersWithViews();
+
+            //services.AddControllersWithViews();
+            services.AddControllersWithViews(option => option.EnableEndpointRouting = false)
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
+                .AddNewtonsoftJson(opt => opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
+
 
             services.AddSignalR();
 

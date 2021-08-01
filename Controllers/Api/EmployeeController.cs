@@ -63,21 +63,36 @@ namespace Payroll.Controllers.Api
                     using (ExcelPackage excelPackage = new ExcelPackage(stream))
                     {
                         bool isError =false;
+                        List<WorksheetResult> worksheetResults = new List<WorksheetResult>();
                         foreach (ExcelWorksheet worksheet in excelPackage.Workbook.Worksheets)
                         {
-                            WorksheetResult worksheetResult = ReadExcel(worksheet, masterData).Result;
-                            if (worksheetResult.IsError)
+                            WorksheetResult worksheetResult = new WorksheetResult();
+                            worksheetResult = ReadExcel(worksheet, masterData);
+                            worksheetResults.Add(worksheetResult);
+                            if (worksheetResult.Worksheet!=null)
                             {
-                                isError = true;
+                                if (worksheetResult.Worksheet != null)
+                                {
+                                    isError = true;
+                                    string sheetName = $"{worksheetResult.Worksheet.Name}_REV";
+                                    excelPackage.Workbook.Worksheets.Add(sheetName, worksheetResult.Worksheet);
+
+                                }
+                                excelPackage.Workbook.Worksheets.Delete(worksheet);
                             }
-                            excelPackage.Workbook.Worksheets.Delete(worksheet);
-                            excelPackage.Workbook.Worksheets.Add(worksheetResult.Worksheet.Name);
-                            ExcelWorksheet newWorksheet = excelPackage.Workbook.Worksheets.Where(table => table.Name == worksheetResult.Worksheet.Name).FirstOrDefault();
-                            newWorksheet = worksheetResult.Worksheet;                            
                         }
+
+                        if (isError)
+                        {
+                            string excelFileDirectory = $"wwwroot/file/blank.xlsx";
+                            FileInfo excelFile = new FileInfo(excelFileDirectory);
+                            await excelPackage.SaveAsAsync(excelFile);
+                            return BadRequest(excelFile.FullName.ToString());
+                        }
+
                     }
                 }
-                return new JsonResult("OK");
+                return new JsonResult(Ok());
 
             }
             catch (Exception error)
@@ -86,12 +101,13 @@ namespace Payroll.Controllers.Api
             }
         }
 
-        private async Task<WorksheetResult> ReadExcel(ExcelWorksheet worksheet, MasterData masterData)
+        private WorksheetResult ReadExcel(ExcelWorksheet worksheet, MasterData masterData)
         {
             WorksheetResult worksheetResult = new WorksheetResult();
+            
+            worksheetResult.LastRow = 0;
             try
             {
-                int lastRow = 0;
                 MappingExcelEmployee mapping = new MappingExcelEmployee(worksheet);
                 List<Employee> newEmployee = new List<Employee>();
                 List<Employee> oldEmployee = new List<Employee>();
@@ -99,9 +115,9 @@ namespace Payroll.Controllers.Api
                 if (mapping.IsAcceptable)
                 {
 
-                    for (int currentRow = mapping.InRowStart; currentRow < mapping.InRowEnd; currentRow++)
+                    for (int currentRow = mapping.InRowStart; currentRow <= mapping.InRowEnd; currentRow++)
                     {
-                        lastRow = currentRow;
+                        worksheetResult.LastRow = currentRow;
                         Employee employee = new Employee();
                         bool isAny = false;
                         //IS EXIST
@@ -152,57 +168,131 @@ namespace Payroll.Controllers.Api
                         ExcelStringReader isDriverPosition = new ExcelStringReader(worksheet, $"{mapping.IsDriverPosition}{currentRow}");
                         if (isDriverPosition.IsExist)
                         {
-                            employee.PositionId = masterData.Positions
+                            bool isAnyPositionId = masterData.Positions
                                 .Where(column => column.Name.ToLower().Replace(" ", string.Empty) == isDriverPosition.ValueMerged)
-                                .FirstOrDefault()
-                                .Id;
+                                .Any();
+                            if (isAnyPositionId)
+                            {
+                                employee.PositionId = masterData.Positions
+                                    .Where(column => column.Name.ToLower().Replace(" ", string.Empty) == isDriverPosition.ValueMerged)
+                                    .FirstOrDefault()
+                                    .Id;
+                            }
+                            else
+                            {
+                                worksheet.Cells[$"{mapping.IsDriverPosition}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                worksheet.Cells[$"{mapping.IsDriverPosition}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                continue;
+                            }
                         }
 
                         ExcelStringReader isHelperPosition = new ExcelStringReader(worksheet, $"{mapping.IsHelperPosition}{currentRow}");
                         if (isHelperPosition.IsExist)
                         {
-                            employee.PositionId = masterData.Positions
+                            bool isAnyPositionId = masterData.Positions
                                 .Where(column => column.Name.ToLower().Replace(" ", string.Empty) == isHelperPosition.ValueMerged)
-                                .FirstOrDefault()
-                                .Id;
+                                .Any();
+                            if (isAnyPositionId)
+                            {
+                                employee.PositionId = masterData.Positions
+                                    .Where(column => column.Name.ToLower().Replace(" ", string.Empty) == isHelperPosition.ValueMerged)
+                                    .FirstOrDefault()
+                                    .Id;
+                            }
+                            else
+                            {
+                                worksheet.Cells[$"{mapping.IsHelperPosition}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                worksheet.Cells[$"{mapping.IsHelperPosition}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                continue;
+                            }
                         }
 
                         ExcelStringReader isCheckerPosition = new ExcelStringReader(worksheet, $"{mapping.IsCheckerPosition}{currentRow}");
                         if (isCheckerPosition.IsExist)
                         {
-                            employee.PositionId = masterData.Positions
+                            bool isAnyPosition = masterData.Positions
                                 .Where(column => column.Name.ToLower().Replace(" ", string.Empty) == isCheckerPosition.ValueMerged)
-                                .FirstOrDefault()
-                                .Id;
+                                .Any();
+                            if (isAnyPosition)
+                            {
+                                employee.PositionId = masterData.Positions
+                                    .Where(column => column.Name.ToLower().Replace(" ", string.Empty) == isCheckerPosition.ValueMerged)
+                                    .FirstOrDefault()
+                                    .Id;
+                            }
+                            else
+                            {
+                                worksheet.Cells[$"{mapping.IsCheckerPosition}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                worksheet.Cells[$"{mapping.IsCheckerPosition}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                continue;
+                            }
                         }
 
                         ExcelStringReader isNonDriverPosition = new ExcelStringReader(worksheet, $"{mapping.IsNonDriverPosition}{currentRow}");
                         if (isNonDriverPosition.IsExist)
                         {
-                            employee.PositionId = masterData.Positions
+                            bool isAnyPosition = masterData.Positions
                                 .Where(column => column.Name.ToLower().Replace(" ", string.Empty) == isNonDriverPosition.ValueMerged)
-                                .FirstOrDefault()
-                                .Id;
+                                .Any();
+                            if (isAnyPosition)
+                            {
+                                employee.PositionId = masterData.Positions
+                                    .Where(column => column.Name.ToLower().Replace(" ", string.Empty) == isNonDriverPosition.ValueMerged)
+                                    .FirstOrDefault()
+                                    .Id;
+                            }
+                            else
+                            {
+                                worksheet.Cells[$"{mapping.IsNonDriverPosition}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                worksheet.Cells[$"{mapping.IsNonDriverPosition}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                continue;
+                            }
                         }
 
                         //LOCATION
                         ExcelStringReader locationId = new ExcelStringReader(worksheet, $"{mapping.LocationId}{currentRow}");
                         if (locationId.IsExist)
                         {
-                            employee.LocationId = masterData.Locations
+                            bool isAnyLocationId = masterData.Locations
                                 .Where(column => column.Name.ToLower().Replace(" ", string.Empty) == locationId.ValueMerged)
-                                .FirstOrDefault()
-                                .Id;
+                                .Any();
+                            if (isAnyLocationId)
+                            {
+                                employee.LocationId = masterData.Locations
+                                    .Where(column => column.Name.ToLower().Replace(" ", string.Empty) == locationId.ValueMerged)
+                                    .FirstOrDefault()
+                                    .Id;
+                            }
+                            else
+                            {
+                                worksheet.Cells[$"{mapping.LocationId}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                worksheet.Cells[$"{mapping.LocationId}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                continue;
+                            }
                         }
 
                         //CUSTOMER
                         ExcelStringReader customerId = new ExcelStringReader(worksheet, $"{mapping.CustomerId}{currentRow}");
                         if (customerId.IsExist)
                         {
-                            employee.CustomerId = masterData.Customers
+                            bool isAnyCustomerId = masterData.Customers
                                 .Where(column => column.Name.ToLower().Replace(" ", string.Empty) == customerId.ValueMerged)
-                                .FirstOrDefault()
-                                .Id;
+                                .Any();
+                            if (isAnyCustomerId)
+                            {
+                                employee.CustomerId = masterData.Customers
+                                    .Where(column => column.Name.ToLower().Replace(" ", string.Empty) == customerId.ValueMerged)
+                                    .FirstOrDefault()
+                                    .Id;
+                            }
+                            else
+                            {
+                                worksheet.Cells[$"{mapping.CustomerId}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                worksheet.Cells[$"{mapping.CustomerId}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                continue;
+
+                            }
+
                         }
 
                         //TODO : JoinCustomerDate
@@ -218,10 +308,23 @@ namespace Payroll.Controllers.Api
                         ExcelStringReader familyStatusCode = new ExcelStringReader(worksheet, $"{mapping.FamilyStatusCode}{currentRow}");
                         if (familyStatusCode.IsExist)
                         {
-                            employee.FamilyStatusCode = masterData.FamilyStatuses
+                            bool isAnyFamilyStatusCode = masterData.FamilyStatuses
                                 .Where(column => column.Code.ToLower() == familyStatusCode.ValueMerged)
-                                .FirstOrDefault()
-                                .Code;
+                                .Any();
+
+                            if (isAnyFamilyStatusCode)
+                            {
+                                employee.FamilyStatusCode = masterData.FamilyStatuses
+                                    .Where(column => column.Code.ToLower() == familyStatusCode.ValueMerged)
+                                    .FirstOrDefault()
+                                    .Code;
+                            }
+                            else
+                            {
+                                worksheet.Cells[$"{mapping.FamilyStatusCode}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                worksheet.Cells[$"{mapping.FamilyStatusCode}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                continue;
+                            }
                         }
 
                         //RELIGION
@@ -253,10 +356,23 @@ namespace Payroll.Controllers.Api
                         ExcelStringReader employmentStatusId = new ExcelStringReader(worksheet, $"{mapping.EmploymentStatusId}{currentRow}");
                         if (employmentStatusId.IsExist)
                         {
-                            employee.EmploymentStatusId = masterData.EmploymentStatuses
+                            bool isAnyEmploymentStatusId = masterData.EmploymentStatuses
                                 .Where(column => column.Name.ToLower().Replace(" ", string.Empty) == employmentStatusId.ValueMerged)
-                                .FirstOrDefault()
-                                .Id;
+                                .Any();
+
+                            if (isAnyEmploymentStatusId)
+                            {
+                                employee.EmploymentStatusId = masterData.EmploymentStatuses
+                                    .Where(column => column.Name.ToLower().Replace(" ", string.Empty) == employmentStatusId.ValueMerged)
+                                    .FirstOrDefault()
+                                    .Id;
+                            }
+                            else
+                            {
+                                worksheet.Cells[$"{mapping.EmploymentStatusId}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                worksheet.Cells[$"{mapping.EmploymentStatusId}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                continue;
+                            }
                         }
 
                         //DriverLicenseType
@@ -367,17 +483,22 @@ namespace Payroll.Controllers.Api
                         ExcelStringReader bankCode = new ExcelStringReader(worksheet, $"{mapping.BankCode}{currentRow}");
                         if (bankCode.IsExist)
                         {
-                            string? code = masterData.Banks
+                            bool isAnyBank = masterData.Banks
                                 .Where(column => column.Code.ToLower().Replace(" ", string.Empty) == bankCode.ValueMerged)
-                                .FirstOrDefault()
-                                .Code;
-                            if (code == null)
+                                .Any();
+
+                            if (isAnyBank)
                             {
-                                employee.BankCode = null;
+                                employee.BankCode = masterData.Banks
+                                    .Where(column => column.Code.ToLower().Replace(" ", string.Empty) == bankCode.ValueMerged)
+                                    .FirstOrDefault()
+                                    .Code;
                             }
                             else
                             {
-                                employee.BankCode = code;
+                                worksheet.Cells[$"{mapping.BankCode}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                worksheet.Cells[$"{mapping.BankCode}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                continue;
                             }
                         }
 
@@ -404,17 +525,22 @@ namespace Payroll.Controllers.Api
                             newEmployee.Add(employee);
                         }
                     }
+                    payrollDB.Employee.UpdateRange(oldEmployee);
+                    payrollDB.Employee.AddRange(newEmployee);
+                    payrollDB.SaveChanges();
+                    worksheetResult.IsError = false;
                 }
-                payrollDB.Employee.UpdateRange(oldEmployee);
-                await payrollDB.Employee.AddRangeAsync(newEmployee);
-                await payrollDB.SaveChangesAsync();
-                worksheetResult.IsError = false;
+                else
+                {
+                    worksheetResult.IsError = true;
+                }
             }
             catch (Exception error)
             {
                 logger.LogError(error, "Employee API - Read Excel");
                 worksheetResult.IsError = true;
-                throw error;
+                worksheetResult.ErrorMessage = $"Error at sheet {worksheet.Name} row {worksheetResult.LastRow} : {error.InnerException}";
+                //throw error;
             }
             worksheetResult.Worksheet = worksheet;
             return worksheetResult;

@@ -50,9 +50,10 @@ function addEmployee() {
             console.log('success', response);
         },
         error: function (result) {
-            console.log('error', result);
+            console.log('error', "Terdapat beberapa data yang error, silahkan download dan perbaiki");
             $('.spinner-border').hide();
             $('#addEmployeeModal').modal('hide');
+            $('#errorAddEmployeeModal').modal('show');
             notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' + result.responseText, 'danger');
         }
     });
