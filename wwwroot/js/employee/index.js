@@ -50,6 +50,7 @@ function addEmployee() {
             console.log('success', response);
         },
         error: function (result) {
+            reloadTable()
             console.log('error', "Terdapat beberapa data yang error, silahkan download dan perbaiki");
             $('.spinner-border').hide();
             $('#addEmployeeModal').modal('hide');

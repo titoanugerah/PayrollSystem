@@ -71,7 +71,7 @@ namespace Payroll.Controllers.Api
                             worksheetResults.Add(worksheetResult);
                             if (worksheetResult.Worksheet!=null)
                             {
-                                if (worksheetResult.Worksheet != null)
+                                if (worksheetResult.IsError)
                                 {
                                     isError = true;
                                     string sheetName = $"{worksheetResult.Worksheet.Name}_REV";
@@ -134,7 +134,11 @@ namespace Payroll.Controllers.Api
                             isAny = masterData.Employees.Where(column => column.NIK == nik.Value).Any();
                             if (isAny)
                             {
-                                employee = masterData.Employees.Where(column => column.NIK == nik.Value).FirstOrDefault();
+                                employee = masterData.Employees.Where(column => column.NIK == nik.Value).FirstOrDefault();                                
+                            }
+                            else
+                            {
+                                employee.NIK = nik.Value;
                             }
                         }
                         else
