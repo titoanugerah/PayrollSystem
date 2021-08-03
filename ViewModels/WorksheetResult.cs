@@ -8,6 +8,7 @@ namespace Payroll.ViewModels
         public bool IsError { set; get; }
         public string ErrorMessage { set; get; }
         public int LastRow { set; get; }
+        public bool IsAcceptableFormat { set; get; }
 
     }
 }

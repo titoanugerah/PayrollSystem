@@ -14,6 +14,8 @@ namespace Payroll.ViewModels
         public List<District> Districts { set; get; }
         public List<Bank> Banks { set; get; }
         public List<Role> Roles { set; get; }
+        public List<PayrollDetail> payrollDetails { set; get; } 
+        public PayrollHistory PayrollHistory { set; get; }
 
     }
 }

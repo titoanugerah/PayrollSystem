@@ -12,6 +12,7 @@ using System.Globalization;
 using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System;
 
 namespace Payroll
 {
@@ -36,10 +37,10 @@ namespace Payroll
             services.Configure<ViewModels.PayrollConfiguration>(Configuration.GetSection("PayrollConfiguration"));
 
 
-            //services.AddControllersWithViews();
-            services.AddControllersWithViews(option => option.EnableEndpointRouting = false)
-                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
-                .AddNewtonsoftJson(opt => opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
+            services.AddControllersWithViews();
+            //services.AddControllersWithViews(option => option.EnableEndpointRouting = false)
+            //.SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
+            //.AddNewtonsoftJson(opt => opt.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore);
 
 
             services.AddSignalR();
@@ -49,6 +50,7 @@ namespace Payroll
                 options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
             }).AddCookie(options =>
             {
+                options.ExpireTimeSpan = TimeSpan.FromHours(5);
                 options.LoginPath = Configuration["Login:Path"];
             });
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();           

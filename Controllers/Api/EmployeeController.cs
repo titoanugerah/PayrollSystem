@@ -41,15 +41,15 @@ namespace Payroll.Controllers.Api
             try
             {
                 MasterData masterData = new MasterData();
-                masterData.Banks =  await payrollDB.Bank.ToListAsync();
-                masterData.Customers = await payrollDB.Customer.ToListAsync();
-                masterData.Districts = await payrollDB.District.ToListAsync();
-                masterData.Employees = await payrollDB.Employee.ToListAsync();
-                masterData.EmploymentStatuses = await payrollDB.EmploymentStatus.ToListAsync();
-                masterData.FamilyStatuses = await payrollDB.FamilyStatus.ToListAsync();
-                masterData.Locations = await payrollDB.Location.ToListAsync();
-                masterData.Positions = await payrollDB.Position.ToListAsync();
-                masterData.Roles = await payrollDB.Role.ToListAsync();
+                masterData.Banks =  await payrollDB.Bank.AsNoTracking().ToListAsync();
+                masterData.Customers = await payrollDB.Customer.AsNoTracking().ToListAsync();
+                masterData.Districts = await payrollDB.District.AsNoTracking().ToListAsync();
+                masterData.Employees = await payrollDB.Employee.AsNoTracking().ToListAsync();
+                masterData.EmploymentStatuses = await payrollDB.EmploymentStatus.AsNoTracking().ToListAsync();
+                masterData.FamilyStatuses = await payrollDB.FamilyStatus.AsNoTracking().ToListAsync();
+                masterData.Locations = await payrollDB.Location.AsNoTracking().ToListAsync();
+                masterData.Positions = await payrollDB.Position.AsNoTracking().ToListAsync();
+                masterData.Roles = await payrollDB.Role.AsNoTracking().ToListAsync();
                 
                 List<Employee> newEmployees = new List<Employee>();
                 List<Employee> updateEmployees = new List<Employee>();
@@ -68,18 +68,18 @@ namespace Payroll.Controllers.Api
                         {
                             WorksheetResult worksheetResult = new WorksheetResult();
                             worksheetResult = ReadExcel(worksheet, masterData);
-                            worksheetResults.Add(worksheetResult);
                             if (worksheetResult.Worksheet!=null)
                             {
-                                if (worksheetResult.IsError)
+                                if (worksheetResult.IsError && worksheetResult.IsAcceptableFormat)
                                 {
                                     isError = true;
                                     string sheetName = $"{worksheetResult.Worksheet.Name}_REV";
                                     excelPackage.Workbook.Worksheets.Add(sheetName, worksheetResult.Worksheet);
 
                                 }
-                                excelPackage.Workbook.Worksheets.Delete(worksheet);
+
                             }
+                                //excelPackage.Workbook.Worksheets.Delete(worksheet);
                         }
 
                         if (isError)
@@ -112,7 +112,7 @@ namespace Payroll.Controllers.Api
                 List<Employee> newEmployee = new List<Employee>();
                 List<Employee> oldEmployee = new List<Employee>();
                 
-                if (mapping.IsAcceptable)
+                if (worksheetResult.IsAcceptableFormat = mapping.IsAcceptable)
                 {
 
                     for (int currentRow = mapping.InRowStart; currentRow <= mapping.InRowEnd; currentRow++)
@@ -186,7 +186,7 @@ namespace Payroll.Controllers.Api
                             {
                                 worksheet.Cells[$"{mapping.IsDriverPosition}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                                 worksheet.Cells[$"{mapping.IsDriverPosition}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
-                                continue;
+                                //continue;
                             }
                         }
 
@@ -207,7 +207,7 @@ namespace Payroll.Controllers.Api
                             {
                                 worksheet.Cells[$"{mapping.IsHelperPosition}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                                 worksheet.Cells[$"{mapping.IsHelperPosition}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
-                                continue;
+                                //                                continue;
                             }
                         }
 
@@ -228,7 +228,7 @@ namespace Payroll.Controllers.Api
                             {
                                 worksheet.Cells[$"{mapping.IsCheckerPosition}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                                 worksheet.Cells[$"{mapping.IsCheckerPosition}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
-                                continue;
+                                //                                continue;
                             }
                         }
 
@@ -249,7 +249,7 @@ namespace Payroll.Controllers.Api
                             {
                                 worksheet.Cells[$"{mapping.IsNonDriverPosition}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                                 worksheet.Cells[$"{mapping.IsNonDriverPosition}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
-                                continue;
+                                //                                continue;
                             }
                         }
 
@@ -271,7 +271,7 @@ namespace Payroll.Controllers.Api
                             {
                                 worksheet.Cells[$"{mapping.LocationId}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                                 worksheet.Cells[$"{mapping.LocationId}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
-                                continue;
+                                //continue;
                             }
                         }
 
@@ -293,7 +293,7 @@ namespace Payroll.Controllers.Api
                             {
                                 worksheet.Cells[$"{mapping.CustomerId}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                                 worksheet.Cells[$"{mapping.CustomerId}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
-                                continue;
+                                //continue;
 
                             }
 
@@ -327,7 +327,7 @@ namespace Payroll.Controllers.Api
                             {
                                 worksheet.Cells[$"{mapping.FamilyStatusCode}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                                 worksheet.Cells[$"{mapping.FamilyStatusCode}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
-                                continue;
+                                //continue;
                             }
                         }
 
@@ -375,7 +375,7 @@ namespace Payroll.Controllers.Api
                             {
                                 worksheet.Cells[$"{mapping.EmploymentStatusId}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                                 worksheet.Cells[$"{mapping.EmploymentStatusId}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
-                                continue;
+                                //continue;
                             }
                         }
 

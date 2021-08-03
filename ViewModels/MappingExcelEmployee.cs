@@ -59,7 +59,7 @@ namespace Payroll.ViewModels
                 IsExist = FindCell("AKTIF", initialRow);
 
 
-                for (int currentRow = InRowStart; currentRow <= EndCell.Row+1;  currentRow++)
+                for (int currentRow = 7; currentRow <= EndCell.Row+1;  currentRow++)
                 {
                     ExcelRange selectedCell = Worksheet.Cells[$"{No}{currentRow}"];
                     if (selectedCell.Value == null)
