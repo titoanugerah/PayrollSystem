@@ -9,7 +9,7 @@ using Payroll.DataAccess;
 namespace Payroll.Migrations
 {
     [DbContext(typeof(PayrollDB))]
-    [Migration("20210717172709_initial")]
+    [Migration("20210720113228_initial")]
     partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -22,8 +22,8 @@ namespace Payroll.Migrations
             modelBuilder.Entity("Payroll.Models.Bank", b =>
                 {
                     b.Property<string>("Code")
-                        .HasMaxLength(4)
-                        .HasColumnType("varchar(4)");
+                        .HasMaxLength(12)
+                        .HasColumnType("varchar(12)");
 
                     b.Property<int>("CreateBy")
                         .HasColumnType("int");
@@ -132,7 +132,7 @@ namespace Payroll.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("BankCode")
-                        .HasColumnType("varchar(4)");
+                        .HasColumnType("varchar(12)");
 
                     b.Property<DateTime>("BirthDate")
                         .HasColumnType("datetime");
@@ -162,6 +162,9 @@ namespace Payroll.Migrations
                     b.Property<DateTime>("DriverLicenseExpire")
                         .HasColumnType("datetime");
 
+                    b.Property<string>("DriverLicenseType")
+                        .HasColumnType("text");
+
                     b.Property<int>("EmploymentStatusId")
                         .HasColumnType("int");
 
@@ -179,6 +182,9 @@ namespace Payroll.Migrations
 
                     b.Property<ulong>("HasUniform")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime>("IdCardDeliveryDate")
+                        .HasColumnType("datetime");
 
                     b.Property<ulong>("IsExist")
                         .HasColumnType("bit");
@@ -242,6 +248,21 @@ namespace Payroll.Migrations
                         .HasColumnType("varchar(1)");
 
                     b.Property<DateTime>("StartContract")
+                        .HasColumnType("datetime");
+
+                    b.Property<DateTime>("TrainingDeliveryDate")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("TrainingGrade")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TrainingName")
+                        .HasColumnType("text");
+
+                    b.Property<string>("TrainingRemark")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UniformDeliveryDate")
                         .HasColumnType("datetime");
 
                     b.HasKey("NIK");
@@ -400,6 +421,9 @@ namespace Payroll.Migrations
                     b.Property<int>("BpjsKesehatanDeduction")
                         .HasColumnType("int");
 
+                    b.Property<int>("BpjsReturn")
+                        .HasColumnType("int");
+
                     b.Property<int>("BpjsTkDeduction")
                         .HasColumnType("int");
 
@@ -479,6 +503,9 @@ namespace Payroll.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("PensionDeduction")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Rapel")
                         .HasColumnType("int");
 
                     b.Property<int>("ResultPayroll")

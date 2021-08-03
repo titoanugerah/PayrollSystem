@@ -6,7 +6,7 @@
             </div>
             <div class="ml-md-auto py-2 py-md-0">
                 <input type="number" id="payrollHistoryId" value="@ViewBag.Id" hidden />
-                <button type="button" onclick="submit()" class="btn btn-white btn-border btn-round mr-2">Submit</button>
+                <button type="button" onclick="showSubmitForm()" class="btn btn-white btn-border btn-round mr-2">Submit</button>
                 <button type="button" onclick="downloadBankReport()" class="btn btn-white btn-border btn-round mr-2">Report Bank</button>
                 <button type="button" onclick="showDownloadReportForm()" class="btn btn-white btn-border btn-round mr-2">Download</button>
                 <button type="button" onclick="showAddPayrollDetailForm()" class="btn btn-white btn-border btn-round mr-2">Upload Gaji</button>
@@ -75,6 +75,36 @@
     </div>
 </div>
 
+
+<div class="modal fade" id="submitModal" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <center>
+                    <h4>Submit Gajian</h4>
+                </center>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group row">
+                            <label class="col-md-12">Apakah ada keterlambatan pengiriman gaji ke bank BCA?</label>
+                            <p>apabila iya, secara otomatis gaji pekerja yang menggunakan BCA akan dipotong Rp. 5000,- </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" onclick="submit(1)">Ya</button>
+                    <button type="button" class="btn btn-success" onclick="submit(0)">Tidak</button>
+                    <button type="button" data-dismiss="modal" class="btn btn-secondary">Kembali</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="modal fade" id="payrollDetailModal" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -89,14 +119,14 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Nama</label>
-                            <input type="text" class="form-control" id="name">
-                            <input type="text" class="form-control" id="id">
+                            <input type="text" class="form-control" id="name" readonly>
+                            <input type="text" class="form-control" id="id" hidden>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>NIK</label>
-                            <input type="text" class="form-control" id="nik">
+                            <input type="text" class="form-control" id="nik" readonly>
                         </div>
                     </div>
                     <div class="col-md-12" style="overflow-x: hidden;overflow-y: scroll;height:200px;">
@@ -105,31 +135,43 @@
                         <div class="col-md-12 ">
                             <div class="form-group row">
                                 <label class="col-md-6">Gaji Pokok</label>
-                                <input type="text" id="mainSalaryBilling" class="form-control col-md-6">
+                                <input type="text" id="mainSalaryBilling" class="form-control col-md-6" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Rapel</label>
+                                <input type="text" id="rapel" class="form-control changeable col-md-6">
                             </div>
                         </div>
                         <div class="col-md-12 ">
                             <div class="form-group row">
                                 <label class="col-md-6">Insentif</label>
-                                <input type="text" id="insentiveBilling" class="form-control col-md-6">
+                                <input type="text" id="insentiveBilling" class="form-control col-md-6" readonly>
                             </div>
                         </div>
                         <div class="col-md-12 ">
                             <div class="form-group row">
                                 <label class="col-md-6">Premi Kehadiran</label>
-                                <input type="text" id="attendanceBilling" class="form-control col-md-6">
+                                <input type="text" id="attendanceBilling" class="form-control col-md-6" readonly>
                             </div>
                         </div>
                         <div class="col-md-12 ">
                             <div class="form-group row">
                                 <label class="col-md-6">Overtime</label>
-                                <input type="text" id="overtimeBilling" class="form-control col-md-6">
+                                <input type="text" id="overtimeBilling" class="form-control col-md-6" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label class="col-md-6">Retur BPJS Kesehatan</label>
+                                <input type="text" id="bpjsReturn" class="form-control col-md-6" readonly>
                             </div>
                         </div>
                         <div class="col-md-12 ">
                             <div class="form-group row">
                                 <label class="col-md-6">Lain Lain</label>
-                                <input type="text" id="apreciationBilling" class="form-control col-md-6">
+                                <input type="text" id="apreciationBilling" class="form-control col-md-6" readonly>
                             </div>
                         </div>
 
@@ -138,54 +180,54 @@
                         <div class="col-md-12 ">
                             <div class="form-group row">
                                 <label class="col-md-6">Potongan BPJS TK</label>
-                                <input type="text" id="bpjsTkDeduction" class="form-control col-md-6">
+                                <input type="text" id="bpjsTkDeduction" class="form-control col-md-6" readonly>
                             </div>
                         </div>
                         <div class="col-md-12 ">
                             <div class="form-group row">
                                 <label class="col-md-6">Potongan BPJS KS</label>
-                                <input type="text" id="bpjsKesehatanDeduction" class="form-control col-md-6">
+                                <input type="text" id="bpjsKesehatanDeduction" class="form-control col-md-6" readonly>
                             </div>
                         </div>
 
                         <div class="col-md-12 ">
                             <div class="form-group row">
                                 <label class="col-md-6">Potongan Pensiun</label>
-                                <input type="text" id="pensionDeduction" class="form-control col-md-6">
+                                <input type="text" id="pensionDeduction" class="form-control col-md-6" readonly>
                             </div>
                         </div>
 
                         <div class="col-md-12 ">
                             <div class="form-group row">
                                 <label class="col-md-6">PPH 21</label>
-                                <input type="text" id="pph21" class="form-control col-md-6">
+                                <input type="text" id="pph21" class="form-control col-md-6" readonly>
                             </div>
                         </div>
 
                         <div class="col-md-12 ">
                             <div class="form-group row">
                                 <label class="col-md-6">Potongan Lainnya</label>
-                                <input type="text" id="anotherDeduction" class="form-control col-md-6">
+                                <input type="text" id="anotherDeduction" class="form-control changeable col-md-6">
                             </div>
                         </div>
 
                         <div class="col-md-12 ">
                             <div class="form-group row">
                                 <label class="col-md-6">Biaya Transfer</label>
-                                <input type="text" id="transferFee" class="form-control col-md-6">
+                                <input type="text" id="transferFee" class="form-control changeable col-md-6">
                             </div>
                         </div>
                     </div>
-
+                                        
                     <div class="col-md-12 ">
                         <div class="form-group row">
                             <label class="col-md-4">Take Home Pay</label>
-                            <input type="text" id="takeHomePay" class="form-control col-md-8">
+                            <input type="text" id="takeHomePay" class="form-control col-md-8" readonly>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" onclick="downloadSlip()" class="btn btn-primary">Download</button>
+                    <button type="button" onclick="updateDetail()" class="btn btn-primary" id="updateBtn">Update</button>
                     <button type="button" data-dismiss="modal" class="btn btn-secondary">Kembali</button>
                 </div>
 

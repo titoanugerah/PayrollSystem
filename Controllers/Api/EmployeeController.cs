@@ -10,6 +10,7 @@ using Payroll.Models;
 using Payroll.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -32,519 +33,521 @@ namespace Payroll.Controllers.Api
             hostingEnvironment = _hostingEnvironment;
         }
 
-        [Authorize] 
+        [Authorize]
         [HttpPost]
         [Route("api/employee/create")]
         public async Task<IActionResult> Create(IFormFile file)
         {
-            int row = 0;
-            string value = null;
             try
             {
-                List<Bank> banks = await payrollDB.Bank.ToListAsync();
-                List<Customer> customers = await payrollDB.Customer.ToListAsync();
-                List<District> districts = await payrollDB.District.ToListAsync();
-                List<Employee> employees = await payrollDB.Employee.ToListAsync();
-                List<EmploymentStatus> employmentStatuses = await payrollDB.EmploymentStatus.ToListAsync();
-                List<FamilyStatus> familyStatuses = await payrollDB.FamilyStatus.ToListAsync();
-                List<Location> locations = await payrollDB.Location.ToListAsync();
-                List<Position> positions = await payrollDB.Position.ToListAsync();
-                List<Role> roles = await payrollDB.Role.ToListAsync();
+                MasterData masterData = new MasterData();
+                masterData.Banks =  await payrollDB.Bank.AsNoTracking().ToListAsync();
+                masterData.Customers = await payrollDB.Customer.AsNoTracking().ToListAsync();
+                masterData.Districts = await payrollDB.District.AsNoTracking().ToListAsync();
+                masterData.Employees = await payrollDB.Employee.AsNoTracking().ToListAsync();
+                masterData.EmploymentStatuses = await payrollDB.EmploymentStatus.AsNoTracking().ToListAsync();
+                masterData.FamilyStatuses = await payrollDB.FamilyStatus.AsNoTracking().ToListAsync();
+                masterData.Locations = await payrollDB.Location.AsNoTracking().ToListAsync();
+                masterData.Positions = await payrollDB.Position.AsNoTracking().ToListAsync();
+                masterData.Roles = await payrollDB.Role.AsNoTracking().ToListAsync();
+                
                 List<Employee> newEmployees = new List<Employee>();
                 List<Employee> updateEmployees = new List<Employee>();
 
-                using (var stream = new MemoryStream())
+                using (MemoryStream stream = new MemoryStream())
                 {
                     file.CopyTo(stream);
                     stream.Position = 0;
                     ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-                    using (var excelPackage = new ExcelPackage(stream))
+
+                    using (ExcelPackage excelPackage = new ExcelPackage(stream))
                     {
-                        bool isAllValid = true;
+                        bool isError =false;
+                        List<WorksheetResult> worksheetResults = new List<WorksheetResult>();
                         foreach (ExcelWorksheet worksheet in excelPackage.Workbook.Worksheets)
                         {
-                            ExcelCellAddress start = worksheet.Dimension.Start;
-                            ExcelCellAddress end = worksheet.Dimension.End;
-                            for (row = 7; row <= end.Row; row++)
+                            WorksheetResult worksheetResult = new WorksheetResult();
+                            worksheetResult = ReadExcel(worksheet, masterData);
+                            if (worksheetResult.Worksheet!=null)
                             {
-                                bool isValid = true;
-                                bool isExist = false;
-                                Employee employee = employees
-                                    .Where(column => column.NIK == int.Parse(worksheet.Cells[$"C{row}"].Value.ToString().Replace(" ", string.Empty)))
-                                    .FirstOrDefault();
-                                if (employee!=null)
+                                if (worksheetResult.IsError && worksheetResult.IsAcceptableFormat)
                                 {
-                                    isExist = true;
-                                }
-                                else
-                                {
-                                    isExist = false;
-                                    employee = new Employee();
-                                }                 
-
-                                if (worksheet.Cells[$"A{row}"].Value.ToString() == "AKTIF")
-                                {
-                                    employee.IsExist = true;
-                                    value = $"IsExist : {employee.IsExist}";
-                                }
-                                else
-                                {
-                                    employee.IsExist = false;
-                                }
-
-                                if (worksheet.Cells[$"C{row}"].Value != null)
-                                {
-                                    employee.NIK = int.Parse(worksheet.Cells[$"C{row}"].Value.ToString().Replace(" ", string.Empty));
-                                    value = $"NIK : {employee.NIK}";
-                                }
-                                else
-                                {
-                                    worksheet.Cells[$"C{row}"].Value = "Belum Diisi";
-                                    isValid = false;
-                                }
-
-                                if (worksheet.Cells[$"D{row}"].Value != null)
-                                {
-                                    employee.Name = worksheet.Cells[$"D{row}"].Value.ToString();
-                                    value = $"Name : {employee.Name}";
-                                }
-                                else
-                                {
-                                    worksheet.Cells[$"D{row}"].Value = "Belum Diisi";
-                                    isValid = false;
-                                }
-
-                                if (worksheet.Cells[$"F{row}"].Value != null)
-                                {
-                                    employee.PhoneNumber = worksheet.Cells[$"F{row}"].Value.ToString().Replace(" ", string.Empty);
-                                    value = $"PhoneNumber : {employee.PhoneNumber}";
-                                }
-
-                                if (worksheet.Cells[$"G{row}"].Value != null)
-                                {
-                                    employee.PositionId = positions.Where(column => column.Name.ToLower().Replace(" ", string.Empty) == worksheet.Cells[$"G{row}"].Value.ToString().ToLower().Replace(" ", string.Empty)).FirstOrDefault().Id;
-                                    value = $"PositionId : {employee.PositionId}";
-                                }
-                                else if (worksheet.Cells[$"H{row}"].Value != null)
-                                {
-                                    employee.PositionId = positions.Where(column => column.Name.ToLower().Replace(" ", string.Empty) == worksheet.Cells[$"H{row}"].Value.ToString().ToLower().Replace(" ", string.Empty)).FirstOrDefault().Id;
-                                    value = $"PositionId : {employee.PositionId}";
-                                }
-                                else if (worksheet.Cells[$"I{row}"].Value != null)
-                                {
-                                    employee.PositionId = positions.Where(column => column.Name.ToLower().Replace(" ", string.Empty) == worksheet.Cells[$"I{row}"].Value.ToString().ToLower().Replace(" ", string.Empty)).FirstOrDefault().Id;
-                                    value = $"PositionId : {employee.PositionId}";
-                                }
-                                else if (worksheet.Cells[$"J{row}"].Value != null)
-                                {
-                                    employee.PositionId = positions.Where(column => column.Name.ToLower().Replace(" ", string.Empty) == worksheet.Cells[$"J{row}"].Value.ToString().ToLower().Replace(" ", string.Empty)).FirstOrDefault().Id;
-                                    value = $"PositionId : {employee.PositionId}";
-                                }
-                                else
-                                {
-                                    worksheet.Cells[$"G{row}"].Value = "Belum Diisi";
-                                    worksheet.Cells[$"H{row}"].Value = "Belum Diisi";
-                                    worksheet.Cells[$"I{row}"].Value = "Belum Diisi";
-                                    worksheet.Cells[$"J{row}"].Value = "Belum Diisi";
-                                    isValid = false;
-                                }
-
-                                if (worksheet.Cells[$"K{row}"].Value != null)
-                                {
-                                    string locationName = worksheet.Cells[$"K{row}"].Value.ToString().Replace(" ",string.Empty);
-                                    employee.LocationId = locations.Where(column => column.Name.ToLower().Replace(" ", string.Empty) == locationName.ToLower()).FirstOrDefault().Id;
-                                    value = $"LocationId : {employee.LocationId}";
-                                }
-
-                                if (worksheet.Cells[$"L{row}"].Value != null)
-                                {
-                                    employee.CustomerId = customers.Where(column => column.Name.ToLower().Replace(" ", string.Empty) == worksheet.Cells[$"L{row}"].Value.ToString().ToLower().Replace(" ", string.Empty)).FirstOrDefault().Id;
-                                    value = $"CustomerId: {employee.CustomerId}";
-                                }
-
-                                if (worksheet.Cells[$"N{row}"].Value != null)
-                                {
-                                    DateTime dateTimeString;
-                                    if (DateTime.TryParse(worksheet.Cells[$"N{row}"].Value.ToString(), out dateTimeString))
-                                    {
-                                        employee.JoinCustomerDate = dateTimeString;
-                                    }
-                                    else
-                                    {
-                                        employee.JoinCustomerDate = DateTime.FromOADate(int.Parse(worksheet.Cells[$"N{row}"].Value.ToString()));
-                                    }
-                                    value = $"JoinCustomerDate  : {employee.JoinCustomerDate}";
-                                }
-                                else
-                                {
-                                    worksheet.Cells[$"N{row}"].Value = "Belum Diisi";
-                                    isValid = false;
-                                }
-
-                                if (worksheet.Cells[$"O{row}"].Value != null)
-                                {
-                                    employee.Address = worksheet.Cells[$"O{row}"].Value.ToString();
-                                    value = $"Address : {employee.Address}";
-                                }
-                                else
-                                {
-                                    worksheet.Cells[$"O{row}"].Value = "Belum Diisi";
-                                    isValid = false;
-                                }
-
-                                if (worksheet.Cells[$"P{row}"].Value != null)
-                                {
-                                    employee.FamilyStatusCode = familyStatuses.Where(column => column.Code.ToLower().Replace(" ", string.Empty) == worksheet.Cells[$"P{row}"].Value.ToString().ToLower().Replace(" ", string.Empty)).FirstOrDefault().Code;
-                                    value = $"FamilyStatusCode : {employee.FamilyStatusCode}";
-                                }
-                                else
-                                {
-                                    worksheet.Cells[$"P{row}"].Value = "Belum Diisi";
-                                    isValid = false;
-                                }
-
-                                if (worksheet.Cells[$"Q{row}"].Value != null)
-                                {
-                                    employee.Religion = worksheet.Cells[$"Q{row}"].Value.ToString().Replace(" ", string.Empty);
-                                    value = $"Religion : {employee.Religion}";
-                                }
-                                else
-                                {
-                                    worksheet.Cells[$"Q{row}"].Value = "Belum Diisi";
-                                    isValid = false;
-                                }
-
-                                if (worksheet.Cells[$"R{row}"].Value != null)
-                                {
-                                    employee.Sex = worksheet.Cells[$"R{row}"].Value.ToString();
-                                    value = $"Sex : {employee.Sex}";
-                                }
-                                else
-                                {
-                                    worksheet.Cells[$"R{row}"].Value = "Belum Diisi";
-                                    isValid = false;
-                                }
-
-                                if (worksheet.Cells[$"T{row}"].Value != null)
-                                {
-                                    employee.BirthPlace = worksheet.Cells[$"T{row}"].Value.ToString();
-                                    value = $"BirthPlace : {employee.BirthPlace}";
-                                }
-                                else
-                                {
-                                    worksheet.Cells[$"T{row}"].Value = "Belum Diisi";
-                                    isValid = false;
-                                }
-
-                                if (worksheet.Cells[$"U{row}"].Value != null)
-                                {
-                                    DateTime dateTimeString;
-                                    if (DateTime.TryParse(worksheet.Cells[$"U{row}"].Value.ToString(), out dateTimeString))
-                                    {
-                                        employee.BirthDate = dateTimeString;
-                                    }
-                                    else
-                                    {
-                                        employee.BirthDate = DateTime.FromOADate(int.Parse(worksheet.Cells[$"U{row}"].Value.ToString()));
-                                    }
-                                    value = $"BirthDate : {employee.BirthDate}";
-                                }
-                                else
-                                {
-                                    worksheet.Cells[$"U{row}"].Value = "Belum Diisi";
-                                    isValid = false;
-                                }
-
-                                if (worksheet.Cells[$"V{row}"].Value != null)
-                                {
-                                    DateTime dateTimeString;
-                                    if (DateTime.TryParse(worksheet.Cells[$"V{row}"].Value.ToString(), out dateTimeString))
-                                    {
-                                        employee.StartContract = dateTimeString;
-                                    }
-                                    else
-                                    {
-                                        employee.StartContract = DateTime.FromOADate(int.Parse(worksheet.Cells[$"V{row}"].Value.ToString()));
-                                    }
-                                    value = $"StartContract : {employee.StartContract}";
+                                    isError = true;
+                                    string sheetName = $"{worksheetResult.Worksheet.Name}_REV";
+                                    excelPackage.Workbook.Worksheets.Add(sheetName, worksheetResult.Worksheet);
 
                                 }
-                                else
-                                {
-                                    worksheet.Cells[$"V{row}"].Value = "Belum Diisi";
-                                    isValid = false;
-                                }
 
-                                if (worksheet.Cells[$"W{row}"].Value != null)
-                                {
-                                    DateTime dateTimeString;
-                                    if (DateTime.TryParse(worksheet.Cells[$"W{row}"].Value.ToString(), out dateTimeString))
-                                    {
-                                        employee.EndContract = dateTimeString;
-                                    }
-                                    else
-                                    {
-                                        employee.EndContract = DateTime.FromOADate(int.Parse(worksheet.Cells[$"W{row}"].Value.ToString()));
-                                    }
-                                    value = $"EndContract : {employee.EndContract}";
-                                }
-                                else
-                                {
-                                    worksheet.Cells[$"W{row}"].Value = "Belum Diisi";
-                                    isValid = false;
-                                }
+                            }
+                                //excelPackage.Workbook.Worksheets.Delete(worksheet);
+                        }
 
-                                if (worksheet.Cells[$"X{row}"].Value != null)
-                                {
-                                    employee.EmploymentStatusId = employmentStatuses.Where(column => column.Name.ToLower().Replace(" ", string.Empty) == worksheet.Cells[$"X{row}"].Value.ToString().ToLower().Replace(" ", string.Empty)).FirstOrDefault().Id;
-                                    value = $"EmploymentStatusId : {employee.EmploymentStatusId}";
-                                }
-                                else
-                                {
-                                    worksheet.Cells[$"X{row}"].Value = "Belum Diisi";
-                                    isValid = false;
-                                }
+                        if (isError)
+                        {
+                            string excelFileDirectory = $"wwwroot/file/blank.xlsx";
+                            FileInfo excelFile = new FileInfo(excelFileDirectory);
+                            await excelPackage.SaveAsAsync(excelFile);
+                            return BadRequest(excelFile.FullName.ToString());
+                        }
 
-                                if (worksheet.Cells[$"AA{row}"].Value != null)
-                                {
-                                    employee.DriverLicenseType = worksheet.Cells[$"AA{row}"].Value.ToString().Replace(" ", string.Empty);
-                                    value = $"DriverLicense : {employee.DriverLicenseType}";
-                                }
+                    }
+                }
+                return new JsonResult(Ok());
 
+            }
+            catch (Exception error)
+            {               
+                throw error;
+            }
+        }
 
-                                if (worksheet.Cells[$"AB{row}"].Value != null)
-                                {
-                                    employee.DriverLicense = worksheet.Cells[$"AB{row}"].Value.ToString().Replace(" ", string.Empty);
-                                    value = $"DriverLicense : {employee.DriverLicense}";
-                                }
+        private WorksheetResult ReadExcel(ExcelWorksheet worksheet, MasterData masterData)
+        {
+            WorksheetResult worksheetResult = new WorksheetResult();
+            
+            worksheetResult.LastRow = 0;
+            try
+            {
+                MappingExcelEmployee mapping = new MappingExcelEmployee(worksheet);
+                List<Employee> newEmployee = new List<Employee>();
+                List<Employee> oldEmployee = new List<Employee>();
+                
+                if (worksheetResult.IsAcceptableFormat = mapping.IsAcceptable)
+                {
 
-                                if (worksheet.Cells[$"AC{row}"].Value != null)
-                                {
-                                    DateTime dateTimeString;
-                                    if (DateTime.TryParse(worksheet.Cells[$"AC{row}"].Value.ToString(), out dateTimeString))
-                                    {
-                                        employee.DriverLicenseExpire = dateTimeString;
-                                    }
-                                    else if(worksheet.Cells[$"AC{row}"].Value.ToString().ToLower().Replace(" ", string.Empty) == "seumurhidup")
-                                    {
-                                        employee.DriverLicenseExpire = DateTime.MaxValue;
-                                    }
-                                    else if (worksheet.Cells[$"AC{row}"].Value.ToString().ToLower().Replace(" ", string.Empty) == "nondriver")
-                                    {
-                                        //employee.DriverLicenseExpire ;
-                                    }
-                                    else
-                                    {
-                                        employee.DriverLicenseExpire = DateTime.FromOADate(int.Parse(worksheet.Cells[$"AC{row}"].Value.ToString()));
-                                    }
-                                    value = $"DriverLicenseExpire : {employee.DriverLicenseExpire}";
-                                }
+                    for (int currentRow = mapping.InRowStart; currentRow <= mapping.InRowEnd; currentRow++)
+                    {
+                        worksheetResult.LastRow = currentRow;
+                        Employee employee = new Employee();
+                        bool isAny = false;
+                        //IS EXIST
+                        ExcelBoolReader isExist = new ExcelBoolReader(worksheet, $"{mapping.IsExist}{currentRow}", "AKTIF");
+                        if (isExist.IsExist)
+                        {
+                            employee.IsExist = isExist.Value;
+                        }
+                        
+                        //NIK
+                        ExcelIntreader nik = new ExcelIntreader(worksheet, $"{mapping.NIK}{currentRow}");
+                        if (nik.IsExist && nik.IsInteger)
+                        {
+                            isAny = masterData.Employees.Where(column => column.NIK == nik.Value).Any();
+                            if (isAny)
+                            {
+                                employee = masterData.Employees.Where(column => column.NIK == nik.Value).FirstOrDefault();                                
+                            }
+                            else
+                            {
+                                employee.NIK = nik.Value;
+                            }
+                        }
+                        else
+                        {
+                            worksheet.Cells[$"{mapping.NIK}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                            worksheet.Cells[$"{mapping.NIK}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                            continue;
+                        }
 
-                                if (worksheet.Cells[$"AD{row}"].Value != null)
-                                {
-                                    employee.HasUniform = true;
-                                    value = $"HasUniform : {employee.HasUniform}";
-                                }
+                        //NAME
+                        ExcelStringReader name = new ExcelStringReader(worksheet, $"{mapping.Name}{currentRow}");
+                        if (name.IsExist)
+                        {
+                            employee.Name = name.Value;
+                        }
+                        else
+                        {
+                            worksheet.Cells[$"{mapping.Name}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                            worksheet.Cells[$"{mapping.Name}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                            continue;
+                        }
 
-                                if (worksheet.Cells[$"AE{row}"].Value != null)
-                                {
-                                    DateTime dateTimeString;
-                                    if (DateTime.TryParse(worksheet.Cells[$"AE{row}"].Value.ToString(), out dateTimeString))
-                                    {
-                                        employee.UniformDeliveryDate = dateTimeString;
-                                    }
-                                    else
-                                    {
-                                        employee.UniformDeliveryDate = DateTime.FromOADate(int.Parse(worksheet.Cells[$"AE{row}"].Value.ToString()));
-                                    }
-                                    value = $"Uniform Delivery Date : {employee.UniformDeliveryDate}";
-                                }
+                        //PHONE NUMBER
+                        ExcelStringReader phoneNumber = new ExcelStringReader(worksheet, $"{mapping.PhoneNumber}{currentRow}");
+                        if (phoneNumber.IsExist)
+                        {
+                            employee.PhoneNumber = phoneNumber.Value;
+                        }
 
-                                if (worksheet.Cells[$"AF{row}"].Value != null)
-                                {
-                                    employee.HasIdCard = true;
-                                    value = $"HasIDCard : {employee.HasIdCard}";
-                                }
+                        //POSITION
+                        ExcelStringReader isDriverPosition = new ExcelStringReader(worksheet, $"{mapping.IsDriverPosition}{currentRow}");
+                        if (isDriverPosition.IsExist)
+                        {
+                            bool isAnyPositionId = masterData.Positions
+                                .Where(column => column.Name.ToLower().Replace(" ", string.Empty) == isDriverPosition.ValueMerged)
+                                .Any();
+                            if (isAnyPositionId)
+                            {
+                                employee.PositionId = masterData.Positions
+                                    .Where(column => column.Name.ToLower().Replace(" ", string.Empty) == isDriverPosition.ValueMerged)
+                                    .FirstOrDefault()
+                                    .Id;
+                            }
+                            else
+                            {
+                                worksheet.Cells[$"{mapping.IsDriverPosition}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                worksheet.Cells[$"{mapping.IsDriverPosition}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                //continue;
+                            }
+                        }
 
-                                if (worksheet.Cells[$"AG{row}"].Value != null)
-                                {
-                                    DateTime dateTimeString;
-                                    if (DateTime.TryParse(worksheet.Cells[$"AG{row}"].Value.ToString(), out dateTimeString))
-                                    {
-                                        employee.IdCardDeliveryDate = dateTimeString;
-                                    }
-                                    else
-                                    {
-                                        employee.IdCardDeliveryDate = DateTime.FromOADate(int.Parse(worksheet.Cells[$"AG{row}"].Value.ToString()));
-                                    }
-                                    value = $"ID Card Delivery Date : {employee.IdCardDeliveryDate}";
-                                }
+                        ExcelStringReader isHelperPosition = new ExcelStringReader(worksheet, $"{mapping.IsHelperPosition}{currentRow}");
+                        if (isHelperPosition.IsExist)
+                        {
+                            bool isAnyPositionId = masterData.Positions
+                                .Where(column => column.Name.ToLower().Replace(" ", string.Empty) == isHelperPosition.ValueMerged)
+                                .Any();
+                            if (isAnyPositionId)
+                            {
+                                employee.PositionId = masterData.Positions
+                                    .Where(column => column.Name.ToLower().Replace(" ", string.Empty) == isHelperPosition.ValueMerged)
+                                    .FirstOrDefault()
+                                    .Id;
+                            }
+                            else
+                            {
+                                worksheet.Cells[$"{mapping.IsHelperPosition}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                worksheet.Cells[$"{mapping.IsHelperPosition}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                //                                continue;
+                            }
+                        }
 
-                                if (worksheet.Cells[$"AH{row}"].Value != null)
-                                {
-                                    employee.TrainingName = worksheet.Cells[$"AH{row}"].Value.ToString().Replace(" ", string.Empty);
-                                    value = $"Training Name: {employee.TrainingName}";
-                                }
+                        ExcelStringReader isCheckerPosition = new ExcelStringReader(worksheet, $"{mapping.IsCheckerPosition}{currentRow}");
+                        if (isCheckerPosition.IsExist)
+                        {
+                            bool isAnyPosition = masterData.Positions
+                                .Where(column => column.Name.ToLower().Replace(" ", string.Empty) == isCheckerPosition.ValueMerged)
+                                .Any();
+                            if (isAnyPosition)
+                            {
+                                employee.PositionId = masterData.Positions
+                                    .Where(column => column.Name.ToLower().Replace(" ", string.Empty) == isCheckerPosition.ValueMerged)
+                                    .FirstOrDefault()
+                                    .Id;
+                            }
+                            else
+                            {
+                                worksheet.Cells[$"{mapping.IsCheckerPosition}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                worksheet.Cells[$"{mapping.IsCheckerPosition}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                //                                continue;
+                            }
+                        }
 
-                                if (worksheet.Cells[$"AI{row}"].Value != null)
-                                {
-                                    employee.TrainingRemark = worksheet.Cells[$"AI{row}"].Value.ToString().Replace(" ", string.Empty);
-                                    value = $"Training Remark: {employee.TrainingRemark}";
-                                }
+                        ExcelStringReader isNonDriverPosition = new ExcelStringReader(worksheet, $"{mapping.IsNonDriverPosition}{currentRow}");
+                        if (isNonDriverPosition.IsExist)
+                        {
+                            bool isAnyPosition = masterData.Positions
+                                .Where(column => column.Name.ToLower().Replace(" ", string.Empty) == isNonDriverPosition.ValueMerged)
+                                .Any();
+                            if (isAnyPosition)
+                            {
+                                employee.PositionId = masterData.Positions
+                                    .Where(column => column.Name.ToLower().Replace(" ", string.Empty) == isNonDriverPosition.ValueMerged)
+                                    .FirstOrDefault()
+                                    .Id;
+                            }
+                            else
+                            {
+                                worksheet.Cells[$"{mapping.IsNonDriverPosition}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                worksheet.Cells[$"{mapping.IsNonDriverPosition}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                //                                continue;
+                            }
+                        }
 
-                                if (worksheet.Cells[$"AJ{row}"].Value != null)
-                                {
-                                    DateTime dateTimeString;
-                                    if (DateTime.TryParse(worksheet.Cells[$"AJ{row}"].Value.ToString(), out dateTimeString))
-                                    {
-                                        employee.TrainingDeliveryDate = dateTimeString;
-                                    }
-                                    else
-                                    {
-                                        employee.TrainingDeliveryDate = DateTime.FromOADate(int.Parse(worksheet.Cells[$"AJ{row}"].Value.ToString()));
-                                    }
-                                    value = $"Training Date : {employee.TrainingDeliveryDate}";
-                                }
+                        //LOCATION
+                        ExcelStringReader locationId = new ExcelStringReader(worksheet, $"{mapping.LocationId}{currentRow}");
+                        if (locationId.IsExist)
+                        {
+                            bool isAnyLocationId = masterData.Locations
+                                .Where(column => column.Name.ToLower().Replace(" ", string.Empty) == locationId.ValueMerged)
+                                .Any();
+                            if (isAnyLocationId)
+                            {
+                                employee.LocationId = masterData.Locations
+                                    .Where(column => column.Name.ToLower().Replace(" ", string.Empty) == locationId.ValueMerged)
+                                    .FirstOrDefault()
+                                    .Id;
+                            }
+                            else
+                            {
+                                worksheet.Cells[$"{mapping.LocationId}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                worksheet.Cells[$"{mapping.LocationId}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                //continue;
+                            }
+                        }
 
-                                if (worksheet.Cells[$"AK{row}"].Value != null)
-                                {
-                                    employee.HasTraining = true;
-                                    value = $"HasTraining: {employee.HasTraining}";
-                                }
-
-                                if (worksheet.Cells[$"AL{row}"].Value != null)
-                                {
-                                    employee.TrainingGrade = worksheet.Cells[$"AL{row}"].Value.ToString().Replace(" ", string.Empty);
-                                    value = $"Training Grade: {employee.TrainingGrade}";
-                                }
-
-                                if (worksheet.Cells[$"AM{row}"].Value != null)
-                                {
-                                    employee.BpjsNumber = worksheet.Cells[$"AM{row}"].Value == null ? worksheet.Cells[$"AM{row}"].Value.ToString().Replace(" ", string.Empty) : null;
-                                    value = $"BpjsNumber : {employee.BpjsNumber}";
-                                }
-
-                                if (worksheet.Cells[$"AN{row}"].Value != null)
-                                {
-                                    employee.BpjsRemark = worksheet.Cells[$"AN{row}"].Value == null ? worksheet.Cells[$"AN{row}"].Value.ToString() : null;
-                                    value = $"BpjsRemark : {employee.BpjsRemark}";
-                                }
-
-                                if (worksheet.Cells[$"AP{row}"].Value != null)
-                                {
-                                    employee.JamsostekNumber = worksheet.Cells[$"AP{row}"].Value.ToString().Replace(" ", string.Empty);
-                                    value = $"JamsostekNumber : {employee.JamsostekNumber}";
-                                }
-
-                                if (worksheet.Cells[$"AQ{row}"].Value != null)
-                                {
-                                    employee.JamsostekRemark = worksheet.Cells[$"AQ{row}"].Value.ToString();
-                                    value = $"JamsostekRemark : {employee.JamsostekRemark}";
-                                }
-                                else
-                                {
-                                    employee.JamsostekRemark = null;
-                                }
-
-                                if (worksheet.Cells[$"AS{row}"].Value != null)
-                                {
-                                    employee.NPWP = worksheet.Cells[$"AS{row}"].Value.ToString().Replace(" ", string.Empty);
-                                    value = $"NPWP : {employee.NPWP}";
-                                }
-                                else
-                                {
-                                    employee.NPWP = null;
-                                }
-
-                                if (worksheet.Cells[$"AT{row}"].Value != null)
-                                {
-                                    employee.KTP = worksheet.Cells[$"AT{row}"].Value.ToString().Replace(" ", string.Empty);
-                                    value = $"KTP : {employee.KTP}";
-                                }
-                                else
-                                {
-                                    worksheet.Cells[$"AT{row}"].Value = "Belum Diisi";
-                                    isValid = false;
-                                }
-
-                                if (worksheet.Cells[$"AV{row}"].Value != null)
-                                {
-                                    employee.AccountName = worksheet.Cells[$"AV{row}"].Value.ToString();
-                                    value = $"AccountName : {employee.AccountName}";
-                                }
-
-                                if (worksheet.Cells[$"AW{row}"].Value != null)
-                                {
-                                    employee.BankCode = banks.Where(column => column.Code.ToLower().Replace(" ", string.Empty) == worksheet.Cells[$"AW{row}"].Value.ToString().ToLower().Replace(" ", string.Empty)).FirstOrDefault().Code;
-                                    value = $"BankCode : {employee.BankCode}";
-                                }
-
-                                if (worksheet.Cells[$"AX{row}"].Value != null)
-                                {
-                                    employee.AccountNumber = worksheet.Cells[$"AX{row}"].Value.ToString().Replace(" ", string.Empty);
-                                    value = $"AccountNumber : {employee.AccountNumber}";
-                                }
-                                else
-                                {
-                                    worksheet.Cells[$"AX{row}"].Value = "Belum Diisi";
-                                    isValid = false;
-                                }
-
-                                if (worksheet.Cells[$"AY{row}"].Value != null)
-                                {
-                                    employee.KK = worksheet.Cells[$"AY{row}"].Value.ToString().Replace(" ", string.Empty);
-                                    value = $"KK : {employee.KK}";
-                                }
-
-                                if (isValid)
-                                {
-                                    if (isExist)
-                                    {
-                                        payrollDB.Entry(employee).State = EntityState.Modified;
-                                        updateEmployees.Add(employee);
-                                    }
-                                    else
-                                    {
-                                        employee.RoleId = 2;
-                                        using (MD5 md5Hash = MD5.Create())
-                                        {
-                                            employee.Password = GetMd5Hash(md5Hash, employee.NIK.ToString());
-                                        }
-                                        payrollDB.Entry(employee).State = EntityState.Added;
-                                        newEmployees.Add(employee);
-                                    }
-
-                                }
-                                else
-                                {
-                                    isAllValid = false;
-                                    return BadRequest($"Data baris ke {row}, pada kolom setelah {value} bermasalah");
-                                }
+                        //CUSTOMER
+                        ExcelStringReader customerId = new ExcelStringReader(worksheet, $"{mapping.CustomerId}{currentRow}");
+                        if (customerId.IsExist)
+                        {
+                            bool isAnyCustomerId = masterData.Customers
+                                .Where(column => column.Name.ToLower().Replace(" ", string.Empty) == customerId.ValueMerged)
+                                .Any();
+                            if (isAnyCustomerId)
+                            {
+                                employee.CustomerId = masterData.Customers
+                                    .Where(column => column.Name.ToLower().Replace(" ", string.Empty) == customerId.ValueMerged)
+                                    .FirstOrDefault()
+                                    .Id;
+                            }
+                            else
+                            {
+                                worksheet.Cells[$"{mapping.CustomerId}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                worksheet.Cells[$"{mapping.CustomerId}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                //continue;
 
                             }
 
                         }
-                        payrollDB.Employee.UpdateRange(updateEmployees);
-                        await payrollDB.Employee.AddRangeAsync(newEmployees);
-                        await payrollDB.SaveChangesAsync();
-                    }
-                }
-                return new JsonResult("OK");
 
-            }
-            catch (Exception error)
-            {
-                logger.LogError(error, $"Employee API - Create at row {row}");
-                if (value == "")
-                {
-                    return new OkObjectResult(error.Message);
+                        //TODO : JoinCustomerDate
+
+                        //ADDRESS
+                        ExcelStringReader address = new ExcelStringReader(worksheet, $"{mapping.Address}{currentRow}");
+                        if (address.IsExist)
+                        {
+                            employee.Address = address.Value;
+                        }
+
+                        //FAMILY STATUS
+                        ExcelStringReader familyStatusCode = new ExcelStringReader(worksheet, $"{mapping.FamilyStatusCode}{currentRow}");
+                        if (familyStatusCode.IsExist)
+                        {
+                            bool isAnyFamilyStatusCode = masterData.FamilyStatuses
+                                .Where(column => column.Code.ToLower() == familyStatusCode.ValueMerged)
+                                .Any();
+
+                            if (isAnyFamilyStatusCode)
+                            {
+                                employee.FamilyStatusCode = masterData.FamilyStatuses
+                                    .Where(column => column.Code.ToLower() == familyStatusCode.ValueMerged)
+                                    .FirstOrDefault()
+                                    .Code;
+                            }
+                            else
+                            {
+                                worksheet.Cells[$"{mapping.FamilyStatusCode}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                worksheet.Cells[$"{mapping.FamilyStatusCode}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                //continue;
+                            }
+                        }
+
+                        //RELIGION
+                        ExcelStringReader religion = new ExcelStringReader(worksheet, $"{mapping.Religion}{currentRow}");
+                        if (religion.IsExist)
+                        {
+                            employee.Religion = religion.Value;
+                        }
+
+                        //SEX
+                        ExcelStringReader sex = new ExcelStringReader(worksheet, $"{mapping.Sex}{currentRow}");
+                        if (sex.IsExist)
+                        {
+                            employee.Sex = sex.Value;
+                        }
+
+                        //BIRTH PLACE
+                        ExcelStringReader birthPlace = new ExcelStringReader(worksheet, $"{mapping.BirthPlace}{currentRow}");
+                        if (birthPlace.IsExist)
+                        {
+                            employee.BirthPlace = birthPlace.Value;
+                        }
+
+                        //TODO : BirthDate
+                        //TODO : StartContract
+                        //TODO : EndContract
+
+                        //EmployeeStatusId
+                        ExcelStringReader employmentStatusId = new ExcelStringReader(worksheet, $"{mapping.EmploymentStatusId}{currentRow}");
+                        if (employmentStatusId.IsExist)
+                        {
+                            bool isAnyEmploymentStatusId = masterData.EmploymentStatuses
+                                .Where(column => column.Name.ToLower().Replace(" ", string.Empty) == employmentStatusId.ValueMerged)
+                                .Any();
+
+                            if (isAnyEmploymentStatusId)
+                            {
+                                employee.EmploymentStatusId = masterData.EmploymentStatuses
+                                    .Where(column => column.Name.ToLower().Replace(" ", string.Empty) == employmentStatusId.ValueMerged)
+                                    .FirstOrDefault()
+                                    .Id;
+                            }
+                            else
+                            {
+                                worksheet.Cells[$"{mapping.EmploymentStatusId}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                worksheet.Cells[$"{mapping.EmploymentStatusId}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                //continue;
+                            }
+                        }
+
+                        //DriverLicenseType
+                        ExcelStringReader driverLicenseType = new ExcelStringReader(worksheet, $"{mapping.DriverLicenseType}{currentRow}");
+                        if (driverLicenseType.IsExist)
+                        {
+                            employee.DriverLicenseType = driverLicenseType.Value;
+                        }
+
+                        //DriverLicense
+                        ExcelStringReader driverLicense = new ExcelStringReader(worksheet, $"{mapping.DriverLicense}{currentRow}");
+                        if (driverLicense.IsExist)
+                        {
+                            employee.DriverLicense = driverLicense.Value;
+                        }
+
+                        //Driver License Expire
+
+                        //Has Uniform
+                        ExcelBoolReader hasUniform = new ExcelBoolReader(worksheet, $"{mapping.HasUniform}{currentRow}", "sudah", "nondriver");
+                        if (hasUniform.IsExist)
+                        {
+                            employee.HasUniform = hasUniform.Value;
+                        }
+
+                        //TODO : DeliveryUniform
+
+                        //Has ID Card
+                        ExcelBoolReader hasIdCard = new ExcelBoolReader(worksheet, $"{mapping.HasIdCard}{currentRow}", "sudah", "nondriver");
+                        if (hasIdCard.IsExist)
+                        {
+                            employee.HasIdCard = hasIdCard.Value;
+                        }
+
+                        //TODO : DeliveryIdCard
+
+                        //HAS TRAINING
+                        ExcelBoolReader hasTraining = new ExcelBoolReader(worksheet, $"{mapping.HasTraining}{currentRow}", "sudah", "nondriver");
+                        if (hasTraining.IsExist)
+                        {
+                            employee.HasTraining = hasTraining.Value;
+                        }
+
+                        //TRAINING REMARK
+                        ExcelStringReader trainingRemark = new ExcelStringReader(worksheet, $"{mapping.TrainingRemark}{currentRow}");
+                        if (trainingRemark.IsExist)
+                        {
+                            employee.TrainingRemark = trainingRemark.Value;
+                        }
+
+                        //TRAINING GRADE
+                        ExcelStringReader trainingGrade = new ExcelStringReader(worksheet, $"{mapping.TrainingGrade}{currentRow}");
+                        if (trainingGrade.IsExist)
+                        {
+                            employee.TrainingGrade = trainingGrade.Value;
+                        }
+
+                        //BPJS KESEHATAN
+                        ExcelStringReader bpjsNumber = new ExcelStringReader(worksheet, $"{mapping.BpjsNumber}{currentRow}");
+                        if (bpjsNumber.IsExist)
+                        {
+                            employee.BpjsNumber = bpjsNumber.Value;
+                        }
+
+                        //BPJS REMARK
+                        ExcelStringReader bpjsRemark = new ExcelStringReader(worksheet, $"{mapping.BpjsRemark}{currentRow}");
+                        if (bpjsRemark.IsExist)
+                        {
+                            employee.BpjsRemark = bpjsRemark.Value;
+                        }
+
+                        //JAMSOSTEK NUMBER
+                        ExcelStringReader jamsostekNumber = new ExcelStringReader(worksheet, $"{mapping.JamsostekNumber}{currentRow}");
+                        if (jamsostekNumber.IsExist)
+                        {
+                            employee.JamsostekNumber = jamsostekNumber.Value;
+                        }
+
+                        //JAMSOSTEK REMARK
+                        ExcelStringReader jamsostekRemark = new ExcelStringReader(worksheet, $"{mapping.JamsostekRemark}{currentRow}");
+                        if (jamsostekRemark.IsExist)
+                        {
+                            employee.JamsostekRemark = jamsostekRemark.Value;
+                        }
+
+                        //NPWP
+                        ExcelStringReader npwp = new ExcelStringReader(worksheet, $"{mapping.NPWP}{currentRow}");
+                        if (npwp.IsExist)
+                        {
+                            employee.NPWP = npwp.Value;
+                        }
+
+                        //KTP
+                        ExcelStringReader ktp = new ExcelStringReader(worksheet, $"{mapping.KTP}{currentRow}");
+                        if (ktp.IsExist)
+                        {
+                            employee.KTP = ktp.Value;
+                        }
+
+                        //ACCOUNT NAME
+                        ExcelStringReader accountName = new ExcelStringReader(worksheet, $"{mapping.AccountName}{currentRow}");
+                        if (accountName.IsExist)
+                        {
+                            employee.AccountName = accountName.Value;
+                        }
+
+                        //BANK CODE
+                        ExcelStringReader bankCode = new ExcelStringReader(worksheet, $"{mapping.BankCode}{currentRow}");
+                        if (bankCode.IsExist)
+                        {
+                            bool isAnyBank = masterData.Banks
+                                .Where(column => column.Code.ToLower().Replace(" ", string.Empty) == bankCode.ValueMerged)
+                                .Any();
+
+                            if (isAnyBank)
+                            {
+                                employee.BankCode = masterData.Banks
+                                    .Where(column => column.Code.ToLower().Replace(" ", string.Empty) == bankCode.ValueMerged)
+                                    .FirstOrDefault()
+                                    .Code;
+                            }
+                            else
+                            {
+                                worksheet.Cells[$"{mapping.BankCode}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                worksheet.Cells[$"{mapping.BankCode}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                continue;
+                            }
+                        }
+
+                        //KK
+                        ExcelStringReader kk = new ExcelStringReader(worksheet, $"{mapping.KK}{currentRow}");
+                        if (kk.IsExist)
+                        {
+                            employee.KK = kk.Value;
+                        }
+
+                        if (isAny)
+                        {
+                            payrollDB.Entry(employee).State = EntityState.Modified;
+                            oldEmployee.Add(employee);
+                        }
+                        else
+                        {
+                            employee.RoleId = 2;
+                            using (MD5 md5Hash = MD5.Create())
+                            {
+                                employee.Password = GetMd5Hash(md5Hash, employee.NIK.ToString());
+                            }
+                            payrollDB.Entry(employee).State = EntityState.Added;
+                            newEmployee.Add(employee);
+                        }
+                    }
+                    payrollDB.Employee.UpdateRange(oldEmployee);
+                    payrollDB.Employee.AddRange(newEmployee);
+                    payrollDB.SaveChanges();
+                    worksheetResult.IsError = false;
                 }
                 else
                 {
-                    return BadRequest($"Error occured at row {row} for column after {value}");
+                    worksheetResult.IsError = true;
                 }
-                throw error;
             }
+            catch (Exception error)
+            {
+                logger.LogError(error, "Employee API - Read Excel");
+                worksheetResult.IsError = true;
+                worksheetResult.ErrorMessage = $"Error at sheet {worksheet.Name} row {worksheetResult.LastRow} : {error.InnerException}";
+                //throw error;
+            }
+            worksheetResult.Worksheet = worksheet;
+            return worksheetResult;
         }
 
         static string GetMd5Hash(MD5 md5Hash, string input)

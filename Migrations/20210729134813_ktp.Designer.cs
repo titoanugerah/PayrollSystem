@@ -9,8 +9,8 @@ using Payroll.DataAccess;
 namespace Payroll.Migrations
 {
     [DbContext(typeof(PayrollDB))]
-    [Migration("20210718084938_CustomerAddition")]
-    partial class CustomerAddition
+    [Migration("20210729134813_ktp")]
+    partial class ktp
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -22,8 +22,8 @@ namespace Payroll.Migrations
             modelBuilder.Entity("Payroll.Models.Bank", b =>
                 {
                     b.Property<string>("Code")
-                        .HasMaxLength(4)
-                        .HasColumnType("varchar(4)");
+                        .HasMaxLength(12)
+                        .HasColumnType("varchar(12)");
 
                     b.Property<int>("CreateBy")
                         .HasColumnType("int");
@@ -132,7 +132,7 @@ namespace Payroll.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("BankCode")
-                        .HasColumnType("varchar(4)");
+                        .HasColumnType("varchar(12)");
 
                     b.Property<DateTime>("BirthDate")
                         .HasColumnType("datetime");
@@ -207,7 +207,6 @@ namespace Payroll.Migrations
                         .HasColumnType("varchar(16)");
 
                     b.Property<string>("KTP")
-                        .IsRequired()
                         .HasMaxLength(16)
                         .HasColumnType("varchar(16)");
 
@@ -421,6 +420,9 @@ namespace Payroll.Migrations
                     b.Property<int>("BpjsKesehatanDeduction")
                         .HasColumnType("int");
 
+                    b.Property<int>("BpjsReturn")
+                        .HasColumnType("int");
+
                     b.Property<int>("BpjsTkDeduction")
                         .HasColumnType("int");
 
@@ -500,6 +502,9 @@ namespace Payroll.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("PensionDeduction")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Rapel")
                         .HasColumnType("int");
 
                     b.Property<int>("ResultPayroll")
