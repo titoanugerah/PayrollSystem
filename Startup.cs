@@ -69,11 +69,8 @@ namespace Payroll
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
             app.UseRouting();
             app.UseStatusCodePagesWithRedirects("/Error/{0}");
-            //app.UseStatusCodePages();
-
             app.UseAuthentication();
             app.UseAuthorization();
 
