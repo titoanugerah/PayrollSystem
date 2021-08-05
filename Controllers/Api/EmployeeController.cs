@@ -563,25 +563,46 @@ namespace Payroll.Controllers.Api
 
         [Authorize]
         [HttpPost]
-        [Route("api/employee/readDatatable")]
-        public  async Task<IActionResult> ReadDatatable()
+        [Route("api/employee/readDatatable/{id}")]
+        public  async Task<IActionResult> ReadDatatable(int id = 0)
         {
             try
             {
+
                 DatatablesRequest request = new DatatablesRequest(Request.Form.Select(column => new InputRequest { Key = column.Key, Value = column.Value }).ToList());
                 EmployeeView employeeView = new EmployeeView();
-                employeeView.Data = await payrollDB.Employee
-                    .Include(table => table.Location.District)
-                    .Include(table => table.Position)
-                    .Include(table => table.Customer)
-                    .Where(column => column.Name.Contains(request.Keyword) || column.Location.Name.Contains(request.Keyword) || column.Customer.Name.Contains(request.Keyword) || column.Position.Name.Contains(request.Keyword) || column.NIK.ToString().Contains(request.Keyword))
-                    .OrderBy(column => column.Name)
-                    .Skip(request.Skip)
-                    .Take(request.PageSize)
-                    .ToListAsync();
-                employeeView.RecordsFiltered = await payrollDB.Employee
-                    .Where(column => column.IsExist == true)
-                    .CountAsync();
+                if (id == 0)
+                {
+                    employeeView.Data = await payrollDB.Employee
+                        .Include(table => table.Location.District)
+                        .Include(table => table.Position)
+                        .Include(table => table.Customer)
+                        .Where(column => column.Name.Contains(request.Keyword) || column.Location.Name.Contains(request.Keyword) || column.Customer.Name.Contains(request.Keyword) || column.Position.Name.Contains(request.Keyword) || column.NIK.ToString().Contains(request.Keyword))
+                        .OrderBy(column => column.Location.DistrictId)
+                        .Skip(request.Skip)
+                        .Take(request.PageSize)
+                        .ToListAsync();
+                    employeeView.RecordsFiltered = await payrollDB.Employee
+                        .Where(column => column.IsExist == true)
+                        .CountAsync();
+                }
+                else
+                {
+                    employeeView.Data = await payrollDB.Employee
+                       .Include(table => table.Location.District)
+                       .Include(table => table.Position)
+                       .Include(table => table.Customer)
+                       .Where(column => column.Location.District.Id == id )
+                       .Where(column => column.Name.Contains(request.Keyword) || column.Location.Name.Contains(request.Keyword) || column.Customer.Name.Contains(request.Keyword) || column.Position.Name.Contains(request.Keyword) || column.NIK.ToString().Contains(request.Keyword))
+                       .OrderBy(column => column.Location.DistrictId)
+                       .Skip(request.Skip)
+                       .Take(request.PageSize)
+                       .ToListAsync();
+                    employeeView.RecordsFiltered = await payrollDB.Employee
+                        .Where(column => column.IsExist == true)
+                        .Where(column => column.Location.District.Id == id)
+                        .CountAsync();
+                }
                 return Ok(employeeView);
             }
             catch (Exception error)

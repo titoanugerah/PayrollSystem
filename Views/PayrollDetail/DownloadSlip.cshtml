@@ -12,19 +12,27 @@
 
     <div class="container" style="width: 21cm; height: 14cm; padding: 2rem; margin: 0 auto;">
         <div class="row">
-            <div class="col-md-6">
-                <b style="color:red;">Mulia Bintang Kejora</b>
+            <div class="col-md-1">
+                <img src="~/img/logo.jpeg" alt="MBK" style="width:60px; height:60px" />
+            </div>
+            <div class="col-md-5">
+                <b style="color:red;">PT. Mulia Bintang Kejora</b>
+                <br />
+                <p style="color:blue;">Melayani Berkarya Komitmen</p>
+
+
             </div>
             <div class="col-md-1">
                 NIK
             </div>
             <div class="col-md-5">
-                : @ViewBag.payrollDetail.Employee.NIK
+                : @ViewBag.payrollDetail.Employee.NIK.ToString().PadLeft(4, '0')
             </div>
         </div>
         <div class="row">
-            <div class="col-md-6">
-                <p style="color:blue;">Melayani Berkarya Komitmen</p>
+            <div class="col-md-1">
+            </div>
+            <div class="col-md-5">
             </div>
             <div class="col-md-1">
                 Nama
@@ -116,7 +124,7 @@
         </div>
         <div class="row">
             <div class="col-md-3">
-                Lain Lain
+                Tunjangan Pulsa
             </div>
             <div class="col-md-3">
                 : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.AppreciationBilling);
@@ -128,21 +136,25 @@
                 : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.TransferFee);
             </div>
         </div>
-        @if (@ViewBag.payrollDetail.Employee.BpjsRemark  == "BUMBK") {
-        <div class="row">
-            <div class="col-md-3">
-                Retur BPJS Kesehatan
+        @if (@ViewBag.payrollDetail.Employee.BpjsRemark != null ) {
+            @if (@ViewBag.payrollDetail.Employee.BpjsRemark.ToString().ToLower().Replace(" ", string.Empty) == "bumbk")
+            {
+            <div class="row">
+                <div class="col-md-3">
+                    Retur BPJS Kesehatan
+                </div>
+                <div class="col-md-3">
+                    : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.Rapel);
+                </div>
+                <div class="col-md-3">
+                    BPJS Kesehatan
+                </div>
+                <div class="col-md-3">
+                    : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.BpjsKesehatanDeduction);
+                </div>
             </div>
-            <div class="col-md-3">
-                : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.Rapel);
-            </div>
-            <div class="col-md-3">
-                BPJS Kesehatan
-            </div>
-            <div class="col-md-3">
-                : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.BpjsKesehatanDeduction);
-            </div>
-        </div>
+
+            }
         }
         <div class="row">
             <div class="col-md-3">

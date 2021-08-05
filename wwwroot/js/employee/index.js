@@ -1,12 +1,74 @@
 ﻿var table = $("#tblEmployee").DataTable({
+    "dom" : 'Bfrtip',
+    "buttons": [
+        {
+            "title": "Database Driver ",
+            "extend": "excelHtml5",
+            "exportOptions": {
+                "columns": [0, 1, 2, 3, 4, 5],
+                "modifier" : {
+                    "order" : 'current',
+                    "page" : 'all',
+                    "selected" : false,
+                },
+            }
+        },
+        {
+            "title": "Database Driver ",
+            "extend": "pdfHtml5",
+            "orientation" : "landscape",
+            "pageSize" : "LEGAL",
+            "exportOptions": {
+                "columns": [0, 1, 2, 3, 4, 5],
+                "modifier": {
+                    "order": 'current',
+                    "page": 'all',
+                    "selected": false,
+                },
+            }
+        },
+        {
+            "title": "Database Driver ",
+            "extend": "csvHtml5",
+            "exportOptions": {
+                "columns": [0, 1, 2, 3, 4, 5],
+                "modifier": {
+                    "order": 'current',
+                    "page": 'all',
+                    "selected": false,
+                },
+
+            }
+        },
+        {
+            "extend": "copyHtml5",
+            "exportOptions": {
+                "columns": [0, 1, 2, 3, 4, 5]
+            }
+        },
+        {
+            "title": "Database Driver ",
+            "extend": "print",
+            "exportOptions": {
+                "columns": [0, 1, 2, 3, 4, 5],
+                "modifier": {
+                    "order": 'current',
+                    "page": 'all',
+                    "selected": false,
+                },
+
+            }
+        },
+        "colvis"        
+    ],
     "processing": true,
     "serverSide": true,
     "filter": true,
     "ordering" : false,
     "paging": true,
-    "pageLength": 10,
+    "pageLength": 100,
     "ajax" : {
-        "url": "/api/employee/readDatatable",
+        "url": "/api/employee/readDatatable/0",
         "dataSrc" : "data",
         "type" : "POST",
         "dataType": 'json',
@@ -15,17 +77,28 @@
         }
     },
     "columns" : [
-        { "data": "nik", "name": "NIK"},
+        {
+            "render": function (data,type, row) {
+                return zeroPad(row.nik);
+            }
+        },
         { "data": "name", "name": "Name"},
         { "data": "customer.name",  "name": "Customer" },
         { "data": "position.name", "name": "Position"},
-        { "data": "location.name", "name": "Location" },
+        { "data": "location.name", "name": "Lokasi" },
+        { "data": "location.district.name", "name": "Distrik" },
         {
             "render": function (data,type, row) {
                 return "<button type='button' class='btn btn-info' onclick=editEmployeeForm('" + row.nik + "'); >Edit</button>";
             }
         },
     ]
+});
+
+$('#selectDistrictId').on('change', function () {
+    districtId = $('#selectDistrictId').val();
+    console.log("/api/employee/readDatatable/1");
+    table.ajax.url("/api/employee/readDatatable/"+districtId).load();
 });
 
 function showAddEmployeeForm() {
@@ -101,6 +174,21 @@ function getLocation() {
                 html = html + "<option value='" + data.id + "'>" + data.name + "</option>";
             });
             $('#editLocationId').html(html);
+        }
+    });
+}
+
+function getDistrict() {
+    $.ajax({
+        type: "GET",
+        dataType: "JSON",
+        url: "api/district/read/",
+        success: function (result) {
+            var html = "<option value='0'> Semua </option>";
+            result.forEach(function (data) {
+                html = html + "<option value='" + data.id + "'>" + data.name + "</option>";
+            });
+            $('#selectDistrictId').html(html);
         }
     });
 }
@@ -204,7 +292,7 @@ function editEmployeeForm(id) {
         dataType: "JSON",
         url: "api/employee/readDetail/" + id,
         success: function (result) {
-            $('#editNIK').val(result.nik);
+            $('#editNIK').val(zeroPad(result.nik));
             $('#editName').val(result.name);
 
             $('#editBirthPlace').val(result.birthPlace);
@@ -286,12 +374,18 @@ function reloadTable() {
     getBank();
 }
 
+function zeroPad(num) {
+    console.log(num);
+    return num.toString().padStart(4, "0");
+}
+
 $(document).ready(function () {
     $('.spinner-border').hide();
     getBank();
     getLocation();
     getPosition();
     getCustomer();
+    getDistrict();
     getRole();
 
 });

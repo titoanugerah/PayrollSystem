@@ -1,7 +1,7 @@
 ﻿var table = $("#table").DataTable({
     "processing": true,
     "serverSide": true,
-    "filter": true,
+    "filter": true, 
     "ordering": false,
     "paging": true,
     "pageLength": 10,
@@ -12,8 +12,13 @@
         "dataType": 'json'
     },
     "columns": [
-        { "data": "employee.nik" },
+        {
+            "render": function (data, type, row) {
+                return zeroPad(row.employee.nik);
+            }
+        },
         { "data": "employee.name" },
+        { "data": "employee.location.name" },
         {
             "render": function (data, type, row) {
                 return "Rp. " + row.takeHomePay.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
@@ -66,6 +71,22 @@ function showAddPayrollDetailForm() {
     $('#addPayrollDetailModal').modal('show');
 }
 
+function resync() {
+    var url = "api/payrollDetail/resync/" + $('#payrollHistoryId').val();
+    $.ajax({
+        type: "POST",
+        dataType: "JSON",
+        url: url,
+        success: function (result) {
+            reloadTable();
+        },
+        error: function (result) {
+            console.log(result);
+            notify('fas fa-times', 'Gagal', result.responseText, 'danger');
+        }
+    });
+}
+
 function showDownloadReportForm() {
     $.ajax({
         type: "GET",
@@ -101,7 +122,7 @@ function showDetailForm(id) {
             console.log(result);
             $('#name').val(result.employee.name);
             $('#id').val(result.id);
-            $('#nik').val(result.employee.nik);
+            $('#nik').val(zeroPad(result.employee.nik));
             $('#mainSalaryBilling').val(formatter.format(result.mainSalaryBilling));
             $('#bpjsReturn').val(formatter.format(result.bpjsReturn));
             $('#rapel').val(result.rapel);
@@ -210,6 +231,9 @@ function updateDetail() {
     });
 }
 
+function zeroPad(num) {
+    return num.toString().padStart(4, "0");
+}
 
 $(document).ready(function () {
     $('.select2addmodal').select2({
