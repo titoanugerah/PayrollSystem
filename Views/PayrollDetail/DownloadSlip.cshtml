@@ -136,34 +136,41 @@
                 : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.TransferFee);
             </div>
         </div>
-        @if (@ViewBag.payrollDetail.Employee.BpjsRemark != null ) {
+        @*@if (@ViewBag.payrollDetail.Employee.BpjsRemark != null ) {
             @if (@ViewBag.payrollDetail.Employee.BpjsRemark.ToString().ToLower().Replace(" ", string.Empty) == "bumbk")
-            {
-            <div class="row">
-                <div class="col-md-3">
-                    Retur BPJS Kesehatan
-                </div>
-                <div class="col-md-3">
-                    : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.Rapel);
-                </div>
-                <div class="col-md-3">
-                    BPJS Kesehatan
-                </div>
-                <div class="col-md-3">
-                    : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.BpjsKesehatanDeduction);
-                </div>
-            </div>
+            {*@
+    <div class="row">
+        @*<div class="col-md-3">
+            Retur BPJS Kesehatan
+        </div>
+        <div class="col-md-3">
+            : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.Rapel);
+        </div>*@
+        <div class="col-md-3">
+            Rapel
+        </div>
+        <div class="col-md-3">
+            : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.Rapel);
+        </div>
 
-            }
-        }
-        <div class="row">
+        <div class="col-md-3">
+            BPJS Kesehatan
+        </div>
+        <div class="col-md-3">
+            : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.BpjsKesehatanDeduction);
+        </div>
+    </div>
+
+            @*}
+        }*@
+        @*<div class="row">
             <div class="col-md-3">
                 Rapel
             </div>
             <div class="col-md-9">
                 : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.Rapel);
             </div>
-        </div>
+        </div>*@
         <br />
         <div class="row">
             <div class="col-md-3">
