@@ -15,6 +15,8 @@ namespace Payroll.Models
         [ForeignKey("Employee")]
         public int EmployeeId { set; get; }
         public Employee Employee { set; get; }
+        [DefaultValue(0)]
+        public int AbsentDeduction { set; get; }
         [Required]
         public int MainSalaryBilling { set; get; }
 
