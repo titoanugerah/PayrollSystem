@@ -8,7 +8,7 @@
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
-	 <EnvironmentName>Development</EnvironmentName>
+	 <EnvironmentName>Test</EnvironmentName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)' == 'Release'">
      <EnvironmentName>Test</EnvironmentName>

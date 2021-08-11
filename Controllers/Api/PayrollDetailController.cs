@@ -140,225 +140,6 @@ namespace Payroll.Controllers.Api
             }
         }
 
-        //[Authorize]
-        //[HttpPost]
-        //[Route("api/payrollDetail/update/{id}")]
-        //public async Task<IActionResult>Update(int id, IFormFile file)
-        //{
-        //    try
-        //    {
-        //        MasterData masterData = new MasterData();
-        //        masterData.payrollDetails = await payrollDB.PayrollDetail
-        //            .Include(table => table.PayrollHistory)
-        //            .Include(table => table.Employee.Location.District)
-        //            .Include(table => table.Employee.FamilyStatus)
-        //            .Where(column => column.PayrollHistoryId == id)
-        //            .ToListAsync();
-        //        masterData.PayrollHistory = await payrollDB.PayrollHistory
-        //            .Where(column => column.Id == id)
-        //            .FirstOrDefaultAsync();
-        //        masterData.Employees = await payrollDB.Employee
-        //            .Where(column => column.IsExist == true)
-        //            .ToListAsync();
-        //        using (var stream = new MemoryStream())
-        //        {
-        //            file.CopyTo(stream);
-        //            stream.Position = 0;
-        //            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-        //            using (ExcelPackage excelPackage = new ExcelPackage(stream))
-        //            {
-        //                bool isError = false;
-        //                foreach (ExcelWorksheet worksheet in excelPackage.Workbook.Worksheets)
-        //                {
-        //                    WorksheetResult worksheetResult = await ReadExcel(worksheet, masterData);
-        //                    if (worksheetResult.Worksheet != null)
-        //                    {
-        //                        if (worksheetResult.IsError && worksheetResult.IsAcceptableFormat)
-        //                        {
-        //                            isError = true;
-        //                            string sheetName = $"{worksheetResult.Worksheet.Name}_REV";
-        //                            excelPackage.Workbook.Worksheets.Add(sheetName, worksheetResult.Worksheet);
-        //                        }
-        //                        excelPackage.Workbook.Worksheets.Delete(worksheet);
-
-        //                    }
-        //                }
-        //                if (isError)
-        //                {
-        //                    string excelFileDirectory = $"wwwroot/file/payrolldetail.xlsx";
-        //                    FileInfo excelFile = new FileInfo(excelFileDirectory);
-        //                    await excelPackage.SaveAsAsync(excelFile);
-        //                    return BadRequest(excelFile.FullName.ToString());
-        //                }
-
-        //            }
-        //        }
-        //        return new JsonResult(Ok());
-        //    }
-        //    catch (Exception error)
-        //    {
-        //        logger.LogError(error, $"Payroll Detail API - Update {id}");
-        //        throw;
-        //    }
-        //}
-
-        //private async Task<WorksheetResult> ReadExcel(ExcelWorksheet worksheet, MasterData masterData)
-        //{
-        //    WorksheetResult worksheetResult = new WorksheetResult();
-        //    worksheetResult.LastRow = 0;
-        //    List<Employee> SuccessBillingEmployee = new List<Employee>();
-        //    List<PayrollDetail> UpdatedPayroll = new List<PayrollDetail>();
-        //    try
-        //    {
-        //        MappingExcelPayrollDetail mapping = new MappingExcelPayrollDetail(worksheet);
-        //        if (worksheetResult.IsAcceptableFormat = mapping.IsAcceptable)
-        //        {
-        //            for (int currentRow = mapping.InRowStart; currentRow <= mapping.InRowEnd; currentRow++)
-        //            {
-        //                worksheetResult.LastRow = currentRow;
-        //                bool isAny;
-        //                PayrollDetail payrollDetail = new PayrollDetail();
-
-        //                ExcelIntreader nik = new ExcelIntreader(worksheet, $"{mapping.NIK}{currentRow}");
-        //                if (nik.IsExist && nik.IsInteger)
-        //                {
-        //                    bool isAnyEmployee = masterData.Employees
-        //                        .Where(column => column.NIK == nik.Value)
-        //                        .Any();
-        //                    if (isAnyEmployee)
-        //                    {
-        //                        isAny = masterData.payrollDetails
-        //                            .Where(column => column.Employee.NIK == nik.Value)
-        //                            .Where(column => column.PayrollHistoryId == masterData.PayrollHistory.Id)
-        //                            .Any();
-        //                        if (isAny)
-        //                        {
-        //                            payrollDetail = masterData.payrollDetails
-        //                                .Where(column => column.Employee.NIK == nik.Value)
-        //                                .Where(column => column.PayrollHistoryId == masterData.PayrollHistory.Id)
-        //                                .FirstOrDefault();
-        //                        }
-        //                        else
-        //                        {
-        //                            continue;
-        //                        }
-
-        //                    }
-        //                    else
-        //                    {
-        //                        continue;
-        //                    }
-        //                }
-        //                else
-        //                {
-        //                    worksheet.Cells[$"{mapping.NIK}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-        //                    worksheet.Cells[$"{mapping.NIK}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
-        //                    continue;
-        //                }
-
-        //                //NAME
-        //                ExcelStringReader name = new ExcelStringReader(worksheet, $"{mapping.Name}{currentRow}");
-        //                if (name.IsExist)
-        //                {
-        //                    bool isAnyName = masterData.Employees
-        //                        .Where(column => column.NIK == nik.Value)
-        //                        .Where(column => column.Name == name.Value)
-        //                        .Any();                            
-        //                }
-        //                else
-        //                {
-        //                    worksheet.Cells[$"{mapping.Name}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-        //                    worksheet.Cells[$"{mapping.Name}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
-        //                    continue;
-        //                }
-
-        //                payrollDetail.MainSalaryBilling = GetIntValue(worksheet, mapping.MainSalaryBilling, currentRow);
-        //                payrollDetail.JamsostekBilling = GetIntValue(worksheet, mapping.JamsostekBilling, currentRow);
-        //                payrollDetail.BpjsBilling = GetIntValue(worksheet, mapping.BpjsBilling, currentRow);
-        //                payrollDetail.PensionBilling = GetIntValue(worksheet, mapping.PensionBilling, currentRow);
-        //                payrollDetail.AtributeBilling = GetIntValue(worksheet, mapping.AtributeBilling, currentRow);
-        //                payrollDetail.MainPrice = GetIntValue(worksheet, mapping.MainPrice, currentRow);
-        //                payrollDetail.ManagementFeeBilling = GetIntValue(worksheet, mapping.ManagementFeeBilling, currentRow);
-        //                payrollDetail.InsentiveBilling = GetIntValue(worksheet, mapping.InsentiveBilling, currentRow);
-        //                payrollDetail.AttendanceBilling = GetIntValue(worksheet, mapping.AttendanceBilling, currentRow);
-        //                if (mapping.AppreciationBilling!= null)
-        //                {
-        //                    payrollDetail.AppreciationBilling = GetIntValue(worksheet, mapping.AppreciationBilling, currentRow);
-        //                }
-        //                payrollDetail.OvertimeBilling = GetIntValue(worksheet, mapping.OvertimeBilling, currentRow);
-        //                payrollDetail.SubtotalBilling = GetIntValue(worksheet, mapping.SubtotalBilling, currentRow);
-        //                payrollDetail.TaxBilling = GetIntValue(worksheet, mapping.TaxBilling, currentRow);
-        //                payrollDetail.GrandTotalBilling = GetIntValue(worksheet, mapping.GrandTotalBilling, currentRow);
-        //                if (mapping.AnotherDeduction != null)
-        //                {
-        //                    payrollDetail.AnotherDeduction = GetIntValue(worksheet, "W", currentRow);
-        //                }
-
-        //                if (payrollDetail.IsValidGrandTotalBilling)
-        //                {
-        //                    payrollDetail.PayrollDetailStatusId = 2;
-        //                    payrollDetail.ResultPayroll = Convert.ToInt32(payrollDetail.MainSalaryBilling + payrollDetail.InsentiveBilling + payrollDetail.AttendanceBilling + payrollDetail.OvertimeBilling + payrollDetail.AppreciationBilling);
-        //                    payrollDetail.FeePayroll = Convert.ToInt32(payrollDetail.ManagementFeeBilling);
-        //                    payrollDetail.TotalPayroll = Convert.ToInt32(payrollDetail.FeePayroll + payrollDetail.ResultPayroll);
-        //                    payrollDetail.TaxPayroll = Convert.ToInt32((payrollDetail.FeePayroll * masterData.PayrollHistory.PpnPercentage) / 100);
-        //                    payrollDetail.GrossPayroll = Convert.ToInt32(payrollDetail.TotalPayroll + payrollDetail.TaxPayroll);
-        //                    payrollDetail.AttributePayroll = Convert.ToInt32(payrollDetail.AtributeBilling);
-        //                    payrollDetail.BpjsTkDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * masterData.PayrollHistory.BpjsTk1Percentage) / 100);
-        //                    if (payrollDetail.Employee.BpjsRemark != null)
-        //                    {
-        //                        if (payrollDetail.Employee.BpjsRemark.ToLower().Replace(" ", string.Empty) != "bumbk")
-        //                        {
-        //                            payrollDetail.BpjsKesehatanDeduction = 0;
-        //                            payrollDetail.BpjsReturn = payrollDetail.BpjsKesehatanDeduction;
-        //                        }
-        //                        else
-        //                        {
-        //                            payrollDetail.BpjsKesehatanDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * masterData.PayrollHistory.BpjsPayrollPercentage) / 100);
-        //                        }
-        //                    }
-        //                    else
-        //                    {
-        //                        payrollDetail.BpjsKesehatanDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * masterData.PayrollHistory.BpjsPayrollPercentage) / 100);
-        //                    }
-
-        //                    payrollDetail.PensionDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * masterData.PayrollHistory.PensionPayrollPercentage) / 100);
-        //                    payrollDetail.PTKP = Convert.ToInt32(payrollDetail.Employee.FamilyStatus.PTKP);
-        //                    payrollDetail.PKP1 = Convert.ToInt32(payrollDetail.ResultPayroll - payrollDetail.BpjsKesehatanDeduction - payrollDetail.PensionDeduction - payrollDetail.BpjsTkDeduction); ;
-        //                    payrollDetail.PKP2 = Convert.ToInt32(payrollDetail.PKP1 - payrollDetail.PTKP);
-        //                    if (payrollDetail.PKP2 > 1)
-        //                    {
-        //                        payrollDetail.PPH21 = Convert.ToInt32((payrollDetail.PKP2 * payrollDetail.PayrollHistory.Pph21Percentage) / 100);
-        //                    }
-
-        //                    if (payrollDetail.Employee.BankCode != "BCA")
-        //                    {
-        //                        payrollDetail.TransferFee = 6500;
-        //                    }
-
-        //                    payrollDetail.PPH23 = Convert.ToInt32((payrollDetail.FeePayroll * payrollDetail.PayrollHistory.Pph23Percentage) / 100);
-        //                    payrollDetail.Netto = Convert.ToInt32(payrollDetail.ResultPayroll + payrollDetail.Rapel + payrollDetail.BpjsReturn - payrollDetail.BpjsKesehatanDeduction - payrollDetail.PensionDeduction - payrollDetail.BpjsTkDeduction - payrollDetail.PPH21);
-        //                    payrollDetail.TakeHomePay = Convert.ToInt32(payrollDetail.Netto - payrollDetail.AnotherDeduction - payrollDetail.TransferFee);
-        //                    payrollDB.Entry(payrollDetail).State = EntityState.Modified;
-        //                    SuccessBillingEmployee.Add(payrollDetail.Employee);
-        //                    UpdatedPayroll.Add(payrollDetail);
-        //                }
-
-
-        //            }
-        //            payrollDB.PayrollDetail.UpdateRange(UpdatedPayroll);
-        //            await payrollDB.SaveChangesAsync();
-        //        }
-        //        worksheetResult.IsError = false;
-        //    }
-        //    catch (Exception error)
-        //    {
-        //        logger.LogError(error, $"Read Excel {worksheet.Name} row {worksheetResult.LastRow}");
-        //        worksheetResult.ErrorMessage = error.Message.ToString();
-        //        worksheetResult.IsError = true;
-        //    }
-        //    return worksheetResult;
-        //}
-
         [Authorize]
         [HttpPost]
         [Route("api/payrollDetail/resync/{id}")]
@@ -408,7 +189,7 @@ namespace Payroll.Controllers.Api
                     if (payrollDetail.MainSalaryBilling != 0)
                     {
                         payrollDetail.PayrollDetailStatusId = 2;
-                        payrollDetail.ResultPayroll = Convert.ToInt32(payrollDetail.MainSalaryBilling + payrollDetail.InsentiveBilling + payrollDetail.AttendanceBilling + payrollDetail.OvertimeBilling + payrollDetail.AppreciationBilling);
+                        payrollDetail.ResultPayroll = Convert.ToInt32(payrollDetail.MainSalaryBilling + payrollDetail.InsentiveBilling + payrollDetail.AttendanceBilling + payrollDetail.OvertimeBilling + payrollDetail.AppreciationBilling - payrollDetail.AbsentDeduction);
                         payrollDetail.FeePayroll = Convert.ToInt32(payrollDetail.ManagementFeeBilling);
                         payrollDetail.TotalPayroll = Convert.ToInt32(payrollDetail.FeePayroll + payrollDetail.ResultPayroll);
                         payrollDetail.TaxPayroll = Convert.ToInt32((payrollDetail.FeePayroll * payrollHistory.PpnPercentage) / 100);
@@ -445,11 +226,6 @@ namespace Payroll.Controllers.Api
                             payrollDetail.PPH21 = 0;
 
                         }
-
-                        //if (payrollDetail.Employee.BankCode != "BCA")
-                        //{
-                        //    payrollDetail.TransferFee = 6500;
-                        //}
 
                         payrollDetail.PPH23 = Convert.ToInt32((payrollDetail.FeePayroll * payrollDetail.PayrollHistory.Pph23Percentage) / 100);
                         payrollDetail.Netto = Convert.ToInt32(payrollDetail.ResultPayroll + payrollDetail.Rapel + payrollDetail.BpjsReturn - payrollDetail.BpjsKesehatanDeduction - payrollDetail.PensionDeduction - payrollDetail.BpjsTkDeduction - payrollDetail.PPH21);
@@ -543,23 +319,24 @@ namespace Payroll.Controllers.Api
                                             .FirstOrDefault();
 
                                         payrollDetail.MainSalaryBilling = GetIntValue(worksheet, "G", currentRow);
-                                        payrollDetail.JamsostekBilling = GetIntValue(worksheet, "H", currentRow);
-                                        payrollDetail.BpjsBilling = GetIntValue(worksheet, "I", currentRow);
-                                        payrollDetail.PensionBilling = GetIntValue(worksheet, "J", currentRow);
-                                        payrollDetail.AtributeBilling = GetIntValue(worksheet, "K", currentRow);
-                                        payrollDetail.MainPrice = GetIntValue(worksheet, "L", currentRow);
-                                        payrollDetail.ManagementFeeBilling = GetIntValue(worksheet, "M", currentRow);
-                                        payrollDetail.InsentiveBilling = GetIntValue(worksheet, "N", currentRow);
-                                        payrollDetail.AttendanceBilling = GetIntValue(worksheet, "O", currentRow);
+                                        payrollDetail.AbsentDeduction = GetIntValue(worksheet, "H", currentRow);
+                                        payrollDetail.JamsostekBilling = GetIntValue(worksheet, "I", currentRow);
+                                        payrollDetail.BpjsBilling = GetIntValue(worksheet, "J", currentRow);
+                                        payrollDetail.PensionBilling = GetIntValue(worksheet, "K", currentRow);
+                                        payrollDetail.AtributeBilling = GetIntValue(worksheet, "L", currentRow);
+                                        payrollDetail.MainPrice = GetIntValue(worksheet, "M", currentRow);
+                                        payrollDetail.ManagementFeeBilling = GetIntValue(worksheet, "N", currentRow);
+                                        payrollDetail.InsentiveBilling = GetIntValue(worksheet, "O", currentRow);
                                         payrollDetail.AppreciationBilling = GetIntValue(worksheet, "P", currentRow);
-                                        payrollDetail.OvertimeBilling = GetIntValue(worksheet, "Q", currentRow);
+                                        payrollDetail.AttendanceBilling = GetIntValue(worksheet, "Q", currentRow);
+                                        //payrollDetail.OvertimeBilling = GetIntValue(worksheet, "R", currentRow);
                                         payrollDetail.SubtotalBilling = GetIntValue(worksheet, "R", currentRow);
                                         payrollDetail.TaxBilling = GetIntValue(worksheet, "S", currentRow);
                                         payrollDetail.GrandTotalBilling = GetIntValue(worksheet, "T", currentRow);
-                                        payrollDetail.AnotherDeduction = GetIntValue(worksheet, "W", currentRow);
+                                        payrollDetail.AnotherDeduction = GetIntValue(worksheet, "U", currentRow);
 
                                         payrollDetail.PayrollDetailStatusId = 2;
-                                        payrollDetail.ResultPayroll = Convert.ToInt32(payrollDetail.MainSalaryBilling + payrollDetail.InsentiveBilling + payrollDetail.AttendanceBilling + payrollDetail.OvertimeBilling + payrollDetail.AppreciationBilling);
+                                        payrollDetail.ResultPayroll = Convert.ToInt32(payrollDetail.MainSalaryBilling + payrollDetail.InsentiveBilling + payrollDetail.AttendanceBilling + payrollDetail.OvertimeBilling + payrollDetail.AppreciationBilling - payrollDetail.AbsentDeduction);
                                         payrollDetail.FeePayroll = Convert.ToInt32(payrollDetail.ManagementFeeBilling);
                                         payrollDetail.TotalPayroll = Convert.ToInt32(payrollDetail.FeePayroll + payrollDetail.ResultPayroll);
                                         payrollDetail.TaxPayroll = Convert.ToInt32((payrollDetail.FeePayroll * payrollHistory.PpnPercentage) / 100);
