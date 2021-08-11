@@ -470,10 +470,80 @@ namespace Payroll.Controllers.Api
             }
         }
 
+
+
         [Authorize]
         [HttpPost]
         [Route("api/payrollDetail/update/{id}")]
         public async Task<IActionResult> Update(int id, IFormFile file)
+        {
+            try
+            {
+                //Check if ID  exist
+                if (id == 0)
+                {
+                    return BadRequest($"Gagal mendapatkan Id, silahkan ulangi kembali");
+                }
+
+                //Check if File valid
+                string extension = Path.GetExtension(file.FileName);
+                if (extension != ".xlsx" && extension != ".xls")
+                {
+                    return BadRequest($"formatt file {extension} tidak diijinkan, silahkan upload file dengan format excel");
+                }
+
+                //List Up Needed Data
+                List<PayrollDetail> payrollDetails = await payrollDB.PayrollDetail
+                    .Include(table => table.PayrollHistory)
+                    .Include(table => table.Employee.Location.District)
+                    .Include(table => table.Employee.FamilyStatus)
+                    .Where(column => column.PayrollHistoryId == id)
+                    .ToListAsync();
+                PayrollHistory payrollHistory = await payrollDB.PayrollHistory
+                    .Where(column => column.Id == id)
+                    .FirstOrDefaultAsync();
+                List<Employee> employees = await payrollDB.Employee
+                    .Where(column => column.IsExist == true)
+                    .ToListAsync();
+
+                //Access File
+                using (MemoryStream memoryStream = new MemoryStream())
+                {
+                    //Copy file to memory stream
+                    file.CopyTo(memoryStream);
+                    memoryStream.Position = 0;
+                    ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+
+                    using (ExcelPackage excelPackage = new ExcelPackage(memoryStream))
+                    {
+                        if (excelPackage.Workbook.Worksheets.Count == 0)
+                        {
+                            return BadRequest($"Tidak ada worksheet yang tersedia pada file {file.FileName}");
+                        }
+
+                        foreach (ExcelWorksheet excelWorksheet in excelPackage.Workbook.Worksheets)
+                        {
+                            AddressPayroll address = new AddressPayroll(excelWorksheet);       
+                        }
+                    }
+
+                }
+                return Ok();
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error, $"Payroll Detail API - Update {id}");
+                return BadRequest(error.Message);
+                throw error;
+            }
+
+        }
+
+
+        [Authorize]
+        [HttpPost]
+        [Route("api/payrollDetail/update1/{id}")]
+        public async Task<IActionResult> Update1(int id, IFormFile file)
         {
             int startRow = 0;
             int endRow = 0;
