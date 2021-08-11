@@ -120,6 +120,7 @@ namespace Payroll.Controllers.Api
                     .Include(table => table.Employee)
                     .Where(column => column.PayrollHistoryId == id)
                     .Where(column => column.PayrollDetailStatusId == 1)
+                    .Where(column => column.IsExist == true)
                     .Where(column => column.Employee.IsExist == true)
                     .Count();
                 bool isAlreadySubmitted = payrollDB.PayrollHistory

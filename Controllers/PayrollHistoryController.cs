@@ -55,6 +55,7 @@ namespace Payroll.Controllers
                     .Include(table => table.PayrollHistory)
                     .Where(column => column.PayrollHistoryId == id)
                     .Where(column => column.Employee.IsExist == true)
+                    .Where(column => column.IsExist == true)
                     .OrderBy(column => column.Employee.CustomerId)
                     .ToListAsync();
                 List<Bank> banks = await payrollDB.Bank

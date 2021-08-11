@@ -1,12 +1,15 @@
 ﻿<div class="panel-header bg-primary-gradient">
     <div class="page-inner py-5">
         <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row">
-            <div>
-                <h2 class="text-white pb-2 fw-bold">Kelola Pekerja</h2>
+            <div class="row">
+                <h2 class="text-white col-md-8 pb-2 fw-bold">Kelola Pekerja</h2>
+                <select class="form-control col-md-4" id="selectDistrictId" value ="0">
+                </select>
             </div>
             <div class="ml-md-auto py-2 py-md-0">
-                <button type="button" onclick="showAddEmployeeForm()"  class="btn btn-white btn-border btn-round mr-2" >Tambah Pekerja</button>
-                <button type="button" onclick="reloadTable()" class="btn btn-white btn-border btn-round mr-2" >Reload Data</button>
+
+                <button type="button" onclick="showAddEmployeeForm()" class="btn btn-white btn-border btn-round mr-2">Tambah Pekerja</button>
+                <button type="button" onclick="reloadTable()" class="btn btn-white btn-border btn-round mr-2">Reload Data</button>
                 <a href="#" class="btn btn-white btn-border btn-round mr-2" hidden>Manage</a>
             </div>
         </div>
@@ -29,6 +32,7 @@
                                         <td>Customer</td>
                                         <td>Jabatan</td>
                                         <td>Lokasi</td>
+                                        <td>Distrik</td>
                                         <td>Opsi</td>
                                     </tr>
                                 </thead>

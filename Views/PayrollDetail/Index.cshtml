@@ -6,6 +6,7 @@
             </div>
             <div class="ml-md-auto py-2 py-md-0">
                 <input type="number" id="payrollHistoryId" value="@ViewBag.Id" hidden />
+                <button type="button" onclick="resync()" class="btn btn-white btn-border btn-round mr-2">Sinkronisasi</button>
                 <button type="button" onclick="showSubmitForm()" class="btn btn-white btn-border btn-round mr-2">Submit</button>
                 <button type="button" onclick="downloadBankReport()" class="btn btn-white btn-border btn-round mr-2">Report Bank</button>
                 <button type="button" onclick="showDownloadReportForm()" class="btn btn-white btn-border btn-round mr-2">Download</button>
@@ -30,6 +31,7 @@
                                     <tr>
                                         <td>NIK</td>
                                         <td>Nama</td>
+                                        <td>Location</td>
                                         <td>Total</td>
                                         <td>Status</td>
                                         <td>Opsi</td>
@@ -66,7 +68,10 @@
                 </div>
                 <div class="modal-footer">
                     <a href="~/file/TemplateBilling.xlsx" class="btn btn-success pull-left">Download Format Excel</a>
-                    <button type="button" class="btn btn-primary" onclick="updatePayrollDetail()">Simpan</button>
+                    <button type="button" class="btn btn-primary" onclick="updatePayrollDetail()">
+                        <div class="spinner-border spinner-border-sm"></div>
+                        Simpan
+                    </button>
                     <button type="button" data-dismiss="modal" class="btn btn-secondary">Kembali</button>
                 </div>
 
@@ -170,7 +175,7 @@
                         </div>
                         <div class="col-md-12 ">
                             <div class="form-group row">
-                                <label class="col-md-6">Lain Lain</label>
+                                <label class="col-md-6">Tunjangan Pulsa</label>
                                 <input type="text" id="apreciationBilling" class="form-control col-md-6" readonly>
                             </div>
                         </div>
