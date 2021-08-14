@@ -509,7 +509,6 @@ namespace Payroll.Controllers.Api
                 using (MemoryStream memoryStream = new MemoryStream())
                 {
 
-                    List<string> errMsg = new List<string>();
                     //Copy file to memory stream
                     file.CopyTo(memoryStream);
                     memoryStream.Position = 0;
@@ -522,7 +521,7 @@ namespace Payroll.Controllers.Api
                             return BadRequest($"Tidak ada worksheet yang tersedia pada file {file.FileName}");
                         }
 
-                        foreach (ExcelWorksheet excelWorksheet in excelPackage.Workbook.Worksheets)
+                        foreach (ExcelWorksheet excelWorksheet in excelPackage.Workbook.Worksheets.ToList())
                         {
                             bool isSheetOk = true;
                             AddressPayroll address = new AddressPayroll(excelWorksheet);
@@ -530,13 +529,13 @@ namespace Payroll.Controllers.Api
                             {
                                 isFileOk = false;
                                 isSheetOk = false;
-                                errMsg.Add($"Wrong format at sheet {excelWorksheet.Name}");
                                 excelWorksheet.Cells[$"G1"].Value = "Format tidak valid";
                                 excelWorksheet.Cells[$"G1"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                                 excelWorksheet.Cells[$"G1"].Style.Fill.BackgroundColor.SetColor(Color.Red);
                                 continue;
                             }
 
+                            int rowNum = 1;
                             for (int currentRow = address.DataStartRow; currentRow < address.DataEndRow; currentRow++)
                             {
                                 int employeeNIK = GetIntValue(excelWorksheet, address.NIK, currentRow);
@@ -549,7 +548,6 @@ namespace Payroll.Controllers.Api
                                 {
                                     isFileOk = false;
                                     isSheetOk = false;
-                                    errMsg.Add($"Employee with NIK {employeeNIK} are not found at sheet {excelWorksheet.Name} row {currentRow}");
                                     excelWorksheet.Cells[$"A{currentRow}"].Value = "Pekerja tidak terdaftar";
                                     excelWorksheet.Cells[$"{address.NIK}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                                     excelWorksheet.Cells[$"{address.NIK}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
@@ -579,7 +577,6 @@ namespace Payroll.Controllers.Api
                                 {
                                     isFileOk = false;
                                     isSheetOk = false;
-                                    errMsg.Add($"Employee with NIK {employeeNIK} calculation not correct at sheet {excelWorksheet.Name} row {currentRow}");
                                     excelWorksheet.Cells[$"A{currentRow}"].Value = "Perhitungan Keliru, silahkan periksa kembali";
                                     excelWorksheet.Cells[$"{address.GrandTotalBilling}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                                     excelWorksheet.Cells[$"{address.GrandTotalBilling}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
@@ -628,8 +625,10 @@ namespace Payroll.Controllers.Api
                                 payrollDetail.PPH23 = Convert.ToInt32((payrollDetail.FeePayroll * payrollDetail.PayrollHistory.Pph23Percentage) / 100);
                                 payrollDetail.Netto = Convert.ToInt32(payrollDetail.ResultPayroll + payrollDetail.Rapel + payrollDetail.BpjsReturn - payrollDetail.BpjsKesehatanDeduction - payrollDetail.PensionDeduction - payrollDetail.BpjsTkDeduction - payrollDetail.PPH21);
                                 payrollDetail.TakeHomePay = Convert.ToInt32(payrollDetail.Netto - payrollDetail.AnotherDeduction - payrollDetail.TransferFee);
+                                excelWorksheet.Cells[$"A{currentRow}"].Value = rowNum;
                                 payrollDB.Entry(payrollDetail).State = EntityState.Modified;
                                 updatedPayrollDetails.Add(payrollDetail);
+                                rowNum++;
                             }
 
                             if (isSheetOk)
@@ -640,14 +639,14 @@ namespace Payroll.Controllers.Api
                         if (!isFileOk)
                         {
 
-                            string excelFileDirectory = $"wwwroot/file/blanks.xlsx";
+                            string excelFileDirectory = $"wwwroot/file/ErrorUpload.xlsx";
                             if (System.IO.File.Exists(excelFileDirectory))
                             {
                                 System.IO.File.Delete(excelFileDirectory);
                             }
                             FileInfo excelFile = new FileInfo(excelFileDirectory);
                             await excelPackage.SaveAsAsync(excelFile);
-                            return BadRequest(errMsg);
+                            return BadRequest($"0");
                         }
 
                         payrollDB.PayrollDetail.UpdateRange(updatedPayrollDetails);

@@ -171,6 +171,9 @@ function updatePayrollDetail() {
         error: function (result) {
             console.log('error', result);
             $('#addPayrollDetailModal').modal('hide');
+            if (result.responseText == "0") {
+                $('#submitErrorModal').modal('show');
+            }
             notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' + result.responseText, 'danger');
         }
     });
