@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Payroll.DataAccess;
 
 namespace Payroll.Migrations
 {
     [DbContext(typeof(PayrollDB))]
-    partial class PayrollDBModelSnapshot : ModelSnapshot
+    [Migration("20210811192225_pulseallowance")]
+    partial class pulseallowance
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

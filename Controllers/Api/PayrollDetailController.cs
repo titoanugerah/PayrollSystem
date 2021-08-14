@@ -408,7 +408,7 @@ namespace Payroll.Controllers.Api
                     if (payrollDetail.MainSalaryBilling != 0)
                     {
                         payrollDetail.PayrollDetailStatusId = 2;
-                        payrollDetail.ResultPayroll = Convert.ToInt32(payrollDetail.MainSalaryBilling + payrollDetail.InsentiveBilling + payrollDetail.AttendanceBilling + payrollDetail.OvertimeBilling + payrollDetail.AppreciationBilling);
+                        payrollDetail.ResultPayroll = Convert.ToInt32(payrollDetail.MainSalaryBilling + payrollDetail.InsentiveBilling + payrollDetail.AttendanceBilling + payrollDetail.OvertimeBilling + payrollDetail.AppreciationBilling + payrollDetail.PulseAllowance);
                         payrollDetail.FeePayroll = Convert.ToInt32(payrollDetail.ManagementFeeBilling);
                         payrollDetail.TotalPayroll = Convert.ToInt32(payrollDetail.FeePayroll + payrollDetail.ResultPayroll);
                         payrollDetail.TaxPayroll = Convert.ToInt32((payrollDetail.FeePayroll * payrollHistory.PpnPercentage) / 100);
@@ -417,13 +417,13 @@ namespace Payroll.Controllers.Api
                         payrollDetail.BpjsTkDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * payrollHistory.BpjsTk1Percentage) / 100);
                         if (payrollDetail.Employee.BpjsRemark != null)
                         {
-                            if (payrollDetail.Employee.BpjsRemark.ToLower().Replace(" ", string.Empty) != "bumbk")
+                            if (payrollDetail.Employee.BpjsRemark.ToLower().Replace(" ", string.Empty) == "bumbk")
                             {
-                                payrollDetail.BpjsKesehatanDeduction = 0;
+                                payrollDetail.BpjsKesehatanDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * payrollHistory.BpjsPayrollPercentage) / 100);
                             }
                             else
                             {
-                                payrollDetail.BpjsKesehatanDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * payrollHistory.BpjsPayrollPercentage) / 100);
+                                payrollDetail.BpjsKesehatanDeduction = 0;
                             }
                         }
                         else
@@ -431,7 +431,7 @@ namespace Payroll.Controllers.Api
                             payrollDetail.BpjsKesehatanDeduction = 0;
                         }
 
-                        payrollDetail.BpjsReturn = 0;
+                        payrollDetail.BpjsReturn = payrollDetail.BpjsKesehatanDeduction;
                         payrollDetail.PensionDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * payrollHistory.PensionPayrollPercentage) / 100);
                         payrollDetail.PTKP = Convert.ToInt32(payrollDetail.Employee.FamilyStatus.PTKP);
                         payrollDetail.PKP1 = Convert.ToInt32(payrollDetail.ResultPayroll - payrollDetail.BpjsKesehatanDeduction - payrollDetail.PensionDeduction - payrollDetail.BpjsTkDeduction - payrollDetail.AnotherDeduction) ;
@@ -479,6 +479,7 @@ namespace Payroll.Controllers.Api
         {
             try
             {
+
                 //Check if ID  exist
                 if (id == 0)
                 {
@@ -502,13 +503,13 @@ namespace Payroll.Controllers.Api
                 PayrollHistory payrollHistory = await payrollDB.PayrollHistory
                     .Where(column => column.Id == id)
                     .FirstOrDefaultAsync();
-                List<Employee> employees = await payrollDB.Employee
-                    .Where(column => column.IsExist == true)
-                    .ToListAsync();
-
+                List<PayrollDetail> updatedPayrollDetails = new List<PayrollDetail>();
                 //Access File
+                bool isFileOk = true;
                 using (MemoryStream memoryStream = new MemoryStream())
                 {
+
+                    List<string> errMsg = new List<string>();
                     //Copy file to memory stream
                     file.CopyTo(memoryStream);
                     memoryStream.Position = 0;
@@ -523,8 +524,134 @@ namespace Payroll.Controllers.Api
 
                         foreach (ExcelWorksheet excelWorksheet in excelPackage.Workbook.Worksheets)
                         {
-                            AddressPayroll address = new AddressPayroll(excelWorksheet);       
+                            bool isSheetOk = true;
+                            AddressPayroll address = new AddressPayroll(excelWorksheet);
+                            if (!address.IsValid)
+                            {
+                                isFileOk = false;
+                                isSheetOk = false;
+                                errMsg.Add($"Wrong format at sheet {excelWorksheet.Name}");
+                                excelWorksheet.Cells[$"G1"].Value = "Format tidak valid";
+                                excelWorksheet.Cells[$"G1"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                excelWorksheet.Cells[$"G1"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                continue;
+                            }
+
+                            for (int currentRow = address.DataStartRow; currentRow < address.DataEndRow; currentRow++)
+                            {
+                                int employeeNIK = GetIntValue(excelWorksheet, address.NIK, currentRow);
+                                List<string> employeeNames = GetStringValue(excelWorksheet, address.Name, currentRow).Split(";").ToList();
+                                PayrollDetail payrollDetail = payrollDetails
+                                    .Where(column => column.EmployeeId == employeeNIK)
+//                                    .Where(column => employeeNames.Contains(column.Employee.Name))
+                                    .FirstOrDefault();
+                                if (payrollDetail == null)
+                                {
+                                    isFileOk = false;
+                                    isSheetOk = false;
+                                    errMsg.Add($"Employee with NIK {employeeNIK} are not found at sheet {excelWorksheet.Name} row {currentRow}");
+                                    excelWorksheet.Cells[$"A{currentRow}"].Value = "Pekerja tidak terdaftar";
+                                    excelWorksheet.Cells[$"{address.NIK}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                    excelWorksheet.Cells[$"{address.NIK}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                    excelWorksheet.Cells[$"{address.Name}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                    excelWorksheet.Cells[$"{address.Name}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                    continue;
+                                }
+
+                                payrollDetail.MainSalaryBilling = GetIntValue(excelWorksheet, address.MainSalaryBilling, currentRow);
+                                payrollDetail.JamsostekBilling = GetIntValue(excelWorksheet, address.JamsostekBilling, currentRow);
+                                payrollDetail.BpjsBilling = GetIntValue(excelWorksheet, address.BpjsBilling, currentRow);
+                                payrollDetail.PensionBilling = GetIntValue(excelWorksheet, address.PensionBilling, currentRow);
+                                payrollDetail.AtributeBilling = GetIntValue(excelWorksheet, address.AtributeBilling, currentRow);
+                                payrollDetail.MainPrice = GetIntValue(excelWorksheet, address.MainPrice, currentRow);
+                                payrollDetail.ManagementFeeBilling = GetIntValue(excelWorksheet, address.ManagementFeeBilling, currentRow);
+                                payrollDetail.InsentiveBilling = address.IsAnyInsentiveBilling? GetIntValue(excelWorksheet, address.InsentiveBilling, currentRow):0;
+                                payrollDetail.AttendanceBilling = address.IsAnyAttendanceBilling ? GetIntValue(excelWorksheet, address.AttendanceBilling, currentRow) :0;
+                                payrollDetail.AbsentDeduction = address.IsAnyAbsentDeduction? GetIntValue(excelWorksheet, address.AbsentDeduction, currentRow) :0;
+                                payrollDetail.AppreciationBilling = address.IsAnyAppreciationBilling ? GetIntValue(excelWorksheet, address.AppreciationBilling, currentRow) :0;
+                                payrollDetail.OvertimeBilling = address.IsAnyOvertimeBilling? GetIntValue(excelWorksheet, address.OvertimeBilling, currentRow) : 0;
+                                payrollDetail.AnotherDeduction = address.IsAnyAnotherDeduction? GetIntValue(excelWorksheet, address.AnotherDeduction, currentRow) : 0;
+                                payrollDetail.PulseAllowance = address.IsAnyPulseAllowance? GetIntValue(excelWorksheet, address.PulseAllowance, currentRow) : 0;
+                                payrollDetail.SubtotalBilling = GetIntValue(excelWorksheet, address.SubtotalBilling, currentRow);
+                                payrollDetail.TaxBilling = GetIntValue(excelWorksheet, address.TaxBilling, currentRow);
+                                payrollDetail.GrandTotalBilling = GetIntValue(excelWorksheet, address.GrandTotalBilling, currentRow);
+                                if (!payrollDetail.IsValidGrandTotalBilling)
+                                {
+                                    isFileOk = false;
+                                    isSheetOk = false;
+                                    errMsg.Add($"Employee with NIK {employeeNIK} calculation not correct at sheet {excelWorksheet.Name} row {currentRow}");
+                                    excelWorksheet.Cells[$"A{currentRow}"].Value = "Perhitungan Keliru, silahkan periksa kembali";
+                                    excelWorksheet.Cells[$"{address.GrandTotalBilling}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                    excelWorksheet.Cells[$"{address.GrandTotalBilling}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                    continue;
+                                }
+
+                                payrollDetail.PayrollDetailStatusId = 2;
+                                payrollDetail.ResultPayroll = Convert.ToInt32(payrollDetail.MainSalaryBilling - payrollDetail.AbsentDeduction + payrollDetail.InsentiveBilling + payrollDetail.AttendanceBilling + payrollDetail.OvertimeBilling + payrollDetail.AppreciationBilling + payrollDetail.PulseAllowance);
+                                payrollDetail.FeePayroll = Convert.ToInt32(payrollDetail.ManagementFeeBilling);
+                                payrollDetail.TotalPayroll = Convert.ToInt32(payrollDetail.FeePayroll + payrollDetail.ResultPayroll);
+                                payrollDetail.TaxPayroll = Convert.ToInt32((payrollDetail.FeePayroll * payrollHistory.PpnPercentage) / 100);
+                                payrollDetail.GrossPayroll = Convert.ToInt32(payrollDetail.TotalPayroll + payrollDetail.TaxPayroll);
+                                payrollDetail.AttributePayroll = Convert.ToInt32(payrollDetail.AtributeBilling);
+                                payrollDetail.BpjsTkDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * payrollHistory.BpjsTk1Percentage) / 100);
+                                if (payrollDetail.Employee.BpjsRemark != null)
+                                {
+                                    if (payrollDetail.Employee.BpjsRemark.ToLower().Replace(" ", string.Empty) != "bumbk")
+                                    {
+                                        payrollDetail.BpjsKesehatanDeduction = 0;
+                                        payrollDetail.BpjsReturn = payrollDetail.BpjsKesehatanDeduction;
+                                    }
+                                    else
+                                    {
+                                        payrollDetail.BpjsKesehatanDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * payrollHistory.BpjsPayrollPercentage) / 100);
+                                    }
+                                }
+                                else
+                                {
+                                    payrollDetail.BpjsKesehatanDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * payrollHistory.BpjsPayrollPercentage) / 100);
+                                }
+
+                                payrollDetail.PensionDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * payrollHistory.PensionPayrollPercentage) / 100);
+                                payrollDetail.PTKP = Convert.ToInt32(payrollDetail.Employee.FamilyStatus.PTKP);
+                                payrollDetail.PKP1 = Convert.ToInt32(payrollDetail.ResultPayroll - payrollDetail.BpjsKesehatanDeduction - payrollDetail.PensionDeduction - payrollDetail.BpjsTkDeduction); ;
+                                payrollDetail.PKP2 = Convert.ToInt32(payrollDetail.PKP1 - payrollDetail.PTKP);
+                                if (payrollDetail.PKP2 > 1)
+                                {
+                                    payrollDetail.PPH21 = Convert.ToInt32((payrollDetail.PKP2 * payrollDetail.PayrollHistory.Pph21Percentage) / 100);
+                                }
+
+                                //if (payrollDetail.Employee.BankCode != "BCA")
+                                //{
+                                //    payrollDetail.TransferFee = 6500;
+                                //}
+
+                                payrollDetail.PPH23 = Convert.ToInt32((payrollDetail.FeePayroll * payrollDetail.PayrollHistory.Pph23Percentage) / 100);
+                                payrollDetail.Netto = Convert.ToInt32(payrollDetail.ResultPayroll + payrollDetail.Rapel + payrollDetail.BpjsReturn - payrollDetail.BpjsKesehatanDeduction - payrollDetail.PensionDeduction - payrollDetail.BpjsTkDeduction - payrollDetail.PPH21);
+                                payrollDetail.TakeHomePay = Convert.ToInt32(payrollDetail.Netto - payrollDetail.AnotherDeduction - payrollDetail.TransferFee);
+                                payrollDB.Entry(payrollDetail).State = EntityState.Modified;
+                                updatedPayrollDetails.Add(payrollDetail);
+                            }
+
+                            if (isSheetOk)
+                            {
+                                excelPackage.Workbook.Worksheets.Delete(excelWorksheet);
+                            }
                         }
+                        if (!isFileOk)
+                        {
+
+                            string excelFileDirectory = $"wwwroot/file/blanks.xlsx";
+                            if (System.IO.File.Exists(excelFileDirectory))
+                            {
+                                System.IO.File.Delete(excelFileDirectory);
+                            }
+                            FileInfo excelFile = new FileInfo(excelFileDirectory);
+                            await excelPackage.SaveAsAsync(excelFile);
+                            return BadRequest(errMsg);
+                        }
+
+                        payrollDB.PayrollDetail.UpdateRange(updatedPayrollDetails);
+                        await payrollDB.SaveChangesAsync();
                     }
 
                 }
@@ -785,15 +912,11 @@ namespace Payroll.Controllers.Api
                 {
                     stringResult = excelWorksheet.Cells[$"{column}{row}"].Value.ToString().ToLower().Replace(" ", string.Empty);
                 }
-                else
-                {
-                    stringResult = "";
-                }
                 return stringResult;
             }
             catch (Exception error)
             {
-                logger.LogError(error, $"Payroll Detail API - Get Int Value {row}");
+                logger.LogError(error, $"Payroll Detail API - Get String Value {row}");
                 throw error;
             }
         }

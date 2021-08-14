@@ -16,7 +16,6 @@ namespace Payroll.ViewModels
             if (HeaderRow != 0)
             {
                 DataStartRow = HeaderRow + 1;
-                //DataEndRow = FindDataRow();
                 NIK = FindHeaderColumn("nik");
                 Name = FindHeaderColumn("nama;name");
                 MainSalaryBilling = FindHeaderColumn("umk;gajipokok");
@@ -28,8 +27,19 @@ namespace Payroll.ViewModels
                 MainPrice = FindHeaderColumn("hargapokok");
                 ManagementFeeBilling = FindHeaderColumn("managementfee");
                 InsentiveBilling = FindHeaderColumn("insentif");
+                PulseAllowance = FindHeaderColumn("tunjpulsa");
                 AttendanceBilling = FindHeaderColumn("premihadir;premikehadiran");
-
+                AppreciationBilling = FindHeaderColumn("tjgp;apresiasi");
+                OvertimeBilling = FindHeaderColumn("overtime");
+                SubtotalBilling = FindHeaderColumn("subtotal");
+                TaxBilling = FindHeaderColumn("ppn");
+                GrandTotalBilling = FindHeaderColumn("grandtotal");
+                AnotherDeduction = FindHeaderColumn("potongan");
+                IsValid = NIK != null && Name != null && MainSalaryBilling != null && JamsostekBilling != null && BpjsBilling != null && PensionBilling != null && MainPrice != null && ManagementFeeBilling != null && SubtotalBilling != null && TaxBilling != null && GrandTotalBilling != null;
+                if (IsValid)
+                {
+                    DataEndRow = FindEndDataRow();
+                }
 
             }        
 
@@ -45,23 +55,38 @@ namespace Payroll.ViewModels
                 if (selectedCell.Style.Fill.BackgroundColor.Indexed == 8)
                 {
                     headerRow = currentRow;
+                    break;
+                }
+                else
+                {
+                    if (selectedCell.Value!=null)
+                    {
+                        if (GetStringValue(selectedCell.Value) == "no")
+                        {
+                            headerRow = currentRow;
+                            break;
+                        }
+                    }
                 }
             }
             return headerRow;
         }
 
-        //public int FindDataRow()
-        //{
-        //    int DataRow = 0;
-        //    for (int currentRow = DataStartRow; currentRow <= Worksheet.Dimension.End.Row; currentRow++)
-        //    {
-        //        ExcelRange selectedCell = Worksheet.Cells[$"A{currentRow}"];
-        //        if (selectedCell.Value == "")
-        //        {
-
-        //        }
-        //    }
-        //}
+        public int FindEndDataRow()
+        {
+            int DataRow = 0;
+            for (int currentRow = DataStartRow; currentRow <= Worksheet.Dimension.End.Row; currentRow++)
+            {
+                ExcelRange selectedCell1 = Worksheet.Cells[$"{NIK}{currentRow}"];
+                ExcelRange selectedCell2 = Worksheet.Cells[$"{Name}{currentRow}"];
+                if (selectedCell1.Value == null && selectedCell2.Value == null)
+                {
+                    DataRow = currentRow;
+                    break;
+                }
+            }
+            return DataRow; 
+        }
 
         public string FindHeaderColumn(string keyword)
         {
@@ -98,11 +123,24 @@ namespace Payroll.ViewModels
         public int HeaderRow { set; get; }
         public int DataStartRow { set; get; }
         public int DataEndRow { set; get; }
-
-        public string NIK { set; get; }
+        public bool IsValid { set; get; }
+        public string NIK { set; get; }      
         public string Name { set; get; }
-        public string UMK { set; get; }
         public string AbsentDeduction { set; get; }
+        public bool IsAnyAbsentDeduction
+        {
+            get
+            {
+                if (AbsentDeduction != null)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
         public string MainSalaryBilling { set; get; }
         public string JamsostekBilling { set; get; }
         public string BpjsBilling { set; get; }
@@ -110,13 +148,98 @@ namespace Payroll.ViewModels
         public string AtributeBilling { set; get; }
         public string MainPrice { set; get; }
         public string AppreciationBilling { set; get; }
+        public bool IsAnyAppreciationBilling
+        {
+            get
+            {
+                if (AppreciationBilling != null)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
         public string ManagementFeeBilling { set; get; }
         public string InsentiveBilling { set; get; }
+        public bool IsAnyInsentiveBilling
+        {
+            get
+            {
+                if (InsentiveBilling != null)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
         public string AttendanceBilling { set; get; }
+        public bool IsAnyAttendanceBilling
+        {
+            get
+            {
+                if (AttendanceBilling != null)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+        public string AnotherDeduction { set; get; }
+        public bool IsAnyAnotherDeduction
+        {
+            get
+            {
+                if (AnotherDeduction != null)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+        public string PulseAllowance { set; get; }
+        public bool IsAnyPulseAllowance
+        {
+            get
+            {
+                if (PulseAllowance != null)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
         public string OvertimeBilling { set; get; }
+        public bool IsAnyOvertimeBilling
+        {
+            get
+            {
+                if (OvertimeBilling != null)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
         public string SubtotalBilling { set; get; }
         public string TaxBilling { set; get; }
         public string GrandTotalBilling { set; get; }
-        public string AnotherDeduction { set; get; }
     }
 }
