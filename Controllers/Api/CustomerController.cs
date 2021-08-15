@@ -23,9 +23,9 @@ namespace Payroll.Controllers.Api
             payrollDB = _payrollDB;
         }
 
-        [Route("api/customer/create")]
-        [Authorize]
         [HttpPost]
+        [Route("api/customer/create")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([FromForm]CustomerInput customerInput)
         {
             try
@@ -38,6 +38,7 @@ namespace Payroll.Controllers.Api
                     Customer customer = new Customer();
                     customer.Name = customerInput.Name;
                     customer.Remark = customerInput.Remark;
+                    customer.MainCustomerId = customerInput.MainCustomerId;
                     customer.IsExist = true;
                     payrollDB.Customer.Add(customer);
                     payrollDB.Entry(customer).State = EntityState.Added;
@@ -53,12 +54,12 @@ namespace Payroll.Controllers.Api
             catch (Exception error)
             {
                 logger.LogError(error, "Customer API Controller - Create");
-                throw error;
+                return BadRequest(error.Message);
             }
         }
 
-        [Route("api/customer/readDatatable")]
         [HttpPost]
+        [Route("api/customer/readDatatable")]
         [Authorize]
         public async Task<IActionResult> ReadDatatable()
         {
@@ -67,8 +68,9 @@ namespace Payroll.Controllers.Api
                 DatatablesRequest request = new DatatablesRequest(Request.Form.Select(column => new InputRequest { Key = column.Key, Value = column.Value }).ToList());
                 CustomerView customerView = new CustomerView();
                 customerView.Data = await payrollDB.Customer
+                    .Include(table => table.MainCustomer)
                     .Where(column => column.IsExist == true)
-                    .Where(column => column.Name.Contains(request.Keyword) || column.Remark.Contains(request.Keyword))
+                    .Where(column => column.Name.Contains(request.Keyword) || column.Remark.Contains(request.Keyword) || column.MainCustomer.Name.Contains(request.Keyword))
                     .OrderBy(column => column.Name)
                     .Skip(request.Skip)
                     .Take(request.PageSize)
@@ -81,7 +83,7 @@ namespace Payroll.Controllers.Api
             catch (Exception error)
             {
                 logger.LogError(error, "Customer API Controller - Read Datatable");
-                throw error;
+                return BadRequest(error.Message);
             }
         }
 
@@ -93,6 +95,7 @@ namespace Payroll.Controllers.Api
             try
             {
                 Customer customer = await payrollDB.Customer
+                    .Include(table => table.MainCustomer)
                     .Where(column => column.Id == id)
                     .FirstOrDefaultAsync();
                 return new JsonResult(customer);
@@ -100,18 +103,19 @@ namespace Payroll.Controllers.Api
             catch (Exception error)
             {
                 logger.LogError(error, $"Customer API Controller - Read Detail {id}");
-                throw error;
+                return BadRequest(error.Message);
             }
         }
 
-        [Authorize]
         [HttpGet]
         [Route("api/customer/read")]
+        [Authorize]
         public async Task<IActionResult> Read()
         {
             try
             {
                 List<Customer> customers = await payrollDB.Customer
+                    .Include(table => table.MainCustomer)
                     .OrderBy(column => column.Name)
                     .ToListAsync();
                 return new JsonResult(customers);
@@ -119,10 +123,11 @@ namespace Payroll.Controllers.Api
             catch (Exception error)
             {
                 logger.LogError(error, $"Customer API - Read");
-                throw error;
+                return BadRequest(error.Message);
             }
         }
 
+        [HttpGet]
         [Route("api/customer/readDeleted")]
         [Authorize]
         public async Task<IActionResult> ReadDeleted()
@@ -138,7 +143,6 @@ namespace Payroll.Controllers.Api
                     })
                     .ToListAsync();
                 return new JsonResult(deletedCustomer);
-
             }
             catch (Exception error)
             {
@@ -149,14 +153,15 @@ namespace Payroll.Controllers.Api
 
         [HttpPost]
         [Route("api/customer/update/{id}")]
-        [Authorize]
-        public async Task<IActionResult> Update([FromForm] CustomerInput customerClientInput, int id)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Update([FromForm] CustomerInput customerInput, int id)
         {
             try
             {
                 Customer customer = payrollDB.Customer.Where(column => column.Id == id).FirstOrDefault();
-                customer.Name = customerClientInput.Name;
-                customer.Remark = customerClientInput.Remark;
+                customer.Name = customerInput.Name;
+                customer.Remark = customerInput.Remark;
+                customer.MainCustomerId = customerInput.MainCustomerId;
                 payrollDB.Entry(customer).State = EntityState.Modified;
                 await payrollDB.SaveChangesAsync();
                 return new JsonResult(customer);
@@ -164,13 +169,13 @@ namespace Payroll.Controllers.Api
             catch (Exception error)
             {
                 logger.LogError(error, $"Customer API Controller - Update {id}");
-                throw error;
+                return BadRequest(error.Message);
             }
         }
 
         [HttpPost]
         [Route("api/customer/delete/{id}")]
-        [Authorize]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             try
@@ -186,13 +191,13 @@ namespace Payroll.Controllers.Api
             catch (Exception error)
             {
                 logger.LogError(error, $"Customer API - Delete {id}");
-                throw error;
+                return BadRequest(error.Message);
             }
         }
 
         [HttpPost]
         [Route("api/customer/recover/{id}")]
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Recover(int id)
         {
             try
@@ -208,7 +213,7 @@ namespace Payroll.Controllers.Api
             catch(Exception error)
             {
                 logger.LogError(error, $"Customer API - Recover {id}");
-                throw error;
+                return BadRequest(error.Message);
             }
         }
         

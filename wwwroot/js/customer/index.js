@@ -13,6 +13,7 @@
     },
     "columns": [
         { "data": "name"},
+        { "data": "mainCustomer.name"},
         { "data": "remark"},
         {
             "render": function (data, type, row) {
@@ -35,6 +36,7 @@ function showEditForm(id) {
             $('#editId').val(result.id);
             $('#editName').val(result.name);
             $('#editRemark').val(result.remark);
+            $('#editMainCustomerId').val(result.mainCustomerId).change();
         },
         error: function (result) {
             console.log(result);
@@ -60,6 +62,7 @@ function addCustomer() {
             data: {
                 Name: $("#addName").val(),
                 Remark: $("#addRemark").val(),
+                MainCustomerId: $("#addMainCustomerId").val()
             },
             success: function (result) {
                 reloadTable();
@@ -94,6 +97,7 @@ function updateCustomer() {
             data: {
                 Name: $("#editName").val(),
                 Remark: $("#editRemark").val(),
+                MainCustomerId: $("#editMainCustomerId").val(),
             },
             success: function (result) {
                 reloadTable();
@@ -178,10 +182,34 @@ function getDeletedCustomer() {
     });
 }
 
+function getMainCustomer() {
+    $.ajax({
+        type: "GET",
+        dataType: "JSON",
+        url: "api/maincustomer/read",
+        success: function (result) {
+            var html = "<option value=0> Silahkan Pilih</option>";
+            result.forEach(function (data) {
+                html = html + "<option value=" + data.id + "> " + data.name + "</option>";
+            });
+            $('#addMainCustomerId').html(html);
+            $('#editMainCustomerId').html(html);
+        },
+        error: function (result) {
+            console.log(result);
+            notify('fas fa-times', 'Gagal', result.responseText, 'danger');
+        }
+    });
+}
+
 $(document).ready(function () {
     $('.select2addmodal').select2({
         dropdownParent: $('#addCustomerModal')
     });
+    $('.select2editmodal').select2({
+        dropdownParent: $('#editCustomerModal')
+    });
     $('.spinner-border').hide();
     getDeletedCustomer();
+    getMainCustomer();
 });
