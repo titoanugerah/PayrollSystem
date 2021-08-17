@@ -127,7 +127,9 @@ function addEmployee() {
             console.log('error', "Terdapat beberapa data yang error, silahkan download dan perbaiki");
             $('.spinner-border').hide();
             $('#addEmployeeModal').modal('hide');
-            $('#errorAddEmployeeModal').modal('show');
+            if (result == "0") {
+                $('#errorAddEmployeeModal').modal('show');
+            }
             notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' + result.responseText, 'danger');
         }
     });
