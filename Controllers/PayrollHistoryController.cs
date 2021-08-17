@@ -211,7 +211,7 @@ namespace Payroll.Controllers
                                 await SetValue($"R{currentRow}", payrollDetail.SubtotalBilling);
                                 await SetValue($"S{currentRow}", payrollDetail.TaxBilling);
                                 await SetValue($"T{currentRow}", payrollDetail.GrandTotalBilling);
-                                await SetValue($"U{currentRow}", payrollDetail.Employee.JoinCustomerDate);
+                                //await SetValue($"U{currentRow}", payrollDetail.Employee.JoinCustomerDate);
 
                                 await SetValue($"X{currentRow}", no);
                                 await SetValue($"Y{currentRow}", payrollDetail.Employee.NIK);
@@ -417,7 +417,7 @@ namespace Payroll.Controllers
                                 await SetValue($"R{currentRow}", payrollDetail.SubtotalBilling);
                                 await SetValue($"S{currentRow}", payrollDetail.TaxBilling);
                                 await SetValue($"T{currentRow}", payrollDetail.GrandTotalBilling);
-                                await SetValue($"U{currentRow}", payrollDetail.Employee.JoinCustomerDate);
+                                //await SetValue($"U{currentRow}", payrollDetail.Employee.JoinCustomerDate);
 
                                 await SetValue($"X{currentRow}", no);
                                 await SetValue($"Y{currentRow}", payrollDetail.Employee.NIK);

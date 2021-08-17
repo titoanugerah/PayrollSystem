@@ -15,18 +15,18 @@ namespace Payroll.Models
         public string Password { set; get; }
         [Required]
         public string Name { set; get; }
-        [MaxLength(1)]
-        [DefaultValue("L")]
-        public string Sex { set; get; }
-        public string BirthPlace { set; get; }
-        public DateTime BirthDate { set; get; }
-        public string Religion { set; get; }
-        public string Address { set; get; }
+        //[MaxLength(1)]
+        //[DefaultValue("L")]
+        //public string Sex { set; get; }
+        //public string BirthPlace { set; get; }
+        //public DateTime BirthDate { set; get; }
+        //public string Religion { set; get; }
+        //public string Address { set; get; }
         public string PhoneNumber { set; get; }
         [MaxLength(16)]
         public string KTP { set; get; }
-        [MaxLength(16)]
-        public string KK { set; get; }
+        //[MaxLength(16)]
+        //public string KK { set; get; }
         [NotMapped]
         public bool HasDriverLicense
         {
@@ -45,8 +45,8 @@ namespace Payroll.Models
 
         public string DriverLicenseType { set; get; }
         public string DriverLicense { set; get; }
-        public DateTime DriverLicenseExpire { set; get; }
-        [DefaultValue("L")]
+        //public DateTime DriverLicenseExpire { set; get; }
+        //[DefaultValue("L")]
         public string FamilyStatusCode { set; get; }
         public FamilyStatus FamilyStatus { set; get; }
         [MaxLength(14)]
@@ -57,32 +57,32 @@ namespace Payroll.Models
         public string JamsostekRemark { set; get; }
         public string NPWP { set; get; }
 
-        public DateTime JoinCompanyDate { set; get; }
-        public DateTime StartContract { set; get; }
-        public DateTime EndContract { set; get; }
+        //public DateTime JoinCompanyDate { set; get; }
+        //public DateTime StartContract { set; get; }
+        //public DateTime EndContract { set; get; }
 
         public string BankCode { set; get; }
         public Bank Bank { set; get; }
         public string AccountNumber { set; get; }
         public string AccountName { set; get; }
-        public int EmploymentStatusId { set; get; }
-        public EmploymentStatus EmploymentStatus { set; get; }
+        //public int EmploymentStatusId { set; get; }
+        //public EmploymentStatus EmploymentStatus { set; get; }
 
-        [Column(TypeName = "bit")]
-        [DefaultValue(false)]
-        public bool HasUniform { set; get; }
-        public DateTime UniformDeliveryDate { set; get; }
-        [Column(TypeName = "bit")]
-        [DefaultValue(false)]
-        public bool HasIdCard { set; get; }
-        public DateTime IdCardDeliveryDate { set; get; }
-        [Column(TypeName = "bit")]
-        [DefaultValue(false)]
-        public bool HasTraining { set; get; }
-        public string TrainingName { set; get; }
-        public string TrainingRemark { set; get; }
-        public string TrainingGrade { set; get; }
-        public DateTime TrainingDeliveryDate { set; get; }
+        //[Column(TypeName = "bit")]
+        //[DefaultValue(false)]
+        //public bool HasUniform { set; get; }
+        //public DateTime UniformDeliveryDate { set; get; }
+        //[Column(TypeName = "bit")]
+        //[DefaultValue(false)]
+        //public bool HasIdCard { set; get; }
+        //public DateTime IdCardDeliveryDate { set; get; }
+        //[Column(TypeName = "bit")]
+        //[DefaultValue(false)]
+        //public bool HasTraining { set; get; }
+        //public string TrainingName { set; get; }
+        //public string TrainingRemark { set; get; }
+        //public string TrainingGrade { set; get; }
+        //public DateTime TrainingDeliveryDate { set; get; }
 
         [Required]
         public int PositionId { set; get; }
@@ -91,7 +91,7 @@ namespace Payroll.Models
         public Location Location { set; get; }
         public int CustomerId { set; get; }
         public Customer Customer { set; get; }
-        public DateTime JoinCustomerDate { set; get; }
+        //public DateTime JoinCustomerDate { set; get; }
         [DefaultValue(2)]
         public int RoleId { set; get; }
         public Role Role { set; get; }

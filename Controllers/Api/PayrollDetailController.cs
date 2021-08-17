@@ -442,8 +442,8 @@ namespace Payroll.Controllers.Api
                 logger.LogError(error, $"Payroll Detail API - Update {id}");
                 return BadRequest(error.Message);
             }
-
         }
+
 
         [Authorize(Roles = "Admin")]
         [HttpPost]
