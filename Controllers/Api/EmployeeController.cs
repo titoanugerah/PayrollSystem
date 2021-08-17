@@ -96,8 +96,8 @@ namespace Payroll.Controllers.Api
 
             }
             catch (Exception error)
-            {               
-                throw error;
+            {
+                return BadRequest(error.Message);
             }
         }
 
@@ -612,9 +612,9 @@ namespace Payroll.Controllers.Api
             }
         }
 
-        [Authorize]
         [HttpGet]
         [Route("api/employee/readDetail/{nik}")]
+        [Authorize]
         public async Task<IActionResult> ReadDetail(int nik)
         {
             try
@@ -627,13 +627,13 @@ namespace Payroll.Controllers.Api
             catch (Exception error)
             {
                 logger.LogError(error, "Employee API Controller - Read");
-                throw error;
+                return BadRequest(error.Message);
             }
         }
 
-        [Authorize]
         [HttpPost]
         [Route("api/employee/update/{id}")]
+        [Authorize]
         public async Task<IActionResult> Update([FromForm]EmployeeInput employeeInput, int id)
         {
             try
@@ -689,7 +689,7 @@ namespace Payroll.Controllers.Api
             catch (Exception error)
             {
                 logger.LogError(error, $"Employee API - Update {id}");
-                throw error;
+                return BadRequest(error.Message);
             }
         }
 

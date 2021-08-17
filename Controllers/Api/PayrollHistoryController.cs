@@ -27,7 +27,7 @@ namespace Payroll.Controllers.Api
             payrollConfiguration = _payrollConfiguration;
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [Route("api/payrollHistory/create")]
         public async Task<IActionResult> Create([FromForm]PayrollInput payrollInput)
@@ -87,7 +87,7 @@ namespace Payroll.Controllers.Api
             catch (Exception error)
             {
                 logger.LogError(error, $"Payroll API - Create");
-                throw error;
+                return BadRequest(error.Message);
             }
         }
 
@@ -105,11 +105,11 @@ namespace Payroll.Controllers.Api
             catch (Exception error)
             {
                 logger.LogError(error, $"Payroll API - Read");
-                throw error;
+                return BadRequest(error.Message);
             }
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [Route("api/payrollHistory/check/{id}")]
         public async Task<IActionResult> Check(int id)
@@ -144,7 +144,7 @@ namespace Payroll.Controllers.Api
             catch (Exception error)
             {
                 logger.LogError(error, $"Payroll History API - Check {id}");
-                throw error;
+                return BadRequest(error.Message);
             }
         }
 

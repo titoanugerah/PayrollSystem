@@ -23,9 +23,9 @@ namespace Payroll.Controllers.Api
             payrollDB = _payrollDB;
         }
 
-        [Authorize]
         [HttpPost]
         [Route("api/district/create")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create([FromForm]DistrictInput districtInput)
         {
             try
@@ -53,14 +53,14 @@ namespace Payroll.Controllers.Api
             catch (Exception error)
             {
                 logger.LogError(error, $"District API - Create");
-                throw error;
+                return BadRequest(error.Message);
             }
         }
 
 
-        [Authorize]
         [HttpGet]
         [Route("api/district/read")]
+        [Authorize]
         public async Task<IActionResult>Read()
         {
             try
@@ -73,14 +73,14 @@ namespace Payroll.Controllers.Api
             catch (Exception error)
             {
                 logger.LogError(error, $"District API - Read");
-                throw error;
+                return BadRequest(error.Message);
             }
         }
 
 
-        [Authorize]
         [HttpPost]
         [Route("api/district/readDatatable")]
+        [Authorize]
         public async Task<IActionResult> ReadDatatable()
         {
             try
@@ -102,13 +102,13 @@ namespace Payroll.Controllers.Api
             catch(Exception error)
             {
                 logger.LogError(error, $"District API - Read");
-                throw error;
+                return BadRequest(error.Message);
             }
         }
 
-        [Authorize]
         [HttpGet]
         [Route("api/district/readDeleted")]
+        [Authorize]
         public async Task<IActionResult> ReadDeleted()
         {
             try
@@ -121,12 +121,12 @@ namespace Payroll.Controllers.Api
             catch (Exception error)
             {
                 logger.LogError(error, $"District API - Read Deleted");
-                throw error;
+                return BadRequest(error.Message);
             }
         }
 
-        [Authorize]
         [HttpGet]
+        [Authorize]
         [Route("api/district/readDetail/{id}")]
         public async Task<IActionResult> ReadDetail(int id)
         {
@@ -140,13 +140,13 @@ namespace Payroll.Controllers.Api
             catch (Exception error)
             {
                 logger.LogError(error, $"District API - Read Detail {id}");
-                throw error;
+                return BadRequest(error.Message);
             }
         }
 
-        [Authorize]
         [HttpPost]
         [Route("api/district/update/{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update([FromForm]DistrictInput districtInput, int id)
         {
             try
@@ -163,13 +163,13 @@ namespace Payroll.Controllers.Api
             catch (Exception error)
             {
                 logger.LogError(error, $"District API - Update {id}");
-                throw error;
+                return BadRequest(error.Message);
             }
         }
 
-        [Authorize]
         [HttpPost]
         [Route("api/district/delete/{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             try
@@ -185,13 +185,13 @@ namespace Payroll.Controllers.Api
             catch (Exception error)
             {
                 logger.LogError(error, $"District API - Delete {id}");
-                throw error;
+                return BadRequest(error.Message);
             }
         }
 
-        [Authorize]
         [HttpPost]
         [Route("api/district/recover/{id}")]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> Recover(int id)
         {
             try
@@ -207,7 +207,7 @@ namespace Payroll.Controllers.Api
             catch (Exception error)
             {
                 logger.LogError(error, $"District API - Recover {id}");
-                throw error;
+                return BadRequest(error.Message);
             }
         }
     }
