@@ -123,13 +123,14 @@ function addEmployee() {
         },
         error: function (result) {
             reloadTable()
-            console.log('error', "Terdapat beberapa data yang error, silahkan download dan perbaiki");
             $('.spinner-border').hide();
             $('#addEmployeeModal').modal('hide');
-            if (result == "0") {
+            if (result.responseText == "0") {
                 $('#errorAddEmployeeModal').modal('show');
             }
-            notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' + result.responseText, 'danger');
+            else {
+                notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' + result.responseText, 'danger');
+            }
         }
     });
 }
