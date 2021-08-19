@@ -121,7 +121,6 @@ namespace Payroll.Models
         public int Netto { set; get; }
         [DefaultValue(0)]
         public int AnotherDeduction { set; get; }
-        public int AbsentDeduction { set; get; }
         public int PulseAllowance { set; get; }
         [DefaultValue(0)]
         public string AnotherDeductionRemark{ set; get; }
