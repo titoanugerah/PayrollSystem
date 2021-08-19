@@ -89,7 +89,7 @@ namespace Payroll.Controllers.Api
         {
             try
             {
-                int userNIK = httpContextAccessor.HttpContext.User.GetNIK();
+                string userNIK = httpContextAccessor.HttpContext.User.GetNIK();
                 DatatablesRequest request = new DatatablesRequest(Request.Form.Select(column => new InputRequest { Key = column.Key, Value = column.Value }).ToList());
                 PayrollDetailView payrollDetailView = new PayrollDetailView();
                 payrollDetailView.Data = await payrollDB.PayrollDetail
@@ -319,7 +319,7 @@ namespace Payroll.Controllers.Api
                             int rowNum = 1;
                             for (int currentRow = address.DataStartRow; currentRow < address.DataEndRow; currentRow++)
                             {
-                                int employeeNIK = GetIntValue(excelWorksheet, address.NIK, currentRow);
+                                string employeeNIK = GetStringValue(excelWorksheet, address.NIK, currentRow);
                                 List<string> employeeNames = GetStringValue(excelWorksheet, address.Name, currentRow).Split(";").ToList();
                                 PayrollDetail payrollDetail = payrollDetails
                                     .Where(column => column.EmployeeId == employeeNIK)

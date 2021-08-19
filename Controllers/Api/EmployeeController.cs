@@ -98,7 +98,7 @@ namespace Payroll.Controllers.Api
                             {
                                 bool isOldEmployee = false;
                                 Employee employee = new Employee();
-                                int employeeNIK = GetIntValue(excelWorksheet, address.NIK, currentRow);
+                                string employeeNIK = GetStringValue(excelWorksheet, address.NIK, currentRow);
                                 if (employeeNIK != null)
                                 {
                                     isOldEmployee = masterData.Employees.Where(column => column.NIK == employeeNIK).Any();
@@ -553,7 +553,7 @@ namespace Payroll.Controllers.Api
                     }
                 }
 
-                return new JsonResult(Ok());
+                return new JsonResult("");
             }
             catch (Exception error)
             {
@@ -677,7 +677,7 @@ namespace Payroll.Controllers.Api
                         .Include(table => table.Location.District)
                         .Include(table => table.Position)
                         .Include(table => table.Customer)
-                        .Where(column => column.Name.Contains(request.Keyword) || column.Location.Name.Contains(request.Keyword) || column.Customer.Name.Contains(request.Keyword) || column.Position.Name.Contains(request.Keyword) || column.NIK.ToString().Contains(request.Keyword))
+                        .Where(column => column.Name.Contains(request.Keyword) || column.Location.Name.Contains(request.Keyword) || column.Customer.Name.Contains(request.Keyword) || column.Position.Name.Contains(request.Keyword) || column.NIK.Contains(request.Keyword))
                         .OrderBy(column => column.Location.DistrictId)
                         .Skip(request.Skip)
                         .Take(request.PageSize)
@@ -692,8 +692,8 @@ namespace Payroll.Controllers.Api
                        .Include(table => table.Location.District)
                        .Include(table => table.Position)
                        .Include(table => table.Customer)
-                       .Where(column => column.Location.District.Id == id )
-                       .Where(column => column.Name.Contains(request.Keyword) || column.Location.Name.Contains(request.Keyword) || column.Customer.Name.Contains(request.Keyword) || column.Position.Name.Contains(request.Keyword) || column.NIK.ToString().Contains(request.Keyword))
+                       .Where(column => column.Location.District.Id == id)
+                       .Where(column => column.Name.Contains(request.Keyword) || column.Location.Name.Contains(request.Keyword) || column.Customer.Name.Contains(request.Keyword) || column.Position.Name.Contains(request.Keyword) || column.NIK.Contains(request.Keyword))
                        .OrderBy(column => column.Location.DistrictId)
                        .Skip(request.Skip)
                        .Take(request.PageSize)
@@ -715,7 +715,7 @@ namespace Payroll.Controllers.Api
         [HttpGet]
         [Route("api/employee/readDetail/{nik}")]
         [Authorize]
-        public async Task<IActionResult> ReadDetail(int nik)
+        public async Task<IActionResult> ReadDetail(string nik)
         {
             try
             {
@@ -734,7 +734,7 @@ namespace Payroll.Controllers.Api
         [HttpPost]
         [Route("api/employee/update/{id}")]
         [Authorize]
-        public async Task<IActionResult> Update([FromForm]EmployeeInput employeeInput, int id)
+        public async Task<IActionResult> Update([FromForm]EmployeeInput employeeInput, string id)
         {
             try
             {

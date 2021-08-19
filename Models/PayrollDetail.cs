@@ -13,7 +13,7 @@ namespace Payroll.Models
         public PayrollHistory PayrollHistory { set; get; }
         [Required]
         [ForeignKey("Employee")]
-        public int EmployeeId { set; get; }
+        public string EmployeeId { set; get; }
         public Employee Employee { set; get; }
         [Required]
         public int MainSalaryBilling { set; get; }

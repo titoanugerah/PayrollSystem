@@ -10,7 +10,7 @@ namespace Payroll.Models
     {
         [Key]
         [MaxLength(5)]
-        public int NIK { set; get; }
+        public string NIK { set; get; }
         [Required]
         public string Password { set; get; }
         [Required]

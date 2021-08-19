@@ -126,7 +126,7 @@ namespace Payroll.DataAccess
             {
                 if (httpContextAccessor != null && httpContextAccessor.HttpContext != null && httpContextAccessor.HttpContext.User != null && httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
                 {
-                    int nik = httpContextAccessor.HttpContext.User.GetNIK();
+                    string nik = httpContextAccessor.HttpContext.User.GetNIK();
                     if (nik != null)
                     {
                         var entries = ChangeTracker.Entries().ToList();
