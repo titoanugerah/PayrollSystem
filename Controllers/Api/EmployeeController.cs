@@ -134,7 +134,7 @@ namespace Payroll.Controllers.Api
                                     }
                                     else
                                     {
-                                        employee.NIK = employeeNIK;
+                                        employee.NIK = excelWorksheet.Cells[$"{address.NIK}{currentRow}"].Value.ToString(); ;
                                     }
                                 }
                                 else
@@ -153,7 +153,8 @@ namespace Payroll.Controllers.Api
                                 //Name
                                 if (GetStringValue(excelWorksheet, address.Name, currentRow) != null)
                                 {
-                                    employee.Name = GetStringValue(excelWorksheet, address.Name, currentRow);
+                                    //employee.Name = GetStringValue(excelWorksheet, address.Name, currentRow);
+                                    employee.Name = excelWorksheet.Cells[$"{address.Name}{currentRow}"].Value.ToString();
                                 }
                                 else
                                 {
@@ -517,6 +518,8 @@ namespace Payroll.Controllers.Api
                                     continue;
                                 }
 
+                                excelWorksheet.Cells[$"{address.No}{currentRow}"].Value = "OK";
+
                                 if (isOldEmployee)
                                 {
                                     payrollDB.Entry(employee).State = EntityState.Modified;
@@ -530,7 +533,7 @@ namespace Payroll.Controllers.Api
                             }
                             await payrollDB.Employee.AddRangeAsync(newEmployees);
                             payrollDB.Employee.UpdateRange(oldEmployees);
-                            //await payrollDB.SaveChangesAsync();
+                            await payrollDB.SaveChangesAsync();
 
                             if (isSheetOk)
                             {
