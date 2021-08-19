@@ -13,7 +13,7 @@ namespace Payroll.Models
         public PayrollHistory PayrollHistory { set; get; }
         [Required]
         [ForeignKey("Employee")]
-        public int EmployeeId { set; get; }
+        public string EmployeeId { set; get; }
         public Employee Employee { set; get; }
         [DefaultValue(0)]
         public int AbsentDeduction { set; get; }
@@ -21,86 +21,11 @@ namespace Payroll.Models
         public int MainSalaryBilling { set; get; }
 
         [DefaultValue(0)]
-        public int JamsostekBilling { set; get; }
-        [NotMapped]
-        public int SuspectedJamsostekBilling
-        {
-            get
-            {
-                return Convert.ToInt32(MainSalaryBilling * PayrollHistory.JamsostekPercentage / 100);
-            }
-        }
-        [NotMapped]
-        [DefaultValue(false)]
-        public bool IsValidJamsostekBilling
-        {
-            get
-            {
-                if (JamsostekBilling == SuspectedJamsostekBilling)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
-
+        public int JamsostekBilling { set; get; }       
         [DefaultValue(0)]
-        public int BpjsBilling { set; get; }
-        [NotMapped]
-        public int SuspectedBpjsBilling 
-        { 
-            get
-            {
-                return Convert.ToInt32(Employee.Location.UMK * PayrollHistory.BpjsPercentage / 100);
-            }
-        }
-        [NotMapped]
-        [DefaultValue(false)]
-        public bool IsValidBpjsBilling
-        {
-            get
-            {
-                if (BpjsBilling == SuspectedBpjsBilling)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
-
+        public int BpjsBilling { set; get; }       
         [DefaultValue(0)]
-        public int PensionBilling { set; get; }
-        [NotMapped]
-        public int SuspectedPensionBilling
-        {
-            get
-            {
-                return Convert.ToInt32((MainSalaryBilling * PayrollHistory.PensionPercentage) / 100);
-            }
-        }
-        [NotMapped]
-        [DefaultValue(false)]
-        public bool IsValiPensionBilling
-        {
-            get
-            {
-                if (PensionBilling == SuspectedPensionBilling)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
-
+        public int PensionBilling { set; get; }        
         [DefaultValue(0)]
         public int AtributeBilling { set; get; }
         [DefaultValue(0)]
@@ -116,57 +41,10 @@ namespace Payroll.Models
         public bool IsLateTransfer { set; get; }
         [DefaultValue(0)]
         public int MainPrice { set; get; }
-        [NotMapped]
-        public int SuspectedMainPrice
-        {
-            get
-            {
-                return Convert.ToInt32(MainSalaryBilling + JamsostekBilling + BpjsBilling + PensionBilling + AtributeBilling);
-            }
-        }
-        [NotMapped]
-        [DefaultValue(false)]
-        public bool IsValidMainPrice
-        {
-            get
-            {
-                if (MainPrice == SuspectedMainPrice || MainPrice == SuspectedMainPrice+1 || MainPrice == SuspectedMainPrice-1)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
-
+        
         [DefaultValue(0)]
         public int ManagementFeeBilling { set; get; }
-        [NotMapped]
-        public int SuspectedManagementFee 
-        { 
-            get
-            {
-                return Convert.ToInt32((MainPrice * PayrollHistory.ManagementFeePercentage) / 100);
-            }
-        }
-        [NotMapped]
-        [DefaultValue(false)]
-        public bool IsValidManagemntFee
-        {
-            get
-            {
-                if (ManagementFeeBilling == SuspectedManagementFee)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
+        
         [DefaultValue(0)]
         public int InsentiveBilling { set; get; }
         [DefaultValue(0)]
@@ -174,74 +52,9 @@ namespace Payroll.Models
         [DefaultValue(0)]
         public int OvertimeBilling { set; get; }        
         [DefaultValue(0)]
-        public int SubtotalBilling { set; get; }
-        [NotMapped]
-        public int SuspectedSubtotalBilling
-        {
-            get
-            {
-                return Convert.ToInt32(MainPrice + ManagementFeeBilling + InsentiveBilling + AttendanceBilling + AppreciationBilling + OvertimeBilling);
-            }
-        }
-        [NotMapped]
-        [DefaultValue(false)]
-        public bool IsValidSubtotalBilling
-        {
-            get
-            {
-                if (SubtotalBilling == SuspectedSubtotalBilling)
-                {
-                    return true;
-                }
-                else if (SubtotalBilling == SuspectedSubtotalBilling + 1)
-                {
-                    return true;
-                }
-                else if (SubtotalBilling == SuspectedSubtotalBilling - 1)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
-
+        public int SubtotalBilling { set; get; }       
         [DefaultValue(0)]
         public int TaxBilling { set; get; }
-        [NotMapped]
-        public int SuspectedTaxBilling
-        {
-            get
-            {
-                if (TaxBilling != 0)
-                {
-                    return Convert.ToInt32((ManagementFeeBilling * PayrollHistory.PpnPercentage) / 100);
-                }
-                else
-                {
-                    return 0;
-                }
-            }
-        }
-        [NotMapped]
-        [DefaultValue(false)]
-        public bool IsValidTaxBilling
-        {
-            get
-            {
-                if (TaxBilling == SuspectedTaxBilling)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
-
         [DefaultValue(0)]
         public int GrandTotalBilling { set; get; }
         [NotMapped]
@@ -308,6 +121,8 @@ namespace Payroll.Models
         public int Netto { set; get; }
         [DefaultValue(0)]
         public int AnotherDeduction { set; get; }
+        public int AbsentDeduction { set; get; }
+        public int PulseAllowance { set; get; }
         [DefaultValue(0)]
         public string AnotherDeductionRemark{ set; get; }
         [DefaultValue(0)]

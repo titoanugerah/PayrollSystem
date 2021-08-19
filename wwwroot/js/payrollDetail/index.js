@@ -124,15 +124,15 @@ function showDetailForm(id) {
             $('#id').val(result.id);
             $('#nik').val(zeroPad(result.employee.nik));
             $('#mainSalaryBilling').val(formatter.format(result.mainSalaryBilling));
-            $('#bpjsReturn').val(formatter.format(result.bpjsReturn));
-            $('#rapel').val(result.rapel);
-            $('#insentiveBilling').val(formatter.format(result.insentiveBilling));
-            $('#attendanceBilling').val(formatter.format(result.attendanceBilling));
             $('#overtimeBilling').val(formatter.format(result.overtimeBilling));
+            $('#attendanceBilling').val(formatter.format(result.attendanceBilling));
+            $('#insentiveBilling').val(formatter.format(result.insentiveBilling));
+            $('#rapel').val(result.rapel);
             $('#apreciationBilling').val(formatter.format(result.appreciationBilling));
             $('#bpjsTkDeduction').val(formatter.format(result.bpjsTkDeduction));
             $('#bpjsKesehatanDeduction').val(formatter.format(result.bpjsKesehatanDeduction));
             $('#pensionDeduction').val(formatter.format(result.pensionDeduction));
+            $('#absentDeduction').val(result.absentDeduction);
             $('#pph21').val(formatter.format(result.ppH21));
             $('#anotherDeduction').val(result.anotherDeduction);
             $('#transferFee').val(result.transferFee);
@@ -171,6 +171,9 @@ function updatePayrollDetail() {
         error: function (result) {
             console.log('error', result);
             $('#addPayrollDetailModal').modal('hide');
+            if (result.responseText == "0") {
+                $('#submitErrorModal').modal('show');
+            }
             notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' + result.responseText, 'danger');
         }
     });

@@ -30,6 +30,7 @@ namespace Payroll.DataAccess
         public DbSet<EmploymentStatus> EmploymentStatus { set; get; }
         public DbSet<FamilyStatus> FamilyStatus { set; get; }
         public DbSet<Location> Location { set; get; }
+        public DbSet<MainCustomer> MainCustomer { set; get; }
         public DbSet<Position> Position { set; get; }
         public DbSet<Role> Role { set; get; }
         public DbSet<PayrollHistory> PayrollHistory { set; get; }
@@ -59,6 +60,12 @@ namespace Payroll.DataAccess
             {
                 district.HasKey(col => col.Id);
             });
+
+            modelBuilder.Entity<MainCustomer>(mainCustomer =>
+            {
+                mainCustomer.HasKey(col => col.Id);
+            });
+
 
             modelBuilder.Entity<Employee>(employee =>
             {
@@ -119,7 +126,7 @@ namespace Payroll.DataAccess
             {
                 if (httpContextAccessor != null && httpContextAccessor.HttpContext != null && httpContextAccessor.HttpContext.User != null && httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
                 {
-                    int nik = httpContextAccessor.HttpContext.User.GetNIK();
+                    string nik = httpContextAccessor.HttpContext.User.GetNIK();
                     if (nik != null)
                     {
                         var entries = ChangeTracker.Entries().ToList();

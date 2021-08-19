@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 
 namespace Payroll.Models
 {
@@ -7,7 +8,10 @@ namespace Payroll.Models
         public int Id { set; get; }
         [Required]
         public string Name { set; get; }
-        public string Remark { set; get; }         
+        public string Remark { set; get; }     
+        [DefaultValue(1)]
+        public int MainCustomerId { set; get; }
+        public MainCustomer MainCustomer { set; get; }
        
     }
 }

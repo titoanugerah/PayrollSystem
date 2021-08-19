@@ -97,7 +97,6 @@
 
 $('#selectDistrictId').on('change', function () {
     districtId = $('#selectDistrictId').val();
-    console.log("/api/employee/readDatatable/1");
     table.ajax.url("/api/employee/readDatatable/"+districtId).load();
 });
 
@@ -120,14 +119,16 @@ function addEmployee() {
             reloadTable()
             $('.spinner-border').hide();
             $('#addEmployeeModal').modal('hide');
-            console.log('success', response);
+           
         },
         error: function (result) {
             reloadTable()
             console.log('error', "Terdapat beberapa data yang error, silahkan download dan perbaiki");
             $('.spinner-border').hide();
             $('#addEmployeeModal').modal('hide');
-            $('#errorAddEmployeeModal').modal('show');
+            if (result == "0") {
+                $('#errorAddEmployeeModal').modal('show');
+            }
             notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' + result.responseText, 'danger');
         }
     });
@@ -217,11 +218,6 @@ function updateEmployee() {
         url: "api/employee/update/" + $('#editNIK').val(),
         data: {
             Name: $("#editName").val(),
-            BirthPlace: $('#editBirthPlace').val(),
-            BirthDate: $('#editBirthDate').val(),
-            Sex: $('#editSex').val(),
-            Religion: $('#editReligion').val(),
-            Address: $('#editAddress').val(),
             PhoneNumber: $('#editPhoneNumber').val(),
             KTP: $('#editKTP').val(),
             KK: $('#editKK').val(),
@@ -232,29 +228,14 @@ function updateEmployee() {
             BpjsRemark: $('#editBpjsRemark').val(),
             DriverLicense: $('#editDriverLicense').val(),
             DriverLicenseType: $('#editDriverLicenseType').val(),
-            DriverLicenseExpire: $('#editDriverLicenseExpire').val(),
             AccountNumber: $('#editAccountNumber').val(),
             AccountName: $('#editAccountName').val(),
             BankCode: $('#editBankCode').val(),
             FamilyStatusCode: $('#editFamilyStatusCode').val(),
-            EmploymentStatusId: $('#editEmploymentStatusId').val(),
             PositionId: $('#editPositionId').val(),
             CustomerId: $('#editCustomerId').val(),
             LocationId: $('#editLocationId').val(),
             RoleId: $('#editRoleId').val(),
-            StartContract: $('#editStartContract').val(),
-            EndContract: $('#editEndContract').val(),
-            JoinCompanyDate: $('#editJoinCompanyDate').val(),
-            JoinCustomerDate: $('#editJoinCustomerDate').val(),
-            HasUniform: $('#editHasUniform').val(),
-            UniformDeliveryDate: $('#editUniformDeliveryDate').val(),
-            HasIdCard: $('#editHasIdCard').val(),
-            IdCardDeliveryDate: $('#editIdCardDeliveryDate').val(),
-            HasTraining: $('#editHasTraining').val(),
-            TrainingDeliveryDate: $('#editTrainingDeliveryDate').val(),
-            TrainingName: $('#editTrainingName').val(),
-            TrainingRemark: $('#editTrainingRemark').val(),
-            TrainingGrade: $('#editTrainingGrade').val(),
             IsExist: $('#editIsExist').val()
         },
         success: function (result) {
@@ -294,15 +275,8 @@ function editEmployeeForm(id) {
         success: function (result) {
             $('#editNIK').val(zeroPad(result.nik));
             $('#editName').val(result.name);
-
-            $('#editBirthPlace').val(result.birthPlace);
-            $('#editBirthDate').val(result.birthDate.substring(0, 10));
-            $('#editSex').val(result.sex).change();
-            $('#editReligion').val(result.religion).change();
-            $('#editAddress').val(result.address);
             $('#editPhoneNumber').val(result.phoneNumber);
             $('#editKTP').val(result.ktp);
-            $('#editKK').val(result.kk);
             $('#editNPWP').val(result.npwp);
             $('#editJamsostekNumber').val(result.jamsostekNumber);
             $('#editJamsostekRemark').val(result.jamsostekRemark);
@@ -310,55 +284,16 @@ function editEmployeeForm(id) {
             $('#editBpjsRemark').val(result.bpjsRemark);
             $('#editDriverLicense').val(result.driverLicense);
             $('#editDriverLicenseType').val(result.driverLicenseType);
-            $('#editDriverLicenseExpire').val(result.driverLicenseExpire.substring(0,10));
             $('#editAccountNumber').val(result.accountNumber);
             $('#editAccountName').val(result.accountName);
             $('#editBankCode').val(result.bankCode).change();
             $('#editFamilyStatusCode').val(result.familyStatusCode).change();
 
-            $('#editEmploymentStatusId').val(result.employmentStatusId).change();
             $('#editPositionId').val(result.positionId).change();
             $('#editCustomerId').val(result.customerId).change();
             $('#editLocationId').val(result.locationId).change();
             $('#editRoleId').val(result.roleId).change();
 
-            $('#editStartContract').val(result.startContract.substring(0, 10));
-            $('#editEndContract').val(result.endContract.substring(0, 10));
-            $('#editJoinCompanyDate').val(result.joinCompanyDate.substring(0, 10));
-            $('#editJoinCustomerDate').val(result.joinCustomerDate.substring(0, 10));
-            if (result.hasUniform) {
-                $('#editHasUniform').val("true").change();
-            }
-            else {
-                $('#editHasUniform').val("false").change();
-            }
-            if (result.isExist) {
-                $('#editIsExist').val("true").change();
-            }
-            else {
-                $('#editIsExist').val("false").change();
-            }
-
-            $('#editUniformDeliveryDate').val(result.uniformDeliveryDate.substring(0, 10));
-            if (result.hasIdCard) {
-                $('#editHasIdCard').val("true").change();
-            }
-            else {
-                $('#editHasIdCard').val("false").change();
-            }
-
-            $('#editIdCardDeliveryDate').val(result.idCardDeliveryDate.substring(0, 10));
-
-            if (result.hasTraining) {
-                $('#editHasTraining').val("true").change();
-            }
-            else {
-                $('#editHasTraining').val("false").change();
-            }
-            $('#editTrainingDeliveryDate').val(result.trainingDeliveryDate.substring(0, 10));
-            $('#editTrainingName').val(result.trainingName);
-            $('#editTrainingRemark').val(result.trainingRemark);
-            $('#editTrainingGrade').val(result.trainingGrade);
 
         },
         error: function (result) {
@@ -375,7 +310,6 @@ function reloadTable() {
 }
 
 function zeroPad(num) {
-    console.log(num);
     return num.toString().padStart(4, "0");
 }
 

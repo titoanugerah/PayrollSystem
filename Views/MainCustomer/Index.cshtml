@@ -2,10 +2,10 @@
     <div class="page-inner py-5">
         <div class="d-flex align-items-left align-items-md-center flex-column flex-md-row">
             <div>
-                <h2 class="text-white pb-2 fw-bold">Kelola Customer</h2>
+                <h2 class="text-white pb-2 fw-bold">Kelola Customer Utama</h2>
             </div>
             <div class="ml-md-auto py-2 py-md-0">
-                <button type="button" onclick="showAddCustomerForm()" class="btn btn-white btn-border btn-round mr-2">Tambah Customer</button>
+                <button type="button" onclick="showAddMainCustomerForm()" class="btn btn-white btn-border btn-round mr-2">Tambah Customer Utama</button>
                 <button type="button" onclick="reloadTable()" class="btn btn-white btn-border btn-round mr-2">Reload Data</button>
                 <a href="#" class="btn btn-white btn-border btn-round mr-2" hidden>Manage</a>
             </div>
@@ -19,13 +19,12 @@
             <div class="row">
                 <div class="card full-height  col-md-12">
                     <div class="card-header">
-                        <div class="card-title">Kelola Data Customer</div>
+                        <div class="card-title">Kelola Data Customer Utama</div>
                         <div class="d-flex flex-wrap justify-content-around pb-2 pt-4">
                             <table id="table" class="display">
                                 <thead>
                                     <tr>
-                                        <td>Customer</td>
-                                        <td>Customer Utama</td>
+                                        <td>Nama</td>
                                         <td>Keterangan</td>
                                         <td>Opsi</td>
                                     </tr>
@@ -41,11 +40,11 @@
     </div>
 </div>
 
-<div class="modal fade" id="addCustomerModal" role="dialog">
+<div class="modal fade" id="addMainCustomerModal" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h4>Tambah Customer</h4>
+                <h4>Tambah Customer Utama</h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
@@ -60,17 +59,10 @@
                 <div class="tab-content">
                     <div class="tab-pane active" id="addNewTab">
                         <div class="row">
-                            <div class="col-md-6">
+                            <div class="col-md-12">
                                 <div class="form-group">
-                                    <label>Nama Customer</label>
+                                    <label>Nama Customer Utama</label>
                                     <input type="text" class="form-control" id="addName" required>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label>Customer Utama</label><br />
-                                    <select class="form-control select2addmodal" id="addMainCustomerId" style="width:190px">
-                                    </select>
                                 </div>
                             </div>
                             <div class="col-md-12">
@@ -81,7 +73,7 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-primary row" onclick="addCustomer()">
+                            <button type="button" class="btn btn-primary row" onclick="addMainCustomer()">
                                 <div class="spinner-border spinner-border-sm"></div>
                                 Simpan
                             </button>
@@ -90,13 +82,13 @@
                     </div>
                     <div class="tab-pane" id="recoverTab">
                         <div class="form-group">
-                            <label>Customer</label>
+                            <label>Customer Utama</label>
                             &nbsp;&nbsp;&nbsp;&nbsp;
                             <select class="form-control select2addmodal" id="recoverId" style="width:360px">
                             </select>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-primary" onclick="recoverCustomer()">
+                            <button type="button" class="btn btn-primary" onclick="recoverMainCustomer()">
                                 <div class="spinner-border spinner-border-sm"></div>
                                 Pulihkan
                             </button>
@@ -109,7 +101,7 @@
     </div>
 </div>
 
-<div class="modal fade" id="editCustomerModal" role="dialog">
+<div class="modal fade" id="editMainCustomerModal" role="dialog">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -120,18 +112,11 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="col-md-6">
+                    <div class="col-md-12">
                         <div class="form-group">
-                            <label>Nama Customer</label>
+                            <label>Nama Customer Utama</label>
                             <input type="text" class="form-control" id="editId" hidden>
                             <input type="text" class="form-control" id="editName" required>
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label>Customer Utama</label><br />
-                            <select class="form-control select2editmodal" id="editMainCustomerId" style="width:190px">
-                            </select>
                         </div>
                     </div>
                     <div class="col-md-12">
@@ -142,11 +127,11 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" onclick="updateCustomer()">
+                    <button type="button" class="btn btn-primary" onclick="updateMainCustomer()">
                         <div class="spinner-border spinner-border-sm"></div>
                         Simpan
                     </button>
-                    <button type="button" class="btn btn-danger" onclick="deleteCustomer()">
+                    <button type="button" class="btn btn-danger" onclick="deleteMainCustomer()">
                         <div class="spinner-border delete spinner-border-sm"></div>
                         Hapus
                     </button>
@@ -159,4 +144,4 @@
 
 
 
-<script src="~/js/customer/index.js"></script>
+<script src="~/js/maincustomer/index.js"></script>

@@ -38,7 +38,7 @@ namespace Payroll.Controllers.Api
             catch (Exception error)
             {
                 logger.LogError(error, $"Bank API - Read");
-                throw error;
+                return BadRequest(error.Message);
             }
         }
     }

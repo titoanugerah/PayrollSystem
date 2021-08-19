@@ -6,14 +6,13 @@
     "paging": true,
     "pageLength": 10,
     "ajax": {
-        "url": "/api/customer/readDatatable",
+        "url": "/api/maincustomer/readdatatable",
         "dataSrc": "data",
         "type": "POST",
         "dataType": 'json'
     },
     "columns": [
         { "data": "name"},
-        { "data": "mainCustomer.name"},
         { "data": "remark"},
         {
             "render": function (data, type, row) {
@@ -23,151 +22,148 @@
     ]
 });
 
-function showAddCustomerForm() {
-    $('#addCustomerModal').modal('show');
+function showAddMainCustomerForm() {
+    $('#addMainCustomerModal').modal('show');
 }
 
 function showEditForm(id) {
     $.ajax({
         type: "GET",
         dataType: "JSON",
-        url: "api/customer/readDetail/"+id,
+        url: "api/maincustomer/readDetail/"+id,
         success: function (result) {
             $('#editId').val(result.id);
             $('#editName').val(result.name);
             $('#editRemark').val(result.remark);
-            $('#editMainCustomerId').val(result.mainCustomerId).change();
         },
         error: function (result) {
             console.log(result);
             notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' + result.responseText, 'danger');
         }
     });
-    $('#editCustomerModal').modal('show');
+    $('#editMainCustomerModal').modal('show');
 }
 
 function reloadTable() {
     table.ajax.reload();
-    getDeletedCustomer();
+    getDeletedMainCustomer();
 }
 
-function addCustomer() {
+function addMainCustomer() {
     if ($("#addName").val()!="") {
         $('.spinner-border').show();
         $.ajax({
             type: "POST",
             dataType: "JSON",
             contentType: "application/x-www-form-urlencoded",
-            url: "api/customer/create",
+            url: "api/maincustomer/create",
             data: {
                 Name: $("#addName").val(),
                 Remark: $("#addRemark").val(),
-                MainCustomerId: $("#addMainCustomerId").val()
             },
             success: function (result) {
                 reloadTable();
                 $("#addName").val("");
                 $("#addRemark").val("");
                 $('.spinner-border').hide();
-                $('#addCustomerModal').modal('hide');
+                $('#addMainCustomerModal').modal('hide');
                 notify('fas fa-check', 'Berhasil', 'Customer berhasil ditambahkan', 'success');
             },
             error: function (result) {
                 console.log(result);
                 $('.spinner-border').hide();
-                $('#addCustomerModal').modal('hide');
+                $('#addMainCustomerModal').modal('hide');
                 notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' +result.responseText, 'danger');
             }
         });
     } else {
-        $('#addCustomerModal').modal('hide');
+        $('#addMainCustomerModal').modal('hide');
         notify('fas fa-times', 'Gagal', "Mohon lengkapi kolom nama" , 'danger');
     }
 }
 
 
-function updateCustomer() {
+function updateMainCustomer() {
     if ($("#editName").val() != "") {
         $('.spinner-border').show();
         $.ajax({
             type: "POST",
             dataType: "json",
             contentType: "application/x-www-form-urlencoded",
-            url: "api/customer/update/"+$('#editId').val(),
+            url: "api/maincustomer/update/"+$('#editId').val(),
             data: {
                 Name: $("#editName").val(),
                 Remark: $("#editRemark").val(),
-                MainCustomerId: $("#editMainCustomerId").val(),
             },
             success: function (result) {
                 reloadTable();
                 $('.spinner-border').hide();
-                $('#editCustomerModal').modal('hide');
+                $('#editMainCustomerModal').modal('hide');
                 notify('fas fa-check', 'Berhasil', 'Customer berhasil diubah', 'success');
             },
             error: function (result) {
                 console.log(result);
                 $('.spinner-border').hide();
-                $('#editCustomerModal').modal('hide');
+                $('#editMainCustomerModal').modal('hide');
                 notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' + result.responseText, 'danger');
             }
         });
     } else {
-        $('#editCustomerModal').modal('hide');
+        $('#editMainCustomerModal').modal('hide');
         notify('fas fa-times', 'Gagal', "Mohon lengkapi kolom nama", 'danger');
     }
 
 }
 
-function deleteCustomer() {
+function deleteMainCustomer() {
     $('.delete').show();
     $.ajax({
         type: "POST",   
         contentType: 'application/json; charset=utf-8',
         dataType: "JSON",
-        url: "api/customer/delete/"+$('#editId').val(),
+        url: "api/maincustomer/delete/"+$('#editId').val(),
         success: function (result) {
             reloadTable();
             $('.delete').hide();
-            $('#editCustomerModal').modal('hide');
-            notify('fas fa-check', 'Berhasil', 'Customer berhasil dihapus', 'success');
+            $('#editMainCustomerModal').modal('hide');
+            notify('fas fa-check', 'Berhasil', 'Customer Utama berhasil dihapus', 'success');
         },
         error: function (result) {
             console.log(result);
             $('.delete').hide();
-            $('#editCustomerModal').modal('hide');
+            $('#editMainCustomerModal').modal('hide');
             notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' + result.responseText, 'danger');
         }
     });
 }
 
-function recoverCustomer() {
+function recoverMainCustomer() {
     $('.spinner-border').show();
     $.ajax({
         type: "POST",
         contentType: 'application/json; charset=utf-8',
         dataType: "JSON",
-        url: "api/customer/recover/" + $('#recoverId').val(),
+        url: "api/maincustomer/recover/" + $('#recoverId').val(),
         success: function (result) {
             reloadTable();
             $('.spinner-border').hide();
-            $('#addCustomerModal').modal('hide');
-            notify('fas fa-check', 'Berhasil', 'Customer berhasil dipulihkan', 'success');
+            $('#addMainCustomerModal').modal('hide');
+            notify('fas fa-check', 'Berhasil', 'Customer Utama berhasil dipulihkan', 'success');
         },
         error: function (result) {
             console.log(result);
             $('.spinner-border').hide();
-            $('#addCustomerModal').modal('hide');
+            $('#addMainCustomerModal').modal('hide');
             notify('fas fa-times', 'Gagal', result.statusText + ' &nbsp; ' + result.responseText, 'danger');
         }
     });
 }
 
-function getDeletedCustomer() {
+function getDeletedMainCustomer() {
     $.ajax({
         type: "GET",
         dataType: "JSON",
-        url: "api/customer/readDeleted",
+        url: "api/maincustomer/readDeleted",
         success: function (result) {
             var html = "<option value=0> Silahkan Pilih</option>";
             result.forEach(function (data) {
@@ -182,34 +178,10 @@ function getDeletedCustomer() {
     });
 }
 
-function getMainCustomer() {
-    $.ajax({
-        type: "GET",
-        dataType: "JSON",
-        url: "api/maincustomer/read",
-        success: function (result) {
-            var html = "<option value=0> Silahkan Pilih</option>";
-            result.forEach(function (data) {
-                html = html + "<option value=" + data.id + "> " + data.name + "</option>";
-            });
-            $('#addMainCustomerId').html(html);
-            $('#editMainCustomerId').html(html);
-        },
-        error: function (result) {
-            console.log(result);
-            notify('fas fa-times', 'Gagal', result.responseText, 'danger');
-        }
-    });
-}
-
 $(document).ready(function () {
     $('.select2addmodal').select2({
-        dropdownParent: $('#addCustomerModal')
-    });
-    $('.select2editmodal').select2({
-        dropdownParent: $('#editCustomerModal')
+        dropdownParent: $('#addMainCustomerModal')
     });
     $('.spinner-border').hide();
-    getDeletedCustomer();
-    getMainCustomer();
+    getDeletedMainCustomer();
 });

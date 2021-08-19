@@ -23,7 +23,7 @@ namespace Payroll.Controllers.Api
             payrollDB = _payrollDB;
         }
 
-        [Authorize]
+        [Authorize(Roles ="Admin")]
         [HttpPost]
         [Route("api/location/create")]
         public async Task<IActionResult> Create([FromForm]LocationInput locationInput)
@@ -54,13 +54,13 @@ namespace Payroll.Controllers.Api
             catch (Exception error)
             {
                 logger.LogError(error, $"Location API - Create");
-                throw error;
+                return BadRequest(error.Message);
             }
         }
 
-        [Authorize]
         [HttpPost]
         [Route("api/location/readDatatable")]
+        [Authorize]
         public async Task<IActionResult> ReadDatatable()
         {
             try
@@ -83,13 +83,13 @@ namespace Payroll.Controllers.Api
             catch (Exception error)
             {
                 logger.LogError(error, $"Location API - Read");
-                throw error;
+                return BadRequest(error.Message);
             }
         }
 
-        [Authorize]
         [HttpGet]
         [Route("api/location/read")]
+        [Authorize]
         public async Task<IActionResult> Read()
         {
             try
@@ -102,13 +102,13 @@ namespace Payroll.Controllers.Api
             catch (Exception error)
             {
                 logger.LogError(error, $"Location API - Read");
-                throw error;
+                return BadRequest(error.Message);
             }
         }
 
-        [Authorize]
         [HttpGet]
         [Route("api/location/readDeleted")]
+        [Authorize]
         public async Task<IActionResult> ReadDeleted()
         {
             try
@@ -121,13 +121,13 @@ namespace Payroll.Controllers.Api
             catch (Exception error)
             {
                 logger.LogError(error, $"Location API - Read Delted");
-                throw error;
+                return BadRequest(error.Message);
             }
         }
 
-        [Authorize]
         [HttpGet]
         [Route("api/location/readDetail/{id}")]
+        [Authorize]
         public async Task<IActionResult> ReadDetail(int id)
         {
             try
@@ -140,13 +140,13 @@ namespace Payroll.Controllers.Api
             catch (Exception error)
             {
                 logger.LogError(error, $"Location API - Read Detail {id}");
-                throw error;
+                return BadRequest(error.Message);
             }
         }
 
-        [Authorize]
         [HttpPost]
         [Route("api/location/update/{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Update([FromForm]LocationInput locationInput, int id)
         {
             try
@@ -164,13 +164,13 @@ namespace Payroll.Controllers.Api
             catch (Exception error)
             {
                 logger.LogError(error, $"Location API - Update {id}");
-                throw error;
+                return BadRequest(error.Message);
             }
         }
 
-        [Authorize]
         [HttpPost]
         [Route("api/location/delete/{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int id)
         {
             try
@@ -186,13 +186,13 @@ namespace Payroll.Controllers.Api
             catch (Exception error)
             {
                 logger.LogError(error, $"Location API - Delete {id}");
-                throw error;
+                return BadRequest(error.Message);
             }
         }
 
-        [Authorize]
         [HttpPost]
         [Route("api/location/recover/{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Recover(int id)
         {
             try
@@ -208,7 +208,7 @@ namespace Payroll.Controllers.Api
             catch (Exception error)
             {
                 logger.LogError(error, $"Location API - Recover {id}");
-                throw error;
+                return BadRequest(error.Message);
             }
         }
     }
