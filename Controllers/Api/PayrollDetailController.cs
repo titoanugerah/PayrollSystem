@@ -189,7 +189,7 @@ namespace Payroll.Controllers.Api
                     if (payrollDetail.MainSalaryBilling != 0)
                     {
                         payrollDetail.PayrollDetailStatusId = 2;
-                        payrollDetail.ResultPayroll = Convert.ToInt32(payrollDetail.MainSalaryBilling + payrollDetail.InsentiveBilling + payrollDetail.AttendanceBilling + payrollDetail.OvertimeBilling + payrollDetail.AppreciationBilling + payrollDetail.PulseAllowance);
+                        payrollDetail.ResultPayroll = Convert.ToInt32(payrollDetail.MainSalaryBilling + payrollDetail.InsentiveBilling + payrollDetail.AttendanceBilling + payrollDetail.OvertimeBilling + payrollDetail.AppreciationBilling + payrollDetail.PulseAllowance - payrollDetail.AbsentDeduction);
                         payrollDetail.FeePayroll = Convert.ToInt32(payrollDetail.ManagementFeeBilling);
                         payrollDetail.TotalPayroll = Convert.ToInt32(payrollDetail.FeePayroll + payrollDetail.ResultPayroll);
                         payrollDetail.TaxPayroll = Convert.ToInt32((payrollDetail.FeePayroll * payrollHistory.PpnPercentage) / 100);
@@ -226,11 +226,6 @@ namespace Payroll.Controllers.Api
                             payrollDetail.PPH21 = 0;
 
                         }
-
-                        //if (payrollDetail.Employee.BankCode != "BCA")
-                        //{
-                        //    payrollDetail.TransferFee = 6500;
-                        //}
 
                         payrollDetail.PPH23 = Convert.ToInt32((payrollDetail.FeePayroll * payrollDetail.PayrollHistory.Pph23Percentage) / 100);
                         payrollDetail.Netto = Convert.ToInt32(payrollDetail.ResultPayroll + payrollDetail.Rapel + payrollDetail.BpjsReturn - payrollDetail.BpjsKesehatanDeduction - payrollDetail.PensionDeduction - payrollDetail.BpjsTkDeduction - payrollDetail.PPH21);
