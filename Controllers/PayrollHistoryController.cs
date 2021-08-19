@@ -6,7 +6,6 @@ using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using Payroll.DataAccess;
 using Payroll.Models;
-using Payroll.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -37,6 +36,22 @@ namespace Payroll.Controllers
             catch (Exception error)
             {
                 logger.LogError(error, "Payroll Controller - Index");
+                throw error;
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Assa()
+        {
+            try
+            {
+                //Default Id Assa
+                ViewBag.MainCustomerId = 1;
+                return View();
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error, "Payroll Controller - Assa");
                 throw error;
             }
         }

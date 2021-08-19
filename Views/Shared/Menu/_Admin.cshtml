@@ -49,8 +49,34 @@
 </li>
 
 <li class="nav-item active">
-    <a asp-controller="PayrollHistory" asp-action="Index">
-        <i class="fas fa-money-bill"></i>
+    <a data-toggle="collapse" href="#payroll" class="collapsed" aria-expanded="false">
+        <i class="fas fa-home"></i>
         <p>Penggajian</p>
+        <span class="caret"></span>
     </a>
+
+    <div class="collapse" id="payroll">
+        <ul class="nav nav-collapse">
+            <li>
+                <a asp-controller="PayrollHistory" asp-action="Assa">
+                    <span class="sub-item">Assa</span>
+                </a>
+            </li>
+            <li>
+                <a asp-controller="PayrollHistory" asp-action="TTNT">
+                    <span class="sub-item">TTNT</span>
+                </a>
+            </li>
+            <li>
+                <a asp-controller="PayrollHistory" asp-action="Syncrum">
+                    <span class="sub-item">Syncrum</span>
+                </a>
+            </li>
+            <li>
+                <a asp-controller="PayrollHistory" asp-action="Dharma">
+                    <span class="sub-item">Dharma</span>
+                </a>
+            </li>
+        </ul>
+    </div>
 </li>
