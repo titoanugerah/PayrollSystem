@@ -78,7 +78,7 @@ namespace Payroll.Controllers
                     ClaimsIdentity userIdentity = new ClaimsIdentity(userClaims, CookieAuthenticationDefaults.AuthenticationScheme);
                     ClaimsPrincipal userPrincipal = new ClaimsPrincipal(userIdentity);
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, userPrincipal);
-                    return RedirectToAction("Index", "Dashboard");
+                    return RedirectToAction("Index", "Dashboard" );
                 }
                 else
                 {
