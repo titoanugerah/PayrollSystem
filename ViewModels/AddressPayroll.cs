@@ -19,7 +19,7 @@ namespace Payroll.ViewModels
                 NIK = FindHeaderColumn("nik");
                 Name = FindHeaderColumn("nama;name");
                 MainSalaryBilling = FindHeaderColumn("umk;gajipokok");
-                AbsentDeduction = FindHeaderColumn("potabsensi");
+                AbsentDeduction = FindHeaderColumn("potabsensi; potabsen");
                 JamsostekBilling = FindHeaderColumn("jamsostek4.89%;jamsostek");
                 BpjsBilling = FindHeaderColumn("bpjskesehatan4%;bpjskesehatan");
                 PensionBilling = FindHeaderColumn("jaminanpensiun2%;jaminanpensiun");

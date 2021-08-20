@@ -16,16 +16,19 @@ namespace Payroll.ViewModels
             Name = GetCellAddress("nama");
             PhoneNumber = GetCellAddress("no handphone;no hp");
             PositionId = GetCellAddress("jabatan");
-            if (Worksheet.MergedCells.Where(cell => cell.StartsWith(PositionId)).Any())
+            if (PositionId != null)
             {
-                DriverPosition = GetCellAddress("driver");
-                HelperPosition = GetCellAddress("helper");
-                CheckerPosition = GetCellAddress("checker");
-                NonDriverPosition = GetCellAddress("nondriver");
-                IsPositionMultiColumn = HelperPosition != null && CheckerPosition != null & NonDriverPosition != null;                
+                if (Worksheet.MergedCells.Where(cell => cell.StartsWith(PositionId)).Any())
+                {
+                    DriverPosition = GetCellAddress("driver");
+                    HelperPosition = GetCellAddress("helper");
+                    CheckerPosition = GetCellAddress("checker");
+                    NonDriverPosition = GetCellAddress("nondriver");
+                    IsPositionMultiColumn = HelperPosition != null && CheckerPosition != null & NonDriverPosition != null;                
+                }
             }
             LocationId = GetCellAddress("lokasi; rute");
-            CustomerId = GetCellAddress("customer; costomer");
+            CustomerId = GetCellAddress("customer; costomer; costumer");
             FamilyStatusCode = GetCellAddress("status l - k1, 2, 3;status keluarga");
             DriverLicenseType = GetCellAddress("sim");
             DriverLicense = GetCellAddress("no sim");
@@ -38,20 +41,29 @@ namespace Payroll.ViewModels
             BankCode = GetCellAddress("Bank");
             AccountName = GetCellAddress("Nama di Bank");
             AccountNumber = GetCellAddress("No.Account;No REK");
-            string cellStart = (Worksheet.MergedCells
-               .Where(cell => cell.Contains(GetCell("no").Address))
-               .LastOrDefault().Split(":").LastOrDefault());
+            //string cellStart = (Worksheet.MergedCells
+            //   .Where(cell => cell.Contains(GetCell("no").Address))
+            //   .LastOrDefault().Split(":").LastOrDefault());
+            string cellStart = "7A";
             DataStartRow = int.Parse(Regex.Replace(cellStart, @"[^\d]", "")) + 1;
-            DataEndRow = Worksheet.Dimension.End.Row;
-            if (CustomerId != null)
+            if (Worksheet.Dimension == null)
             {
-                MainCustomerId = 1;
+                IsValid = false;
             }
-            if (GetCell("DATA BASE TTNT").Address != null)
+            else
             {
-                MainCustomerId = 3;
+                DataEndRow = Worksheet.Dimension.End.Row;
+                if (CustomerId != null)
+                {
+                    MainCustomerId = 1;
+                }
+                if (GetCell("DATA BASE TTNT") != null)
+                {
+                    MainCustomerId = 3;
+                }
+
+                IsValid = (IsExist != null && No != null & Name!=null & PositionId != null && FamilyStatusCode != null && KTP != null && BankCode != null && AccountNumber != null );
             }
-            IsValid = (IsExist != null && No != null & Name!=null & PositionId != null && FamilyStatusCode != null && KTP != null && BankCode != null && AccountNumber != null );
         }
        
 

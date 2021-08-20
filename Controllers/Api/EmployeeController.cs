@@ -38,6 +38,7 @@ namespace Payroll.Controllers.Api
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(IFormFile file)
         {
+            ExcelWorksheet currentWorksheet = null;
             try
             {
                 //Check if File valid
@@ -46,7 +47,8 @@ namespace Payroll.Controllers.Api
                 {
                     return BadRequest($"format file {extension} tidak diijinkan, silahkan upload file dengan format excel");
                 }
-
+                List<Employee> newEmployees = new List<Employee>();
+                List<Employee> oldEmployees = new List<Employee>();
                 //List Up Needed Data
                 MasterData masterData = new MasterData();
                 masterData.Banks = await payrollDB.Bank.AsNoTracking().ToListAsync();
@@ -59,9 +61,6 @@ namespace Payroll.Controllers.Api
                 masterData.Positions = await payrollDB.Position.AsNoTracking().ToListAsync();
                 masterData.Roles = await payrollDB.Role.AsNoTracking().ToListAsync();
 
-                //Declare New & Old Employee
-                List<Employee> newEmployees = new List<Employee>();
-                List<Employee> oldEmployees = new List<Employee>();
 
                 //Access File
                 bool isFileOk = true;
@@ -74,6 +73,10 @@ namespace Payroll.Controllers.Api
 
                     using (ExcelPackage excelPackage = new ExcelPackage(memoryStream))
                     {
+                        //Declare New & Old Employee
+
+
+
                         if (excelPackage.Workbook.Worksheets.Count == 0)
                         {
                             return BadRequest($"Tidak ada worksheet yang tersedia pada file {file.FileName}");
@@ -81,7 +84,21 @@ namespace Payroll.Controllers.Api
 
                         foreach (ExcelWorksheet excelWorksheet in excelPackage.Workbook.Worksheets.ToList())
                         {
+                            currentWorksheet = excelWorksheet;
                             bool isSheetOk = true;
+                            if (excelWorksheet.Name == "Sheet3")
+                            {
+                                if (excelWorksheet.Dimension == null)
+                                {
+                                    isFileOk = false;
+                                    isSheetOk = false;
+                                    excelWorksheet.Cells[$"G1"].Value = "Format tidak valid";
+                                    excelWorksheet.Cells[$"G1"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                    excelWorksheet.Cells[$"G1"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                    continue;
+                                }
+
+                            }
                             AddressEmployee address = new AddressEmployee(excelWorksheet);
                             if (!address.IsValid)
                             {
@@ -99,34 +116,44 @@ namespace Payroll.Controllers.Api
                                 bool isOldEmployee = false;
                                 Employee employee = new Employee();
                                 string employeeNIK = GetStringValue(excelWorksheet, address.NIK, currentRow);
-                                if (employeeNIK != null)
-                                {
-                                    isOldEmployee = masterData.Employees.Where(column => Standarize(column.NIK) == Standarize(employeeNIK)).Any();
-                                    if (isOldEmployee)
-                                    {
-                                        employee = masterData.Employees
-                                            .Where(column => Standarize(column.NIK) == Standarize(employeeNIK))
-                                            .FirstOrDefault();
-                                    }
-                                    else
-                                    {
-                                        employee.NIK = employeeNIK;
-                                    }
-                                }
-                                else
-                                {
-                                    isFileOk = false;
-                                    isSheetOk = false;
-                                    excelWorksheet.Cells[$"{address.No}{currentRow}"].Value = "NIK tidak ada";
-                                    excelWorksheet.Cells[$"{address.NIK}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-                                    excelWorksheet.Cells[$"{address.NIK}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
-                                    continue;
-                                }
+                                //if (employeeNIK != null)
+                                //{
+                                //    isOldEmployee = masterData.Employees.Where(column => Standarize(column.NIK) == Standarize(employeeNIK)).Any();
+                                //    if (isOldEmployee)
+                                //    {
+                                //        employee = masterData.Employees
+                                //            .Where(column => Standarize(column.NIK) == Standarize(employeeNIK))
+                                //            .FirstOrDefault();
+                                //    }
+                                //    else
+                                //    {
+                                //        employee.NIK = employeeNIK;
+                                //    }
+                                //}
+                                //else
+                                //{
+                                //    isFileOk = false;
+                                //    isSheetOk = false;
+                                //    excelWorksheet.Cells[$"{address.No}{currentRow}"].Value = "NIK tidak ada";
+                                //    excelWorksheet.Cells[$"{address.NIK}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                //    excelWorksheet.Cells[$"{address.NIK}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                //    continue;
+                                //}
 
                                 //NIK
                                 if (employeeNIK != null)
                                 {
-                                    if (masterData.Employees.Where(column => column.NIK == employeeNIK).Any())
+                                    if (oldEmployees.Where(column => column.NIK == employeeNIK).Any())
+                                    {
+                                        //employee = oldEmployees.Where(column => column.NIK == employeeNIK).FirstOrDefault();
+                                        continue;
+                                    }
+                                    else if (newEmployees.Where(column => column.NIK == employeeNIK).Any())
+                                    {
+                                        //employee = newEmployees.Where(column => column.NIK == employeeNIK).FirstOrDefault();
+                                        continue;
+                                    }
+                                    else if (masterData.Employees.Where(column => column.NIK == employeeNIK).Any())
                                     {
                                         employee = masterData.Employees
                                             .Where(column => column.NIK == employeeNIK)
@@ -538,20 +565,19 @@ namespace Payroll.Controllers.Api
                                     payrollDB.Entry(employee).State = EntityState.Added;
                                     newEmployees.Add(employee);
                                 }
+                                payrollDB.Entry(employee).State = EntityState.Detached;
                             }
 
                             
-
-                            await payrollDB.Employee.AddRangeAsync(newEmployees);
-                            payrollDB.Employee.UpdateRange(oldEmployees);
-                            await payrollDB.SaveChangesAsync();
-
                             if (isSheetOk)
                             {
                                 excelPackage.Workbook.Worksheets.Delete(excelWorksheet);
                             }
                         }
 
+                            payrollDB.Employee.AddRange(newEmployees);
+                            payrollDB.Employee.UpdateRange(oldEmployees);
+                            await payrollDB.SaveChangesAsync();
                         if (!isFileOk)
                         {
 
@@ -572,7 +598,7 @@ namespace Payroll.Controllers.Api
             catch (Exception error)
             {
                 logger.LogError(error, "Employee Controller API - Create ");
-                return BadRequest(error.Message);
+                return BadRequest($"{currentWorksheet.Name}{error.Message}");
             }
         }
 
@@ -652,14 +678,31 @@ namespace Payroll.Controllers.Api
                 List<string> valueIfTrue = stringIfTrue != null ? stringIfTrue.ToLower().Replace(" ", string.Empty).Split(";").ToList() : null;
                 List<string> valueIfFalse = stringIfFalse != null ?stringIfFalse.ToLower().Replace(" ", string.Empty).Split(";").ToList() : null;
 
-                if (valueIfTrue.Contains(Standarize(cell.Value)))
+                if (valueIfTrue.Count() > 0)
                 {
-                    result =  true;
+                    if (valueIfTrue.Contains(Standarize(cell.Value)))
+                    {
+                        result =  true;
+                    }
+                    else
+                    {
+                        result = false;
+                    }
+
                 }
-                else if (valueIfFalse.Contains(Standarize(cell.Value)))
+                else if (valueIfFalse.Count() > 0)
                 {
-                    result =  false;
+
+                    if (valueIfFalse.Contains(Standarize(cell.Value)))
+                    {
+                        result =  false;
+                    }
+                    else
+                    {
+                        result = true;
+                    }
                 }
+                
             }
             return result;
         }

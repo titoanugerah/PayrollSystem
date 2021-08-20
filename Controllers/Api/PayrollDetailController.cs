@@ -395,9 +395,18 @@ namespace Payroll.Controllers.Api
                                 }
 
                                 int rowNum = 1;
-                                for (int currentRow = address.DataStartRow; currentRow < address.DataEndRow; currentRow++)
+                                for (int currentRow = address.DataStartRow; currentRow < address.Worksheet.Dimension.End.Row; currentRow++)
                                 {
                                     string employeeNIK = GetStringValue(excelWorksheet, address.NIK, currentRow);
+                                    if (employeeNIK == null)
+                                    {
+                                        isFileOk = false;
+                                        isSheetOk = false;
+                                        excelWorksheet.Cells[$"A{currentRow}"].Value = "NIK Kosong";
+                                        excelWorksheet.Cells[$"{address.NIK}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                        excelWorksheet.Cells[$"{address.NIK}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                        continue;
+                                    }
                                     List<string> employeeNames = GetStringValue(excelWorksheet, address.Name, currentRow).Split(";").ToList();
                                     PayrollDetail payrollDetail = payrollDetails
                                         .Where(column => Standarize(column.EmployeeId) == Standarize(employeeNIK))
@@ -424,7 +433,7 @@ namespace Payroll.Controllers.Api
                                     payrollDetail.ManagementFeeBilling = GetIntValue(excelWorksheet, address.ManagementFeeBilling, currentRow);
                                     payrollDetail.InsentiveBilling = address.IsAnyInsentiveBilling ? GetIntValue(excelWorksheet, address.InsentiveBilling, currentRow) : 0;
                                     payrollDetail.AttendanceBilling = address.IsAnyAttendanceBilling ? GetIntValue(excelWorksheet, address.AttendanceBilling, currentRow) : 0;
-                                    payrollDetail.AbsentDeduction = address.IsAnyAbsentDeduction ? GetIntValue(excelWorksheet, address.AbsentDeduction, currentRow) : 0;
+                                    payrollDetail.AbsentDeduction = address.IsAnyAbsentDeduction ? -1*GetIntValue(excelWorksheet, address.AbsentDeduction, currentRow) : 0;
                                     payrollDetail.AppreciationBilling = address.IsAnyAppreciationBilling ? GetIntValue(excelWorksheet, address.AppreciationBilling, currentRow) : 0;
                                     payrollDetail.OvertimeBilling = address.IsAnyOvertimeBilling ? GetIntValue(excelWorksheet, address.OvertimeBilling, currentRow) : 0;
                                     payrollDetail.AnotherDeduction = address.IsAnyAnotherDeduction ? GetIntValue(excelWorksheet, address.AnotherDeduction, currentRow) : 0;
@@ -444,7 +453,6 @@ namespace Payroll.Controllers.Api
                                     payrollDetail.PayrollDetailStatusId = 2;
                                     payrollDB.Entry(payrollDetail).State = EntityState.Modified;
                                     updatedPayrollDetails.Add(payrollDetail);
-
                                     excelWorksheet.Cells[$"A{currentRow}"].Value = "OK";
                                     rowNum++;
                                 }
