@@ -56,6 +56,54 @@ namespace Payroll.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Syncrum()
+        {
+            try
+            {
+                //Default Id Syncrum
+                ViewBag.MainCustomerId = 2;
+                return View();
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error, "Payroll Controller - Syncrum");
+                throw error;
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> TTNT()
+        {
+            try
+            {
+                //Default Id TTNT
+                ViewBag.MainCustomerId = 3;
+                return View();
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error, "Payroll Controller - TTNT");
+                throw error;
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Dharma()
+        {
+            try
+            {
+                //Default Id Dharma
+                ViewBag.MainCustomerId = 4;
+                return View();
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error, "Payroll Controller - Dharma");
+                throw error;
+            }
+        }
+
         [Route("PayrollHistory/Download/ReportBank/{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DownloadReportBank(int id)
