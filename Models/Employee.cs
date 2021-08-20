@@ -22,6 +22,8 @@ namespace Payroll.Models
         //public DateTime BirthDate { set; get; }
         //public string Religion { set; get; }
         //public string Address { set; get; }
+        public int MainCustomerId { set; get; }
+        public MainCustomer MainCustomer { set; get; }
         public string PhoneNumber { set; get; }
         [MaxLength(16)]
         public string KTP { set; get; }

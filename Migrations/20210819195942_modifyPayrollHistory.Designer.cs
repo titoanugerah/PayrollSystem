@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Payroll.DataAccess;
 
 namespace Payroll.Migrations
 {
     [DbContext(typeof(PayrollDB))]
-    partial class PayrollDBModelSnapshot : ModelSnapshot
+    [Migration("20210819195942_modifyPayrollHistory")]
+    partial class modifyPayrollHistory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -175,9 +177,6 @@ namespace Payroll.Migrations
                     b.Property<int>("LocationId")
                         .HasColumnType("int");
 
-                    b.Property<int>("MainCustomerId")
-                        .HasColumnType("int");
-
                     b.Property<string>("ModifyBy")
                         .HasColumnType("text");
 
@@ -213,8 +212,6 @@ namespace Payroll.Migrations
                     b.HasIndex("FamilyStatusCode");
 
                     b.HasIndex("LocationId");
-
-                    b.HasIndex("MainCustomerId");
 
                     b.HasIndex("PositionId");
 
@@ -589,8 +586,6 @@ namespace Payroll.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("MainCustomerId");
-
                     b.ToTable("PayrollHistory");
                 });
 
@@ -693,12 +688,6 @@ namespace Payroll.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Payroll.Models.MainCustomer", "MainCustomer")
-                        .WithMany()
-                        .HasForeignKey("MainCustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Payroll.Models.Position", "Position")
                         .WithMany()
                         .HasForeignKey("PositionId")
@@ -718,8 +707,6 @@ namespace Payroll.Migrations
                     b.Navigation("FamilyStatus");
 
                     b.Navigation("Location");
-
-                    b.Navigation("MainCustomer");
 
                     b.Navigation("Position");
 
@@ -754,17 +741,6 @@ namespace Payroll.Migrations
                     b.Navigation("Employee");
 
                     b.Navigation("PayrollHistory");
-                });
-
-            modelBuilder.Entity("Payroll.Models.PayrollHistory", b =>
-                {
-                    b.HasOne("Payroll.Models.MainCustomer", "MainCustomer")
-                        .WithMany()
-                        .HasForeignKey("MainCustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("MainCustomer");
                 });
 #pragma warning restore 612, 618
         }

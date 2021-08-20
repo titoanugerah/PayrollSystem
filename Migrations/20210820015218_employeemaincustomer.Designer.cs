@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Payroll.DataAccess;
 
 namespace Payroll.Migrations
 {
     [DbContext(typeof(PayrollDB))]
-    partial class PayrollDBModelSnapshot : ModelSnapshot
+    [Migration("20210820015218_employeemaincustomer")]
+    partial class employeemaincustomer
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -175,7 +177,10 @@ namespace Payroll.Migrations
                     b.Property<int>("LocationId")
                         .HasColumnType("int");
 
-                    b.Property<int>("MainCustomerId")
+                    b.Property<string>("MainCustomerId")
+                        .HasColumnType("text");
+
+                    b.Property<int?>("MainCustomerId1")
                         .HasColumnType("int");
 
                     b.Property<string>("ModifyBy")
@@ -214,7 +219,7 @@ namespace Payroll.Migrations
 
                     b.HasIndex("LocationId");
 
-                    b.HasIndex("MainCustomerId");
+                    b.HasIndex("MainCustomerId1");
 
                     b.HasIndex("PositionId");
 
@@ -695,9 +700,7 @@ namespace Payroll.Migrations
 
                     b.HasOne("Payroll.Models.MainCustomer", "MainCustomer")
                         .WithMany()
-                        .HasForeignKey("MainCustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("MainCustomerId1");
 
                     b.HasOne("Payroll.Models.Position", "Position")
                         .WithMany()

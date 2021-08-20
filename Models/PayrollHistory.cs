@@ -10,6 +10,7 @@ namespace Payroll.Models
         public int Id { set; get; }
         [Required]
         public int MainCustomerId { set; get; }
+        public MainCustomer MainCustomer { set; get; }
         [Required]
         public string Month { set; get; }
         [Required]
