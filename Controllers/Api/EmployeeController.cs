@@ -101,11 +101,11 @@ namespace Payroll.Controllers.Api
                                 string employeeNIK = GetStringValue(excelWorksheet, address.NIK, currentRow);
                                 if (employeeNIK != null)
                                 {
-                                    isOldEmployee = masterData.Employees.Where(column => column.NIK == employeeNIK).Any();
+                                    isOldEmployee = masterData.Employees.Where(column => Standarize(column.NIK) == Standarize(employeeNIK)).Any();
                                     if (isOldEmployee)
                                     {
                                         employee = masterData.Employees
-                                            .Where(column => column.NIK == employeeNIK)
+                                            .Where(column => Standarize(column.NIK) == Standarize(employeeNIK))
                                             .FirstOrDefault();
                                     }
                                     else
@@ -522,6 +522,10 @@ namespace Payroll.Controllers.Api
                                 employee.MainCustomerId = address.MainCustomerId;
                                 //Todo Password
                                 //employee.Password = GetMd5Hash(new MD5(), "lala");
+                                using (MD5 md5Hash = MD5.Create())
+                                {
+                                    employee.Password = GetMd5Hash(md5Hash, employee.NIK);
+                                }
 
 
                                 if (isOldEmployee)

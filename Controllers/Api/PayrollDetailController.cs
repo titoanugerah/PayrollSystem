@@ -400,7 +400,7 @@ namespace Payroll.Controllers.Api
                                     string employeeNIK = GetStringValue(excelWorksheet, address.NIK, currentRow);
                                     List<string> employeeNames = GetStringValue(excelWorksheet, address.Name, currentRow).Split(";").ToList();
                                     PayrollDetail payrollDetail = payrollDetails
-                                        .Where(column => column.EmployeeId == employeeNIK)
+                                        .Where(column => Standarize(column.EmployeeId) == Standarize(employeeNIK))
                                         //                                    .Where(column => employeeNames.Contains(column.Employee.Name))
                                         .FirstOrDefault();
                                     if (payrollDetail == null)
@@ -482,7 +482,7 @@ namespace Payroll.Controllers.Api
                                     string employeeNIK = GetStringValue(excelWorksheet, address.NIK, currentRow);
                                     List<string> employeeNames = GetStringValue(excelWorksheet, address.Name, currentRow).Split(";").ToList();
                                     PayrollDetail payrollDetail = payrollDetails
-                                        .Where(column => column.EmployeeId == employeeNIK)
+                                        .Where(column => Standarize(column.EmployeeId) == Standarize(employeeNIK))
                                         //                                    .Where(column => employeeNames.Contains(column.Employee.Name))
                                         .FirstOrDefault();
                                     if (payrollDetail == null)
@@ -509,7 +509,7 @@ namespace Payroll.Controllers.Api
                                     payrollDetail.AnotherDeduction = address.IsAnyAnotherDeduction ? GetIntValue(excelWorksheet, address.AnotherDeduction, currentRow) : 0;
                                     payrollDetail.GrandTotalBilling = GetIntValue(excelWorksheet, address.GrandTotalBilling, currentRow);
 
-                                    if (!(payrollDetail.GrandTotalBilling == (payrollDetail.MainPrice + payrollDetail.TrainingBilling + payrollDetail.RouteBilling + payrollDetail.InsentiveBilling)))
+                                    if (!(payrollDetail.GrandTotalBilling == (payrollDetail.MainSalaryBilling + payrollDetail.TrainingBilling + payrollDetail.RouteBilling + payrollDetail.InsentiveBilling)))
                                     {
                                         isFileOk = false;
                                         isSheetOk = false;
@@ -581,6 +581,15 @@ namespace Payroll.Controllers.Api
             }
         }
 
+        private string Standarize(object keyword)
+        {
+            string value = null;
+            if (keyword != null)
+            {
+                value = keyword.ToString().ToLower().Replace(" ", string.Empty);
+            }
+            return value;
+        }
 
         [Authorize(Roles = "Admin")]
         [HttpPost]
