@@ -263,8 +263,69 @@ namespace Payroll.Controllers.Api
             {
                 logger.LogError(error, $"Calculate Assa");
                 throw error;
+            } 
+        }
+
+        private async Task<IActionResult> CalculateTTNT(List<PayrollDetail> payrollDetails, PayrollHistory payrollHistory)
+        {
+            try
+            {
+                List<PayrollDetail> updatedPayrollDetails = new List<PayrollDetail>();
+                foreach (PayrollDetail payrollDetail in payrollDetails)
+                {
+                    if (payrollDetail.MainSalaryBilling != 0)
+                    {
+                        payrollDetail.PayrollDetailStatusId = 2;
+                        payrollDetail.BpjsTkDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * payrollHistory.BpjsTk1Percentage) / 100);
+                        if (payrollDetail.Employee.BpjsRemark != null)
+                        {
+                            if (payrollDetail.Employee.BpjsRemark.ToLower().Replace(" ", string.Empty) == "bumbk")
+                            {
+                                payrollDetail.BpjsKesehatanDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * payrollHistory.BpjsPayrollPercentage) / 100);
+                            }
+                            else
+                            {
+                                payrollDetail.BpjsKesehatanDeduction = 0;
+                            }
+                        }
+                        else
+                        {
+                            payrollDetail.BpjsKesehatanDeduction = 0;
+                        }
+
+                        payrollDetail.BpjsReturn = payrollDetail.BpjsKesehatanDeduction;
+                        payrollDetail.PensionDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * payrollHistory.PensionPayrollPercentage) / 100);
+                        payrollDetail.PTKP = Convert.ToInt32(payrollDetail.Employee.FamilyStatus.PTKP);
+                        payrollDetail.PKP1 = Convert.ToInt32(payrollDetail.GrandTotalBilling - payrollDetail.BpjsKesehatanDeduction - payrollDetail.PensionDeduction - payrollDetail.BpjsTkDeduction);
+                        payrollDetail.PKP2 = Convert.ToInt32(payrollDetail.PKP1 - payrollDetail.PTKP);
+                        if (payrollDetail.PKP2 > 1)
+                        {
+                            payrollDetail.PPH21 = Convert.ToInt32((payrollDetail.PKP2 * payrollDetail.PayrollHistory.Pph21Percentage) / 100);
+                        }
+                        else
+                        {
+                            payrollDetail.PPH21 = 0;
+
+                        }
+
+                        payrollDetail.PPH23 = Convert.ToInt32((payrollDetail.FeePayroll * payrollDetail.PayrollHistory.Pph23Percentage) / 100);
+                        payrollDetail.Netto = Convert.ToInt32(payrollDetail.GrandTotalBilling - payrollDetail.BpjsTkDeduction - payrollDetail.BpjsKesehatanDeduction - payrollDetail.PensionDeduction - payrollDetail.PPH21);
+                        payrollDetail.TakeHomePay = Convert.ToInt32(payrollDetail.Netto - payrollDetail.AnotherDeduction - payrollDetail.TransferFee);
+                        payrollDB.Entry(payrollDetail).State = EntityState.Modified;
+                        updatedPayrollDetails.Add(payrollDetail);
+                    }
+                }
+
+                payrollDB.PayrollDetail.UpdateRange(updatedPayrollDetails);
+                await payrollDB.SaveChangesAsync();
+                return Ok();
             }
- 
+            catch (Exception error)
+            {
+                logger.LogError(error, $"Calculate Assa");
+                throw error;
+            }
+
         }
 
         [HttpPost]
@@ -395,9 +456,105 @@ namespace Payroll.Controllers.Api
                             }
 
                         }
+                        else if (payrollHistory.MainCustomerId == 2)
+                        {
+
+                        }
+                        else if (payrollHistory.MainCustomerId == 3)
+                        {
+                            foreach (ExcelWorksheet excelWorksheet in excelPackage.Workbook.Worksheets.ToList())
+                            {
+                                bool isSheetOk = true;
+                                AddressTTNT address = new AddressTTNT(excelWorksheet);
+                                if (!address.IsValid)
+                                {
+                                    isFileOk = false;
+                                    isSheetOk = false;
+                                    excelWorksheet.Cells[$"G1"].Value = "Format tidak valid";
+                                    excelWorksheet.Cells[$"G1"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                    excelWorksheet.Cells[$"G1"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                    continue;
+                                }
+
+                                int rowNum = 1;
+                                for (int currentRow = address.DataStartRow; currentRow < address.DataEndRow; currentRow++)
+                                {
+                                    string employeeNIK = GetStringValue(excelWorksheet, address.NIK, currentRow);
+                                    List<string> employeeNames = GetStringValue(excelWorksheet, address.Name, currentRow).Split(";").ToList();
+                                    PayrollDetail payrollDetail = payrollDetails
+                                        .Where(column => column.EmployeeId == employeeNIK)
+                                        //                                    .Where(column => employeeNames.Contains(column.Employee.Name))
+                                        .FirstOrDefault();
+                                    if (payrollDetail == null)
+                                    {
+                                        isFileOk = false;
+                                        isSheetOk = false;
+                                        excelWorksheet.Cells[$"A{currentRow}"].Value = "Pekerja tidak terdaftar";
+                                        excelWorksheet.Cells[$"{address.NIK}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                        excelWorksheet.Cells[$"{address.NIK}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                        excelWorksheet.Cells[$"{address.Name}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                        excelWorksheet.Cells[$"{address.Name}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                        continue;
+                                    }
+
+                                    payrollDetail.MainSalaryBilling = GetIntValue(excelWorksheet, address.MainSalaryBilling, currentRow);
+                                    payrollDetail.TrainingBilling = GetIntValue(excelWorksheet, address.TrainingBilling, currentRow);
+                                    payrollDetail.RouteBilling = GetIntValue(excelWorksheet, address.RouteBilling, currentRow);
+                                    payrollDetail.InsentiveBilling = address.IsAnyInsentiveBilling ? GetIntValue(excelWorksheet, address.InsentiveBilling, currentRow) : 0;
+
+                                    payrollDetail.JamsostekBilling = GetIntValue(excelWorksheet, address.JamsostekBilling, currentRow);
+                                    payrollDetail.BpjsBilling = GetIntValue(excelWorksheet, address.BpjsBilling, currentRow);
+                                    payrollDetail.PensionBilling = GetIntValue(excelWorksheet, address.PensionBilling, currentRow);
+
+                                    payrollDetail.AnotherDeduction = address.IsAnyAnotherDeduction ? GetIntValue(excelWorksheet, address.AnotherDeduction, currentRow) : 0;
+                                    payrollDetail.GrandTotalBilling = GetIntValue(excelWorksheet, address.GrandTotalBilling, currentRow);
+
+                                    if (!(payrollDetail.GrandTotalBilling == (payrollDetail.MainPrice + payrollDetail.TrainingBilling + payrollDetail.RouteBilling + payrollDetail.InsentiveBilling)))
+                                    {
+                                        isFileOk = false;
+                                        isSheetOk = false;
+                                        excelWorksheet.Cells[$"A{currentRow}"].Value = "Perhitungan Keliru, silahkan periksa kembali";
+                                        excelWorksheet.Cells[$"{address.GrandTotalBilling}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                        excelWorksheet.Cells[$"{address.GrandTotalBilling}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                        continue;
+                                    }
+                                    payrollDetail.PayrollDetailStatusId = 2;
+                                    payrollDB.Entry(payrollDetail).State = EntityState.Modified;
+                                    updatedPayrollDetails.Add(payrollDetail);
+
+                                    excelWorksheet.Cells[$"A{currentRow}"].Value = "OK";
+                                    rowNum++;
+                                }
+
+                                if (isSheetOk)
+                                {
+                                    excelPackage.Workbook.Worksheets.Delete(excelWorksheet);
+                                }
+                            }
+                        }
+                        else if (payrollHistory.MainCustomerId == 4)
+                        {
+
+                        }
                         payrollDB.PayrollDetail.UpdateRange(updatedPayrollDetails);
                         await payrollDB.SaveChangesAsync();
-                        await CalculateAssa(payrollDetails, payrollHistory);
+
+                        if (payrollHistory.MainCustomerId == 1)
+                        {
+                            await CalculateAssa(payrollDetails, payrollHistory);
+                        }
+                        else if (payrollHistory.MainCustomerId == 2)
+                        {
+
+                        }
+                        else if (payrollHistory.MainCustomerId == 3)
+                        {
+                            await CalculateTTNT(payrollDetails, payrollHistory);
+                        }
+                        else if (payrollHistory.MainCustomerId == 4)
+                        {
+
+                        }
 
                         if (!isFileOk)
                         {

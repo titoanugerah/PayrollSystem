@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Payroll.DataAccess;
 
 namespace Payroll.Migrations
 {
     [DbContext(typeof(PayrollDB))]
-    partial class PayrollDBModelSnapshot : ModelSnapshot
+    [Migration("20210820055659_ttnt2")]
+    partial class ttnt2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -502,9 +504,6 @@ namespace Payroll.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("TaxPayroll")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Thr")
                         .HasColumnType("int");
 
                     b.Property<int>("TotalPayroll")

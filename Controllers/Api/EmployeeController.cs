@@ -172,12 +172,12 @@ namespace Payroll.Controllers.Api
                                 }
                                 else
                                 {
-                                    isFileOk = false;
-                                    isSheetOk = false;
-                                    excelWorksheet.Cells[$"{address.No}{currentRow}"].Value = "Nomor HP kosong";
-                                    excelWorksheet.Cells[$"{address.PhoneNumber}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-                                    excelWorksheet.Cells[$"{address.PhoneNumber}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
-                                    continue;
+                                    //isFileOk = false;
+                                    //isSheetOk = false;
+                                    //excelWorksheet.Cells[$"{address.No}{currentRow}"].Value = "Nomor HP kosong";
+                                    //excelWorksheet.Cells[$"{address.PhoneNumber}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                    //excelWorksheet.Cells[$"{address.PhoneNumber}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                    //continue;
                                 }
 
                                 if (address.IsPositionMultiColumn)
@@ -455,15 +455,15 @@ namespace Payroll.Controllers.Api
                                 {
                                     employee.KTP = GetStringValue(excelWorksheet, address.KTP, currentRow);
                                 }
-                                else
-                                {
-                                    isFileOk = false;
-                                    isSheetOk = false;
-                                    excelWorksheet.Cells[$"{address.No}{currentRow}"].Value = "KTP kosong";
-                                    excelWorksheet.Cells[$"{address.KTP}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-                                    excelWorksheet.Cells[$"{address.KTP}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
-                                    continue;
-                                }
+                                //else
+                                //{
+                                //    isFileOk = false;
+                                //    isSheetOk = false;
+                                //    excelWorksheet.Cells[$"{address.No}{currentRow}"].Value = "KTP kosong";
+                                //    excelWorksheet.Cells[$"{address.KTP}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                //    excelWorksheet.Cells[$"{address.KTP}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                //    continue;
+                                //}
 
                                 //Todo Bank Code
                                 if (GetStringValue(excelWorksheet, address.BankCode, currentRow) != null)
@@ -503,10 +503,10 @@ namespace Payroll.Controllers.Api
                                     employee.AccountName = GetStringValue(excelWorksheet, address.AccountName, currentRow);
                                 }
 
-                                //KTP 
+                                //Account Number
                                 if (GetStringValue(excelWorksheet, address.AccountNumber, currentRow) != null)
                                 {
-                                    employee.AccountNumber = GetStringValue(excelWorksheet, address.KTP, currentRow);
+                                    employee.AccountNumber = GetStringValue(excelWorksheet, address.AccountNumber, currentRow);
                                 }
                                 else
                                 {
@@ -519,6 +519,10 @@ namespace Payroll.Controllers.Api
                                 }
 
                                 excelWorksheet.Cells[$"{address.No}{currentRow}"].Value = "OK";
+                                employee.MainCustomerId = address.MainCustomerId;
+                                //Todo Password
+                                //employee.Password = GetMd5Hash(new MD5(), "lala");
+
 
                                 if (isOldEmployee)
                                 {
@@ -531,6 +535,9 @@ namespace Payroll.Controllers.Api
                                     newEmployees.Add(employee);
                                 }
                             }
+
+                            
+
                             await payrollDB.Employee.AddRangeAsync(newEmployees);
                             payrollDB.Employee.UpdateRange(oldEmployees);
                             await payrollDB.SaveChangesAsync();

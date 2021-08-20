@@ -29,6 +29,12 @@ namespace Payroll.Models
         [DefaultValue(0)]
         public int AtributeBilling { set; get; }
         [DefaultValue(0)]
+        public int TrainingBilling { set; get; }
+        [DefaultValue(0)]
+        public int RouteBilling { set; get; }
+        [DefaultValue(0)]
+        public int Thr { set; get; }
+        [DefaultValue(0)]
         public int Rapel { set; get; }
         [DefaultValue(0)]
         public int BpjsReturn { set; get; }

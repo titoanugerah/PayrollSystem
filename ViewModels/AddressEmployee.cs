@@ -40,10 +40,17 @@ namespace Payroll.ViewModels
             AccountNumber = GetCellAddress("No.Account;No REK");
             string cellStart = (Worksheet.MergedCells
                .Where(cell => cell.Contains(GetCell("no").Address))
-               .FirstOrDefault().Split(":").LastOrDefault());
+               .LastOrDefault().Split(":").LastOrDefault());
             DataStartRow = int.Parse(Regex.Replace(cellStart, @"[^\d]", "")) + 1;
             DataEndRow = Worksheet.Dimension.End.Row;
-
+            if (CustomerId != null)
+            {
+                MainCustomerId = 1;
+            }
+            if (GetCell("DATA BASE TTNT").Address != null)
+            {
+                MainCustomerId = 3;
+            }
             IsValid = (IsExist != null && No != null & Name!=null & PositionId != null && FamilyStatusCode != null && KTP != null && BankCode != null && AccountNumber != null );
         }
        
@@ -143,5 +150,6 @@ namespace Payroll.ViewModels
         public string HelperPosition { set; get; }
         public string CheckerPosition { set; get; }
         public string NonDriverPosition { set; get; }
+        public int MainCustomerId { set; get; }
     }
 }
