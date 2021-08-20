@@ -20,7 +20,7 @@
         { "data": "status" },
         {
             "render": function (data, type, row) {
-                return "<a href='payrollDetail?id="+row.id+"' class='btn btn-info' >Detail</a>";
+                return "<a href='/PayrollDetail?id="+row.id+"' class='btn btn-info' >Detail</a>";
             }
         },
     ]
@@ -32,6 +32,7 @@ function showAddPayrollHistoryForm() {
 
 function reloadTable() {
     table.ajax.reload();
+    $("#bodyDiv").removeAttr("style");
     //getDeletedPayrollHistory();
 }
 
@@ -42,7 +43,7 @@ function addPayrollHistory() {
             type: "POST",
             dataType: "JSON",
             contentType: "application/x-www-form-urlencoded",
-            url: "api/payrollHistory/create/",
+            url: "/api/payrollHistory/create/",
             data: {
                 Month: $("#addMonth").val(),
                 Year: $("#addYear").val(),
