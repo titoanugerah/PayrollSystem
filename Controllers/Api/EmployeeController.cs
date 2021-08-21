@@ -86,19 +86,7 @@ namespace Payroll.Controllers.Api
                         {
                             currentWorksheet = excelWorksheet;
                             bool isSheetOk = true;
-                            if (excelWorksheet.Name == "Sheet3")
-                            {
-                                if (excelWorksheet.Dimension == null)
-                                {
-                                    isFileOk = false;
-                                    isSheetOk = false;
-                                    excelWorksheet.Cells[$"G1"].Value = "Format tidak valid";
-                                    excelWorksheet.Cells[$"G1"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-                                    excelWorksheet.Cells[$"G1"].Style.Fill.BackgroundColor.SetColor(Color.Red);
-                                    continue;
-                                }
-
-                            }
+                          
                             AddressEmployee address = new AddressEmployee(excelWorksheet);
                             if (!address.IsValid)
                             {
@@ -110,54 +98,47 @@ namespace Payroll.Controllers.Api
                                 continue;
                             }
 
-                            int rowNum = 1;
                             for (int currentRow = address.DataStartRow; currentRow < address.DataEndRow; currentRow++)
                             {
                                 bool isOldEmployee = false;
                                 Employee employee = new Employee();
                                 string employeeNIK = GetStringValue(excelWorksheet, address.NIK, currentRow);
-                                //if (employeeNIK != null)
-                                //{
-                                //    isOldEmployee = masterData.Employees.Where(column => Standarize(column.NIK) == Standarize(employeeNIK)).Any();
-                                //    if (isOldEmployee)
-                                //    {
-                                //        employee = masterData.Employees
-                                //            .Where(column => Standarize(column.NIK) == Standarize(employeeNIK))
-                                //            .FirstOrDefault();
-                                //    }
-                                //    else
-                                //    {
-                                //        employee.NIK = employeeNIK;
-                                //    }
-                                //}
-                                //else
-                                //{
-                                //    isFileOk = false;
-                                //    isSheetOk = false;
-                                //    excelWorksheet.Cells[$"{address.No}{currentRow}"].Value = "NIK tidak ada";
-                                //    excelWorksheet.Cells[$"{address.NIK}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-                                //    excelWorksheet.Cells[$"{address.NIK}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
-                                //    continue;
-                                //}
-
+                               
                                 //NIK
                                 if (employeeNIK != null)
                                 {
-                                    if (oldEmployees.Where(column => column.NIK == employeeNIK).Any())
+                                    if (oldEmployees.Where(column => Standarize(column.NIK) == Standarize(employeeNIK)).Any())
                                     {
-                                        //employee = oldEmployees.Where(column => column.NIK == employeeNIK).FirstOrDefault();
-                                        continue;
+                                        if (oldEmployees.Where(column => Standarize(column.NIK) == Standarize(employeeNIK)).Where(column => column.IsExist == false).Any())
+                                        {
+                                            oldEmployees.Remove(oldEmployees.Where(column => Standarize(column.NIK) == Standarize(employeeNIK)).Where(column => column.IsExist == false).FirstOrDefault());
+                                            employee.NIK = excelWorksheet.Cells[$"{address.NIK}{currentRow}"].Value.ToString(); ;
+                                        }
+                                        else
+                                        {
+                                            continue;
+                                        }
+
                                     }
-                                    else if (newEmployees.Where(column => column.NIK == employeeNIK).Any())
+                                    else if (newEmployees.Where(column => Standarize(column.NIK) == Standarize(employeeNIK)).Any())
                                     {
-                                        //employee = newEmployees.Where(column => column.NIK == employeeNIK).FirstOrDefault();
-                                        continue;
+                                        if (newEmployees.Where(column => Standarize(column.NIK) == Standarize(employeeNIK)).Where(column => column.IsExist == false).Any())
+                                        {
+                                            newEmployees.Remove(newEmployees.Where(column => Standarize(column.NIK) == Standarize(employeeNIK)).Where(column => column.IsExist == false).FirstOrDefault());
+                                            employee.NIK = excelWorksheet.Cells[$"{address.NIK}{currentRow}"].Value.ToString(); ;
+                                        }
+                                        else
+                                        {
+                                            continue;
+                                        }
+
                                     }
-                                    else if (masterData.Employees.Where(column => column.NIK == employeeNIK).Any())
+                                    else if (masterData.Employees.Where(column => Standarize(column.NIK) == Standarize(employeeNIK)).Any())
                                     {
                                         employee = masterData.Employees
-                                            .Where(column => column.NIK == employeeNIK)
+                                            .Where(column => Standarize(column.NIK) == Standarize(employeeNIK))
                                             .FirstOrDefault();
+                                        isOldEmployee = true;
                                     }
                                     else
                                     {
@@ -595,7 +576,7 @@ namespace Payroll.Controllers.Api
 
                 return new JsonResult("");
             }
-            catch (Exception error)
+          catch (Exception error)
             {
                 logger.LogError(error, "Employee Controller API - Create ");
                 return BadRequest($"{currentWorksheet.Name}{error.Message}");
@@ -675,8 +656,8 @@ namespace Payroll.Controllers.Api
             ExcelRangeBase cell = worksheet.Cells[$"{stringCell}"];
             if (cell.Value != null)
             {
-                List<string> valueIfTrue = stringIfTrue != null ? stringIfTrue.ToLower().Replace(" ", string.Empty).Split(";").ToList() : null;
-                List<string> valueIfFalse = stringIfFalse != null ?stringIfFalse.ToLower().Replace(" ", string.Empty).Split(";").ToList() : null;
+                List<string> valueIfTrue = stringIfTrue != null ? Standarize(stringIfTrue).Split(";").ToList() : null;
+                List<string> valueIfFalse = stringIfFalse != null ? Standarize(stringIfFalse).Split(";").ToList() : null;
 
                 if (valueIfTrue.Count() > 0)
                 {

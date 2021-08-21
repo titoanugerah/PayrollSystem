@@ -121,8 +121,8 @@ namespace Payroll.Migrations
             modelBuilder.Entity("Payroll.Models.Employee", b =>
                 {
                     b.Property<string>("NIK")
-                        .HasMaxLength(6)
-                        .HasColumnType("varchar(6)");
+                        .HasMaxLength(16)
+                        .HasColumnType("varchar(16)");
 
                     b.Property<string>("AccountName")
                         .HasColumnType("text");
@@ -409,7 +409,7 @@ namespace Payroll.Migrations
 
                     b.Property<string>("EmployeeId")
                         .IsRequired()
-                        .HasColumnType("varchar(6)");
+                        .HasColumnType("varchar(16)");
 
                     b.Property<int>("FeePayroll")
                         .HasColumnType("int");

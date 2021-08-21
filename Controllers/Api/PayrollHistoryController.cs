@@ -108,6 +108,7 @@ namespace Payroll.Controllers.Api
                         payrollDetail.PayrollHistoryId = payrollHistory.Id;
                         payrollDetail.MainPrice = 0;
                         payrollDetail.PayrollDetailStatusId = 1;
+                        payrollDetail.IsExist = true;
                         payrollDetails.Add(payrollDetail);
                         payrollDB.Entry(payrollDetail).State = EntityState.Added;
                     }

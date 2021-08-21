@@ -137,7 +137,6 @@ namespace Payroll.DataAccess
                                 switch (entry.State)
                                 {
                                     case EntityState.Added:
-                                        audit.IsExist = true;
                                         audit.CreateBy = nik;
                                         audit.CreateDateUtc = DateTime.UtcNow;
                                         audit.ModifyBy = nik;

@@ -9,7 +9,7 @@ namespace Payroll.Models
     public class Employee : Audit
     {
         [Key]
-        [MaxLength(6)]
+        [MaxLength(16)]
         public string NIK { set; get; }
         [Required]
         public string Password { set; get; }

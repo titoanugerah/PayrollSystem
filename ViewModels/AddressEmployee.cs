@@ -9,8 +9,9 @@ namespace Payroll.ViewModels
     {
         public AddressEmployee(ExcelWorksheet excelWorksheet)
         {
-            Worksheet = excelWorksheet;            
-            IsExist = GetCellAddress("aktif");
+            Worksheet = excelWorksheet;
+            //IsExist = GetCellAddress("aktif");
+            IsExist = "A";
             No = GetCellAddress("no");
             NIK = GetCellAddress("nik");
             Name = GetCellAddress("nama");
@@ -44,7 +45,7 @@ namespace Payroll.ViewModels
             //string cellStart = (Worksheet.MergedCells
             //   .Where(cell => cell.Contains(GetCell("no").Address))
             //   .LastOrDefault().Split(":").LastOrDefault());
-            string cellStart = "7A";
+            string cellStart = "6A";
             DataStartRow = int.Parse(Regex.Replace(cellStart, @"[^\d]", "")) + 1;
             if (Worksheet.Dimension == null)
             {
