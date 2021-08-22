@@ -55,25 +55,45 @@ namespace Payroll.Controllers
         {
             try
             {
+                bool isAnyEmployee = false;
+                Employee employee = new Employee();
+                if (loginInput.Username == null || loginInput.Password == null)
+                {
+                    ViewBag.Message = $"Kolom NIK /Pasword kosong, silahkan dilengkapi";
+                    return View("Login");
+                }
+
+                if (isAnyEmployee = await payrollDB.Employee.Where(column => column.PrimaryNIK.ToString() == loginInput.Username).AnyAsync())
+                {
+                    employee = await payrollDB.Employee
+                        .Where(column => column.PrimaryNIK.ToString() == loginInput.Username)
+                        .FirstOrDefaultAsync();                    
+                } 
+                else if (isAnyEmployee = await payrollDB.Employee.Where(column => column.SecondaryNIK.ToLower() == loginInput.Username.ToLower()).AnyAsync())
+                {
+                    employee = await payrollDB.Employee
+                        .Include(table => table.Role)
+                        .Where(column => column.SecondaryNIK.ToLower() == loginInput.Username.ToLower())
+                        .FirstOrDefaultAsync();
+                }
+                else
+                {
+                    ViewBag.Message = $"Username tidak ditemukan";
+                    return View("Login");
+                }
+
                 string encryptedPassword = null;
                 using (MD5 md5Hash = MD5.Create())
                 {
                     encryptedPassword = GetMd5Hash(md5Hash, loginInput.Password);
                 }
-                    Employee employee = await payrollDB.Employee
-                    .Include(table => table.Role)
-                    //TODO
-                    //.Where(column => column.NIK == loginInput.NIK)
-                    .Where(column => column.Password == encryptedPassword)
-                    .FirstOrDefaultAsync();
 
-
-                if (employee != null)
+                if (employee.Password == encryptedPassword)
                 {
                     List<Claim> userClaims = new List<Claim>()
                     {
-                        //TODO
-                        //new Claim("NIK", employee.NIK.ToString()),
+                        
+                        new Claim("Id", employee.Id.ToString()),
                         new Claim(ClaimTypes.Name, employee.Name),
                         new Claim(ClaimTypes.Role, employee.Role.Name),
                     };
@@ -104,8 +124,7 @@ namespace Payroll.Controllers
             try
             {
                 Employee employee = await payrollDB.Employee
-                    //TODO
-                    //.Where(column => column.NIK == resetInput.NIK)
+                    .Where(column => column.Name == resetInput.Name)
                     .FirstOrDefaultAsync();
                 if (employee != null)
                 {
@@ -120,7 +139,7 @@ namespace Payroll.Controllers
                 }
                 else
                 {
-                    ViewBag.Message = $"Kombinasi NIK dan nomor KTP anda salah, silahkan ulangi kembali";
+                    ViewBag.Message = $"Kombinasi NIK dan nomor Nama anda salah, silahkan ulangi kembali";
                 }
             }
             catch (Exception error)

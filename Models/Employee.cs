@@ -9,7 +9,7 @@ namespace Payroll.Models
         [Key]
         public int Id { set; get; }
         [MaxLength(4)]
-        public int PrimaryNIK { set; get; }
+        public int? PrimaryNIK { set; get; }
         [MaxLength(16)]
         public string SecondaryNIK { set; get; }
         [Required]

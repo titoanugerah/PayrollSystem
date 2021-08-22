@@ -126,7 +126,7 @@ namespace Payroll.Controllers
                     .Include(table => table.PayrollHistory)
                     .Where(column => column.Id == id)
                     .FirstOrDefault();
-                if (payrollDetail.EmployeeId == userIdentity.NIK || userIdentity.Role.ToLower() == "admin")
+                if (payrollDetail.EmployeeId == userIdentity.EmployeeId || userIdentity.Role.ToLower() == "admin")
                 {
                     ViewBag.payrollDetail = payrollDetail;
                     return View();
