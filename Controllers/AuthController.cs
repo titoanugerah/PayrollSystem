@@ -66,6 +66,7 @@ namespace Payroll.Controllers
                 if (isAnyEmployee = await payrollDB.Employee.Where(column => column.PrimaryNIK.ToString() == loginInput.Username).AnyAsync())
                 {
                     employee = await payrollDB.Employee
+                        .Include(table => table.Role)
                         .Where(column => column.PrimaryNIK.ToString() == loginInput.Username)
                         .FirstOrDefaultAsync();                    
                 } 
