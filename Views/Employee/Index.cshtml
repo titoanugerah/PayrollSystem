@@ -57,9 +57,21 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="col-md-12">
+                        <div class="col-md-12 ">
+                            <div class="form-group row">
+                                <label>Customer Utama</label>
+                                <select class="form-control" id="addMainCustomerId">
+                                    <option value="1">Assa</option>
+                                    <option value="2">TTNT</option>
+                                    <option value="3">Syncrum</option>
+                                    <option value="4">Bukan Customer (Staff)</option>
+                                </select>
+                            </div>
+                        </div>
+
                         <div class="form-group row">
                             <label class="col-md-12">Pilih dokumen </label>
-                            <input type="file" class="form-control form-control-file" id="fileUpload1" name="fileUpload1" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required="">                            
+                            <input type="file" class="form-control form-control-file" id="fileUpload1" name="fileUpload1" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required="">
                         </div>
                     </div>
                 </div>
@@ -112,7 +124,8 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label>NIK</label>
-                            <input type="text" class="form-control" id="editNIK" readonly>
+                            <input type="text" class="form-control" id="editId" hidden>
+                            <input type="text" class="form-control" id="editNIK">
                         </div>
                     </div>
 
@@ -157,61 +170,16 @@
                             </div>
                         </div>
 
-
-                        <p>Pendataan</p>
-                        <div class="col-md-12 ">
-                            <div class="form-group row">
-                                <label class="col-md-6">Nomor KTP</label>
-                                <input type="text" id="editKTP" class="form-control col-md-6">
-                            </div>
-                        </div>
-
-                        <div class="col-md-12 ">
-                            <div class="form-group row">
-                                <label class="col-md-6">Nomor SIM</label>
-                                <input type="text" id="editDriverLicense" class="form-control col-md-6">
-                            </div>
-                        </div>
-
-                        <div class="col-md-12 ">
-                            <div class="form-group row">
-                                <label class="col-md-6">Tipe SIM</label>
-                                <input type="text" id="editDriverLicenseType" class="form-control col-md-6">
-                            </div>
-                        </div>
-
-                        <div class="col-md-12 ">
-                            <div class="form-group row">
-                                <label class="col-md-6">NPWP</label>
-                                <input type="text" id="editNPWP" class="form-control col-md-6">
-                            </div>
-                        </div>
-
-                        <div class="col-md-12 ">
-                            <div class="form-group row">
-                                <label class="col-md-6">Jamsostek</label>
-                                <input type="text" id="editJamsostekNumber" class="form-control col-md-6">
-                            </div>
-                        </div>
-
-                        <div class="col-md-12 ">
-                            <div class="form-group row">
-                                <label class="col-md-6">Keterangan Jamsostek</label>
-                                <input type="text" id="editJamsostekRemark" class="form-control col-md-6">
-                            </div>
-                        </div>
-
-                        <div class="col-md-12 ">
-                            <div class="form-group row">
-                                <label class="col-md-6">Nomor BPJS</label>
-                                <input type="text" id="editBpjsNumber" class="form-control col-md-6">
-                            </div>
-                        </div>
-
                         <div class="col-md-12 ">
                             <div class="form-group row">
                                 <label class="col-md-6">Keterangan BPJS</label>
-                                <input type="text" id="editBpjsRemark" class="form-control col-md-6">
+                                <select class="form-control col-md-6" id="editBpjsStatusId">
+                                    <option value="">Silahkan Pilih</option>
+                                    <option value="0">Tidak Ada</option>
+                                    <option value="1">BU MBK</option>
+                                    <option value="2">Lainnya</option>
+                                </select>
+
                             </div>
                         </div>
 

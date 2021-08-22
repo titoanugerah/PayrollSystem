@@ -89,7 +89,7 @@
         { "data": "location.district.name", "name": "Distrik" },
         {
             "render": function (data,type, row) {
-                return "<button type='button' class='btn btn-info' onclick=editEmployeeForm('" + row.nik + "'); >Edit</button>";
+                return "<button type='button' class='btn btn-info' onclick=editEmployeeForm('" + row.id + "'); >Edit</button>";
             }
         },
     ]
@@ -110,7 +110,7 @@ function addEmployee() {
     var files = $('#fileUpload1')[0].files[0];
     fd.append('file', files);
     $.ajax({
-        url: 'api/employee/create/',
+        url: 'api/employee/create/'+$("#addMainCustomerId").val(),
         data: fd,
         processData: false,
         contentType: false,
@@ -220,15 +220,7 @@ function updateEmployee() {
         data: {
             Name: $("#editName").val(),
             PhoneNumber: $('#editPhoneNumber').val(),
-            KTP: $('#editKTP').val(),
-            KK: $('#editKK').val(),
-            NPWP: $('#editNPWP').val(),
-            JamsostekNumber: $('#editJamsostekNumber').val(),
-            JamsostekRemark: $('#editJamsostekRemark').val(),
-            BpjsNumber: $('#editBpjsNumber').val(),
-            BpjsRemark: $('#editBpjsRemark').val(),
-            DriverLicense: $('#editDriverLicense').val(),
-            DriverLicenseType: $('#editDriverLicenseType').val(),
+            BpjsStatusId: $('#editBpjsStatusId').val(),
             AccountNumber: $('#editAccountNumber').val(),
             AccountName: $('#editAccountName').val(),
             BankCode: $('#editBankCode').val(),
@@ -274,21 +266,15 @@ function editEmployeeForm(id) {
         dataType: "JSON",
         url: "api/employee/readDetail/" + id,
         success: function (result) {
+            $('#editId').val(result.id);
             $('#editNIK').val(zeroPad(result.nik));
             $('#editName').val(result.name);
             $('#editPhoneNumber').val(result.phoneNumber);
-            $('#editKTP').val(result.ktp);
-            $('#editNPWP').val(result.npwp);
-            $('#editJamsostekNumber').val(result.jamsostekNumber);
-            $('#editJamsostekRemark').val(result.jamsostekRemark);
-            $('#editBpjsNumber').val(result.bpjsNumber);
-            $('#editBpjsRemark').val(result.bpjsRemark);
-            $('#editDriverLicense').val(result.driverLicense);
-            $('#editDriverLicenseType').val(result.driverLicenseType);
             $('#editAccountNumber').val(result.accountNumber);
             $('#editAccountName').val(result.accountName);
             $('#editBankCode').val(result.bankCode).change();
             $('#editFamilyStatusCode').val(result.familyStatusCode).change();
+            $('#editBpjsStatusId').val(result.bpjsStatusId).change();
 
             $('#editPositionId').val(result.positionId).change();
             $('#editCustomerId').val(result.customerId).change();

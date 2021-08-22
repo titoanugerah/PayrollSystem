@@ -1,9 +1,10 @@
 ﻿using Payroll.Models;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Payroll.ViewModels
 {
-    public class MasterData
+    public class MasterData        
     {
         public List<Customer> Customers { set; get; }
         public List<Position> Positions { set; get; }
@@ -15,6 +16,6 @@ namespace Payroll.ViewModels
         public List<Role> Roles { set; get; }
         public List<PayrollDetail> payrollDetails { set; get; } 
         public PayrollHistory PayrollHistory { set; get; }
-
+     
     }
 }

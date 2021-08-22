@@ -5,12 +5,11 @@ using System.Text.RegularExpressions;
 
 namespace Payroll.ViewModels
 {
-    public class AddressEmployee
+    public class AddressAssaEmployee
     {
-        public AddressEmployee(ExcelWorksheet excelWorksheet)
+        public AddressAssaEmployee(ExcelWorksheet excelWorksheet)
         {
             Worksheet = excelWorksheet;
-            //IsExist = GetCellAddress("aktif");
             IsExist = "A";
             No = GetCellAddress("no");
             NIK = GetCellAddress("nik");
@@ -28,19 +27,14 @@ namespace Payroll.ViewModels
                     IsPositionMultiColumn = HelperPosition != null && CheckerPosition != null & NonDriverPosition != null;                
                 }
             }
-            LocationId = GetCellAddress("lokasi; rute");
+
+            LocationId = GetCellAddress("lokasi");
             CustomerId = GetCellAddress("customer; costomer; costumer");
-            FamilyStatusCode = GetCellAddress("status l - k1, 2, 3;status keluarga");
-            DriverLicenseType = GetCellAddress("sim");
-            DriverLicense = GetCellAddress("no sim");
-            //DriverLicenseExpire = GetCellAddress("masa berlaku;sim berlaku");                        
-            BpjsNumber = GetCellAddress("BPJS Kesehatan; BPJS KES");
-            BpjsRemark = GetCellAddress("KETERANGAN BPJS Kesehatan; BPJS KES");
-            JamsostekNumber = GetCellAddress("jamsostek; BPJS TK");
-            JamsostekRemark = GetCellAddress("KET JAMSOSTEK");
-            KTP = GetCellAddress("No. KTP; No KTP");
-            BankCode = GetCellAddress("Bank");
+            FamilyStatusCode = GetCellAddress("status l - k1, 2, 3");
+            
+            BpjsStatusId = GetCellAddress("KETERANGAN BPJS Kesehatan; BPJS KES; KETERANGAN PROSES BPJS Kesehatan");
             AccountName = GetCellAddress("Nama di Bank");
+            BankCode = GetCellAddress("Bank");
             AccountNumber = GetCellAddress("No.Account;No REK");
             //string cellStart = (Worksheet.MergedCells
             //   .Where(cell => cell.Contains(GetCell("no").Address))
@@ -51,19 +45,15 @@ namespace Payroll.ViewModels
             {
                 IsValid = false;
             }
+            else if (No == "A")
+            {
+                IsValid = false;
+            }
             else
             {
-                DataEndRow = Worksheet.Dimension.End.Row;
-                if (CustomerId != null)
-                {
-                    MainCustomerId = 1;
-                }
-                if (GetCell("DATA BASE TTNT") != null)
-                {
-                    MainCustomerId = 3;
-                }
 
-                IsValid = (IsExist != null && No != null & Name!=null & PositionId != null && FamilyStatusCode != null && KTP != null && BankCode != null && AccountNumber != null );
+                DataEndRow = Worksheet.Dimension.End.Row;              
+                IsValid = (IsExist != null && No != null & Name!=null & PositionId != null && FamilyStatusCode != null && BankCode != null && AccountNumber != null );
             }
         }
        
@@ -142,27 +132,18 @@ namespace Payroll.ViewModels
         public string NIK { set; get; }
         public string Name { set; get; }
         public string PhoneNumber { set; get; }
-        public string KTP { set; get; }
-        public string DriverLicenseType { set; get; }
-        public string DriverLicense { set; get; }
-        public string DriverLicenseExpire { set; get; }
-        public string FamilyStatusCode { set; get; }
-        public string BpjsNumber { set; get; }
-        public string BpjsRemark { set; get; }
-        public string JamsostekNumber { set; get; }
-        public string JamsostekRemark { set; get; }
-        public string NPWP { set; get; }
-        public string BankCode { set; get; }
-        public string AccountNumber { set; get; }
-        public string AccountName { set; get; }
         public string PositionId { set; get; }
         public string LocationId { set; get; }
         public string CustomerId { set; get; }
+        public string FamilyStatusCode { set; get; }
+        public string BpjsStatusId { set; get; }
+        public string AccountName { set; get; }
+        public string BankCode { set; get; }
+        public string AccountNumber { set; get; }
         public string IsExist { set; get; }
         public string DriverPosition { set; get; }
         public string HelperPosition { set; get; }
         public string CheckerPosition { set; get; }
         public string NonDriverPosition { set; get; }
-        public int MainCustomerId { set; get; }
     }
 }
