@@ -32,6 +32,9 @@ namespace Payroll.Migrations
                     b.Property<ulong>("IsExist")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Keyword")
+                        .HasColumnType("text");
+
                     b.Property<int?>("ModifyBy")
                         .HasColumnType("int");
 
@@ -61,6 +64,9 @@ namespace Payroll.Migrations
 
                     b.Property<ulong>("IsExist")
                         .HasColumnType("bit");
+
+                    b.Property<string>("Keyword")
+                        .HasColumnType("text");
 
                     b.Property<int>("MainCustomerId")
                         .HasColumnType("int");
@@ -569,6 +575,9 @@ namespace Payroll.Migrations
 
                     b.Property<ulong>("IsExist")
                         .HasColumnType("bit");
+
+                    b.Property<string>("Keyword")
+                        .HasColumnType("text");
 
                     b.Property<int?>("ModifyBy")
                         .HasColumnType("int");

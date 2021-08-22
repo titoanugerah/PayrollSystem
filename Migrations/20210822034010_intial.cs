@@ -14,6 +14,7 @@ namespace Payroll.Migrations
                 {
                     Code = table.Column<string>(type: "varchar(12)", maxLength: 12, nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
+                    Keyword = table.Column<string>(type: "text", nullable: true),
                     IsExist = table.Column<ulong>(type: "bit", nullable: false),
                     CreateBy = table.Column<int>(type: "int", nullable: false),
                     ModifyBy = table.Column<int>(type: "int", nullable: true),
@@ -90,6 +91,7 @@ namespace Payroll.Migrations
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Remark = table.Column<string>(type: "text", nullable: true),
+                    Keyword = table.Column<string>(type: "text", nullable: true),
                     IsExist = table.Column<ulong>(type: "bit", nullable: false),
                     CreateBy = table.Column<int>(type: "int", nullable: false),
                     ModifyBy = table.Column<int>(type: "int", nullable: true),
@@ -155,6 +157,7 @@ namespace Payroll.Migrations
                     Name = table.Column<string>(type: "text", nullable: false),
                     Remark = table.Column<string>(type: "text", nullable: true),
                     MainCustomerId = table.Column<int>(type: "int", nullable: false),
+                    Keyword = table.Column<string>(type: "text", nullable: true),
                     IsExist = table.Column<ulong>(type: "bit", nullable: false),
                     CreateBy = table.Column<int>(type: "int", nullable: false),
                     ModifyBy = table.Column<int>(type: "int", nullable: true),

@@ -12,6 +12,7 @@ namespace Payroll.Models
         [DefaultValue(1)]
         public int MainCustomerId { set; get; }
         public MainCustomer MainCustomer { set; get; }
-       
+        public string Keyword { set; get; }
+
     }
 }

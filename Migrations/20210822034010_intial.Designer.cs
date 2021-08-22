@@ -9,7 +9,7 @@ using Payroll.DataAccess;
 namespace Payroll.Migrations
 {
     [DbContext(typeof(PayrollDB))]
-    [Migration("20210822032313_intial")]
+    [Migration("20210822034010_intial")]
     partial class intial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -33,6 +33,9 @@ namespace Payroll.Migrations
 
                     b.Property<ulong>("IsExist")
                         .HasColumnType("bit");
+
+                    b.Property<string>("Keyword")
+                        .HasColumnType("text");
 
                     b.Property<int?>("ModifyBy")
                         .HasColumnType("int");
@@ -63,6 +66,9 @@ namespace Payroll.Migrations
 
                     b.Property<ulong>("IsExist")
                         .HasColumnType("bit");
+
+                    b.Property<string>("Keyword")
+                        .HasColumnType("text");
 
                     b.Property<int>("MainCustomerId")
                         .HasColumnType("int");
@@ -571,6 +577,9 @@ namespace Payroll.Migrations
 
                     b.Property<ulong>("IsExist")
                         .HasColumnType("bit");
+
+                    b.Property<string>("Keyword")
+                        .HasColumnType("text");
 
                     b.Property<int?>("ModifyBy")
                         .HasColumnType("int");
