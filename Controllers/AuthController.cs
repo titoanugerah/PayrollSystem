@@ -62,7 +62,8 @@ namespace Payroll.Controllers
                 }
                     Employee employee = await payrollDB.Employee
                     .Include(table => table.Role)
-                    .Where(column => column.NIK == loginInput.NIK)
+                    //TODO
+                    //.Where(column => column.NIK == loginInput.NIK)
                     .Where(column => column.Password == encryptedPassword)
                     .FirstOrDefaultAsync();
 
@@ -71,7 +72,8 @@ namespace Payroll.Controllers
                 {
                     List<Claim> userClaims = new List<Claim>()
                     {
-                        new Claim("NIK", employee.NIK.ToString()),
+                        //TODO
+                        //new Claim("NIK", employee.NIK.ToString()),
                         new Claim(ClaimTypes.Name, employee.Name),
                         new Claim(ClaimTypes.Role, employee.Role.Name),
                     };
@@ -102,8 +104,8 @@ namespace Payroll.Controllers
             try
             {
                 Employee employee = await payrollDB.Employee
-                    .Where(column => column.NIK == resetInput.NIK)
-                    .Where(column => column.KTP == resetInput.KTP)
+                    //TODO
+                    //.Where(column => column.NIK == resetInput.NIK)
                     .FirstOrDefaultAsync();
                 if (employee != null)
                 {

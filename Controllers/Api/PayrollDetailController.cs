@@ -89,13 +89,14 @@ namespace Payroll.Controllers.Api
         {
             try
             {
-                string userNIK = httpContextAccessor.HttpContext.User.GetNIK();
+                int userNIK = httpContextAccessor.HttpContext.User.GetNIK();
                 DatatablesRequest request = new DatatablesRequest(Request.Form.Select(column => new InputRequest { Key = column.Key, Value = column.Value }).ToList());
                 PayrollDetailView payrollDetailView = new PayrollDetailView();
                 payrollDetailView.Data = await payrollDB.PayrollDetail
                     .Include(table => table.Employee.Location)
                     .Include(table => table.PayrollHistory)
-                    .Where(column => column.Employee.NIK == userNIK)
+                    //Todo
+                    //.Where(column => column.Employee.NIK == userNIK)
                     .Where(column => column.IsExist == true)
                     .Where(column => column.PayrollDetailStatusId == 3)
                     .OrderBy(column => column.Id)                    
@@ -104,7 +105,8 @@ namespace Payroll.Controllers.Api
                     .ToListAsync();
                 payrollDetailView.RecordsFiltered = await payrollDB.PayrollDetail
                     .Include(table => table.Employee)
-                    .Where(column => column.Employee.NIK == userNIK)
+                    //Todo
+                    //.Where(column => column.Employee.NIK == userNIK)
                     .Where(column => column.PayrollDetailStatusId == 3)
                     .CountAsync();
                 return new JsonResult(payrollDetailView);
@@ -173,7 +175,8 @@ namespace Payroll.Controllers.Api
                 foreach (Employee employee in newEmployees)
                 {
                     PayrollDetail payrollDetail = new PayrollDetail();
-                    payrollDetail.EmployeeId = employee.NIK;
+                    //Todo
+                    //payrollDetail.EmployeeId = employee.NIK;
                     payrollDetail.PayrollHistoryId = payrollHistory.Id;
                     payrollDetail.MainPrice = 0;
                     payrollDetail.PayrollDetailStatusId = 1;
@@ -217,21 +220,22 @@ namespace Payroll.Controllers.Api
                         payrollDetail.GrossPayroll = Convert.ToInt32(payrollDetail.TotalPayroll + payrollDetail.TaxPayroll);
                         payrollDetail.AttributePayroll = Convert.ToInt32(payrollDetail.AtributeBilling);
                         payrollDetail.BpjsTkDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * payrollHistory.BpjsTk1Percentage) / 100);
-                        if (payrollDetail.Employee.BpjsRemark != null)
-                        {
-                            if (payrollDetail.Employee.BpjsRemark.ToLower().Replace(" ", string.Empty) == "bumbk")
-                            {
-                                payrollDetail.BpjsKesehatanDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * payrollHistory.BpjsPayrollPercentage) / 100);
-                            }
-                            else
-                            {
-                                payrollDetail.BpjsKesehatanDeduction = 0;
-                            }
-                        }
-                        else
-                        {
-                            payrollDetail.BpjsKesehatanDeduction = 0;
-                        }
+                        //TODO
+                        //if (payrollDetail.Employee.BpjsRemark != null)
+                        //{
+                        //    if (payrollDetail.Employee.BpjsRemark.ToLower().Replace(" ", string.Empty) == "bumbk")
+                        //    {
+                        //        payrollDetail.BpjsKesehatanDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * payrollHistory.BpjsPayrollPercentage) / 100);
+                        //    }
+                        //    else
+                        //    {
+                        //        payrollDetail.BpjsKesehatanDeduction = 0;
+                        //    }
+                        //}
+                        //else
+                        //{
+                        //    payrollDetail.BpjsKesehatanDeduction = 0;
+                        //}
 
                         payrollDetail.BpjsReturn = payrollDetail.BpjsKesehatanDeduction;
                         payrollDetail.PensionDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * payrollHistory.PensionPayrollPercentage) / 100);
@@ -278,21 +282,22 @@ namespace Payroll.Controllers.Api
                     {
                         payrollDetail.PayrollDetailStatusId = 2;
                         payrollDetail.BpjsTkDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * payrollHistory.BpjsTk1Percentage) / 100);
-                        if (payrollDetail.Employee.BpjsRemark != null)
-                        {
-                            if (payrollDetail.Employee.BpjsRemark.ToLower().Replace(" ", string.Empty) == "bumbk")
-                            {
-                                payrollDetail.BpjsKesehatanDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * payrollHistory.BpjsPayrollPercentage) / 100);
-                            }
-                            else
-                            {
-                                payrollDetail.BpjsKesehatanDeduction = 0;
-                            }
-                        }
-                        else
-                        {
-                            payrollDetail.BpjsKesehatanDeduction = 0;
-                        }
+                        //TODO
+                        //if (payrollDetail.Employee.BpjsRemark != null)
+                        //{
+                        //    if (payrollDetail.Employee.BpjsRemark.ToLower().Replace(" ", string.Empty) == "bumbk")
+                        //    {
+                        //        payrollDetail.BpjsKesehatanDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * payrollHistory.BpjsPayrollPercentage) / 100);
+                        //    }
+                        //    else
+                        //    {
+                        //        payrollDetail.BpjsKesehatanDeduction = 0;
+                        //    }
+                        //}
+                        //else
+                        //{
+                        //    payrollDetail.BpjsKesehatanDeduction = 0;
+                        //}
 
                         payrollDetail.BpjsReturn = payrollDetail.BpjsKesehatanDeduction;
                         payrollDetail.PensionDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * payrollHistory.PensionPayrollPercentage) / 100);

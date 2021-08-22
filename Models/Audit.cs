@@ -26,8 +26,8 @@ namespace Payroll.Models
                 return isExist;                 
             }
         }
-        public string CreateBy { set; get; }
-        public string? ModifyBy { set; get; }
+        public int CreateBy { set; get; }
+        public int? ModifyBy { set; get; }
         [NotMapped]
         public string CreateByName { set; get; }
         [NotMapped]

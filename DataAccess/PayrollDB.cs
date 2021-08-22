@@ -68,7 +68,7 @@ namespace Payroll.DataAccess
 
             modelBuilder.Entity<Employee>(employee =>
             {
-                employee.HasKey(col => col.NIK);
+                employee.HasKey(col => col.Id);
             });
 
             modelBuilder.Entity<FamilyStatus>(familyStatus =>
@@ -120,7 +120,7 @@ namespace Payroll.DataAccess
             {
                 if (httpContextAccessor != null && httpContextAccessor.HttpContext != null && httpContextAccessor.HttpContext.User != null && httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
                 {
-                    string nik = httpContextAccessor.HttpContext.User.GetNIK();
+                    int nik = httpContextAccessor.HttpContext.User.GetNIK();
                     if (nik != null)
                     {
                         var entries = ChangeTracker.Entries().ToList();

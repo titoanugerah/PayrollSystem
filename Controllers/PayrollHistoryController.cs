@@ -141,7 +141,8 @@ namespace Payroll.Controllers
                     {
 
                         await SetValue($"A{currentRow}", no);
-                        await SetValue($"B{currentRow}", payrollDetail.Employee.NIK);
+                        //TODO
+                        //await SetValue($"B{currentRow}", payrollDetail.Employee.NIK);
                         await SetValue($"C{currentRow}", payrollDetail.Employee.Name);
                         await SetValue($"D{currentRow}", payrollDetail.Employee.Position.Name);
                         await SetValue($"E{currentRow}", payrollDetail.Employee.Location.Name);
@@ -166,7 +167,8 @@ namespace Payroll.Controllers
                     {
 
                         await SetValue($"A{currentRow}", no);
-                        await SetValue($"B{currentRow}", payrollDetail.Employee.NIK);
+                        //TODO
+                        //await SetValue($"B{currentRow}", payrollDetail.Employee.NIK);
                         await SetValue($"C{currentRow}", payrollDetail.Employee.Name);
                         await SetValue($"D{currentRow}", payrollDetail.Employee.Position.Name);
                         await SetValue($"E{currentRow}", payrollDetail.Employee.Location.Name);
@@ -255,7 +257,7 @@ namespace Payroll.Controllers
                             foreach (PayrollDetail payrollDetail in payrollDetails)
                             {
                                 await SetValue($"A{currentRow}", no);
-                                await SetValue($"B{currentRow}", payrollDetail.Employee.NIK);
+                                //await SetValue($"B{currentRow}", payrollDetail.Employee.NIK);
                                 await SetValue($"C{currentRow}", payrollDetail.Employee.Name);
                                 await SetValue($"D{currentRow}", payrollDetail.Employee.Position.Name);
                                 await SetValue($"E{currentRow}", payrollDetail.Employee.Location.Name);
@@ -277,7 +279,8 @@ namespace Payroll.Controllers
                                 //await SetValue($"U{currentRow}", payrollDetail.Employee.JoinCustomerDate);
 
                                 await SetValue($"X{currentRow}", no);
-                                await SetValue($"Y{currentRow}", payrollDetail.Employee.NIK);
+                                //TODO
+                                //await SetValue($"Y{currentRow}", payrollDetail.Employee.NIK);
                                 await SetValue($"Z{currentRow}", payrollDetail.Employee.Name);
                                 await SetValue($"AA{currentRow}", payrollDetail.Employee.FamilyStatusCode);
                                 await SetValue($"AB{currentRow}", payrollDetail.ResultPayroll);
@@ -301,7 +304,8 @@ namespace Payroll.Controllers
                                 await SetValue($"AT{currentRow}", payrollDetail.TakeHomePay);
                                 
                                 await SetValue($"AV{currentRow}", no);
-                                await SetValue($"AW{currentRow}", payrollDetail.Employee.NIK);
+                                //TODO
+                                //await SetValue($"AW{currentRow}", payrollDetail.Employee.NIK);
                                 await SetValue($"AX{currentRow}", payrollDetail.Employee.Name);
                                 await SetValue($"AY{currentRow}", payrollDetail.TakeHomePay);
                                 currentRow++;
@@ -461,7 +465,8 @@ namespace Payroll.Controllers
                             foreach (PayrollDetail payrollDetail in payrollDetails)
                             {
                                 await SetValue($"A{currentRow}", no);
-                                await SetValue($"B{currentRow}", payrollDetail.Employee.NIK);
+                                //TODO
+                                //await SetValue($"B{currentRow}", payrollDetail.Employee.NIK);
                                 await SetValue($"C{currentRow}", payrollDetail.Employee.Name);
                                 await SetValue($"D{currentRow}", payrollDetail.Employee.Position.Name);
                                 await SetValue($"E{currentRow}", payrollDetail.Employee.Location.Name);
@@ -483,7 +488,8 @@ namespace Payroll.Controllers
                                 //await SetValue($"U{currentRow}", payrollDetail.Employee.JoinCustomerDate);
 
                                 await SetValue($"X{currentRow}", no);
-                                await SetValue($"Y{currentRow}", payrollDetail.Employee.NIK);
+                                //TODO
+                                //await SetValue($"Y{currentRow}", payrollDetail.Employee.NIK);
                                 await SetValue($"Z{currentRow}", payrollDetail.Employee.Name);
                                 await SetValue($"AA{currentRow}", payrollDetail.Employee.FamilyStatusCode);
                                 await SetValue($"AB{currentRow}", payrollDetail.ResultPayroll);
@@ -507,7 +513,8 @@ namespace Payroll.Controllers
                                 await SetValue($"AT{currentRow}", payrollDetail.TakeHomePay);
 
                                 await SetValue($"AV{currentRow}", no);
-                                await SetValue($"AW{currentRow}", payrollDetail.Employee.NIK);
+                                //TODO
+                                //await SetValue($"AW{currentRow}", payrollDetail.Employee.NIK);
                                 await SetValue($"AX{currentRow}", payrollDetail.Employee.Name);
                                 await SetValue($"AY{currentRow}", payrollDetail.TakeHomePay);
 

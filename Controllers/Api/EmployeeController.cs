@@ -104,62 +104,63 @@ namespace Payroll.Controllers.Api
                                 string employeeNIK = GetStringValue(excelWorksheet, address.NIK, currentRow);
                                
                                 //NIK
-                                if (employeeNIK != null)
-                                {
-                                    if (oldEmployees.Where(column => Standarize(column.NIK) == Standarize(employeeNIK)).Any())
-                                    {
-                                        if (oldEmployees.Where(column => Standarize(column.NIK) == Standarize(employeeNIK)).Where(column => column.IsExist == false).Any())
-                                        {
-                                            oldEmployees.Remove(oldEmployees.Where(column => Standarize(column.NIK) == Standarize(employeeNIK)).Where(column => column.IsExist == false).FirstOrDefault());
-                                            employee.NIK = excelWorksheet.Cells[$"{address.NIK}{currentRow}"].Value.ToString(); ;
-                                        }
-                                        else
-                                        {
-                                            isFileOk = false;
-                                            isSheetOk = false;
-                                            excelWorksheet.Cells[$"{address.No}{currentRow}"].Value = $"Data sudah ada";
-                                            continue;
-                                        }
+                                //TODO
+                                //if (employeeNIK != null)
+                                //{
+                                //    if (oldEmployees.Where(column => Standarize(column.NIK) == Standarize(employeeNIK)).Any())
+                                //    {
+                                //        if (oldEmployees.Where(column => Standarize(column.NIK) == Standarize(employeeNIK)).Where(column => column.IsExist == false).Any())
+                                //        {
+                                //            oldEmployees.Remove(oldEmployees.Where(column => Standarize(column.NIK) == Standarize(employeeNIK)).Where(column => column.IsExist == false).FirstOrDefault());
+                                //            employee.NIK = excelWorksheet.Cells[$"{address.NIK}{currentRow}"].Value.ToString(); ;
+                                //        }
+                                //        else
+                                //        {
+                                //            isFileOk = false;
+                                //            isSheetOk = false;
+                                //            excelWorksheet.Cells[$"{address.No}{currentRow}"].Value = $"Data sudah ada";
+                                //            continue;
+                                //        }
 
-                                    }
-                                    else if (newEmployees.Where(column => Standarize(column.NIK) == Standarize(employeeNIK)).Any())
-                                    {
-                                        if (newEmployees.Where(column => Standarize(column.NIK) == Standarize(employeeNIK)).Where(column => column.IsExist == false).Any())
-                                        {
-                                            newEmployees.Remove(newEmployees.Where(column => Standarize(column.NIK) == Standarize(employeeNIK)).Where(column => column.IsExist == false).FirstOrDefault());
-                                            employee.NIK = excelWorksheet.Cells[$"{address.NIK}{currentRow}"].Value.ToString(); ;
-                                        }
-                                        else
-                                        {
-                                            isFileOk = false;
-                                            isSheetOk = false;
-                                            excelWorksheet.Cells[$"{address.No}{currentRow}"].Value = $"Data sudah ada";
-                                            continue;
+                                //    }
+                                //    else if (newEmployees.Where(column => Standarize(column.NIK) == Standarize(employeeNIK)).Any())
+                                //    {
+                                //        if (newEmployees.Where(column => Standarize(column.NIK) == Standarize(employeeNIK)).Where(column => column.IsExist == false).Any())
+                                //        {
+                                //            newEmployees.Remove(newEmployees.Where(column => Standarize(column.NIK) == Standarize(employeeNIK)).Where(column => column.IsExist == false).FirstOrDefault());
+                                //            employee.NIK = excelWorksheet.Cells[$"{address.NIK}{currentRow}"].Value.ToString(); ;
+                                //        }
+                                //        else
+                                //        {
+                                //            isFileOk = false;
+                                //            isSheetOk = false;
+                                //            excelWorksheet.Cells[$"{address.No}{currentRow}"].Value = $"Data sudah ada";
+                                //            continue;
 
-                                        }
+                                //        }
 
-                                    }
-                                    else if (masterData.Employees.Where(column => Standarize(column.NIK) == Standarize(employeeNIK)).Any())
-                                    {
-                                        employee = masterData.Employees
-                                            .Where(column => Standarize(column.NIK) == Standarize(employeeNIK))
-                                            .FirstOrDefault();
-                                        isOldEmployee = true;
-                                    }
-                                    else
-                                    {
-                                        employee.NIK = excelWorksheet.Cells[$"{address.NIK}{currentRow}"].Value.ToString(); ;
-                                    }
-                                }
-                                else
-                                {
-                                    isFileOk = false;
-                                    isSheetOk = false;
-                                    excelWorksheet.Cells[$"{address.No}{currentRow}"].Value = "NIK kosong";
-                                    excelWorksheet.Cells[$"{address.NIK}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-                                    excelWorksheet.Cells[$"{address.NIK}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
-                                    continue;
-                                }
+                                //    }
+                                //    else if (masterData.Employees.Where(column => Standarize(column.NIK) == Standarize(employeeNIK)).Any())
+                                //    {
+                                //        employee = masterData.Employees
+                                //            .Where(column => Standarize(column.NIK) == Standarize(employeeNIK))
+                                //            .FirstOrDefault();
+                                //        isOldEmployee = true;
+                                //    }
+                                //    else
+                                //    {
+                                //        employee.NIK = excelWorksheet.Cells[$"{address.NIK}{currentRow}"].Value.ToString(); ;
+                                //    }
+                                //}
+                                //else
+                                //{
+                                //    isFileOk = false;
+                                //    isSheetOk = false;
+                                //    excelWorksheet.Cells[$"{address.No}{currentRow}"].Value = "NIK kosong";
+                                //    excelWorksheet.Cells[$"{address.NIK}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                //    excelWorksheet.Cells[$"{address.NIK}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                //    continue;
+                                //}
 
                                 //IsExist
                                 employee.IsExist = GetBoolValue(excelWorksheet, $"{address.IsExist}{currentRow}", "aktif");
@@ -430,57 +431,6 @@ namespace Payroll.Controllers.Api
                                     //continue;
                                 }
 
-                                //DriverLicenseType
-                                if (address.DriverLicenseType != null)
-                                {
-                                    employee.DriverLicenseType = GetStringValue(excelWorksheet, address.DriverLicenseType, currentRow);
-                                }
-
-                                //DriverLicense
-                                if (address.DriverLicense != null)
-                                {
-                                    employee.DriverLicense = GetStringValue(excelWorksheet, address.DriverLicense, currentRow);
-                                }
-
-                                //Bpjs Number
-                                if (address.BpjsNumber != null)
-                                {
-                                    employee.BpjsNumber = GetStringValue(excelWorksheet, address.BpjsNumber, currentRow);
-                                }
-
-                                //Bpjs Remark
-                                if (address.BpjsRemark != null)
-                                {
-                                    employee.BpjsRemark = GetStringValue(excelWorksheet, address.BpjsRemark, currentRow);
-                                }
-
-                                //Jamsostek Number
-                                if (address.JamsostekNumber != null)
-                                {
-                                    employee.JamsostekNumber = GetStringValue(excelWorksheet, address.JamsostekNumber, currentRow);
-                                }
-
-                                //Jamsostek Remark
-                                if (address.JamsostekRemark != null)
-                                {
-                                    employee.JamsostekRemark = GetStringValue(excelWorksheet, address.JamsostekRemark, currentRow);
-                                }
-
-                                //KTP 
-                                if (GetStringValue(excelWorksheet, address.KTP, currentRow) != null)
-                                {
-                                    employee.KTP = GetStringValue(excelWorksheet, address.KTP, currentRow);
-                                }
-                                //else
-                                //{
-                                //    isFileOk = false;
-                                //    isSheetOk = false;
-                                //    excelWorksheet.Cells[$"{address.No}{currentRow}"].Value = "KTP kosong";
-                                //    excelWorksheet.Cells[$"{address.KTP}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-                                //    excelWorksheet.Cells[$"{address.KTP}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
-                                //    continue;
-                                //}
-
                                 //Todo Bank Code
                                 if (GetStringValue(excelWorksheet, address.BankCode, currentRow) != null)
                                 {
@@ -493,25 +443,9 @@ namespace Payroll.Controllers.Api
                                             .Where(column => Standarize(column.Code) == Standarize(GetStringValue(excelWorksheet, address.BankCode, currentRow)))
                                             .FirstOrDefault().Code;
                                     }
-                                    //else
-                                    //{
-                                    //    isFileOk = false;
-                                    //    isSheetOk = false;
-                                    //    excelWorksheet.Cells[$"{address.No}{currentRow}"].Value = "Bank tidak cocok";
-                                    //    excelWorksheet.Cells[$"{address.BankCode}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-                                    //    excelWorksheet.Cells[$"{address.BankCode}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
-                                    //    continue;
-                                    //}
+
                                 }
-                                //else
-                                //{
-                                //    isFileOk = false;
-                                //    isSheetOk = false;
-                                //    excelWorksheet.Cells[$"{address.No}{currentRow}"].Value = "Bank kosong";
-                                //    excelWorksheet.Cells[$"{address.BankCode}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-                                //    excelWorksheet.Cells[$"{address.BankCode}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
-                                //    continue;
-                                //}
+
 
                                 // Account Name
                                 if (address.AccountName != null)
@@ -524,15 +458,6 @@ namespace Payroll.Controllers.Api
                                 {
                                     employee.AccountNumber = GetStringValue(excelWorksheet, address.AccountNumber, currentRow);
                                 }
-                                //else
-                                //{
-                                //    isFileOk = false;
-                                //    isSheetOk = false;
-                                //    excelWorksheet.Cells[$"{address.No}{currentRow}"].Value = "Nomor Rekening Kosong";
-                                //    excelWorksheet.Cells[$"{address.AccountNumber}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-                                //    excelWorksheet.Cells[$"{address.AccountNumber}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
-                                //    continue;
-                                //}
 
                                 excelWorksheet.Cells[$"{address.No}{currentRow}"].Value = "OK";
                                 employee.MainCustomerId = address.MainCustomerId;
@@ -540,7 +465,8 @@ namespace Payroll.Controllers.Api
                                 //employee.Password = GetMd5Hash(new MD5(), "lala");
                                 using (MD5 md5Hash = MD5.Create())
                                 {
-                                    employee.Password = GetMd5Hash(md5Hash, employee.NIK);
+                                    //TODO
+                                    //employee.Password = GetMd5Hash(md5Hash, employee.NIK);
                                 }
 
 
@@ -723,7 +649,8 @@ namespace Payroll.Controllers.Api
                         .Include(table => table.Location.District)
                         .Include(table => table.Position)
                         .Include(table => table.Customer)
-                        .Where(column => column.Name.Contains(request.Keyword) || column.Location.Name.Contains(request.Keyword) || column.Customer.Name.Contains(request.Keyword) || column.Position.Name.Contains(request.Keyword) || column.NIK.Contains(request.Keyword))
+                        //TODO
+                        //.Where(column => column.Name.Contains(request.Keyword) || column.Location.Name.Contains(request.Keyword) || column.Customer.Name.Contains(request.Keyword) || column.Position.Name.Contains(request.Keyword) || column.NIK.Contains(request.Keyword))
                         .OrderBy(column => column.Location.DistrictId)
                         .Skip(request.Skip)
                         .Take(request.PageSize)
@@ -739,7 +666,8 @@ namespace Payroll.Controllers.Api
                        .Include(table => table.Position)
                        .Include(table => table.Customer)
                        .Where(column => column.Location.District.Id == id)
-                       .Where(column => column.Name.Contains(request.Keyword) || column.Location.Name.Contains(request.Keyword) || column.Customer.Name.Contains(request.Keyword) || column.Position.Name.Contains(request.Keyword) || column.NIK.Contains(request.Keyword))
+                       //TODO
+                       //.Where(column => column.Name.Contains(request.Keyword) || column.Location.Name.Contains(request.Keyword) || column.Customer.Name.Contains(request.Keyword) || column.Position.Name.Contains(request.Keyword) || column.NIK.Contains(request.Keyword))
                        .OrderBy(column => column.Location.DistrictId)
                        .Skip(request.Skip)
                        .Take(request.PageSize)
@@ -766,7 +694,8 @@ namespace Payroll.Controllers.Api
             try
             {
                 Employee employee = await payrollDB.Employee
-                    .Where(column => column.NIK == nik)
+                    //TODO
+                    //.Where(column => column.NIK == nik)
                     .FirstOrDefaultAsync();
                 return new JsonResult(employee);
             }
@@ -785,47 +714,19 @@ namespace Payroll.Controllers.Api
             try
             {
                 Employee employee = await payrollDB.Employee
-                    .Where(column => column.NIK == id)
+                    //TODO
+                    //.Where(column => column.NIK == id)
                     .FirstOrDefaultAsync();
                 employee.Name = employeeInput.Name;
-                //employee.BirthPlace = employeeInput.BirthPlace;
-                //employee.BirthDate = employeeInput.BirthDate;
-                //employee.Sex = employeeInput.Sex;
-                //employee.Religion = employeeInput.Religion;
-                //employee.Address = employeeInput.Address;
                 employee.PhoneNumber = employeeInput.PhoneNumber;
-                employee.KTP = employeeInput.KTP;
-                //employee.KK = employeeInput.KK;
-                employee.NPWP = employeeInput.NPWP;
-                employee.JamsostekNumber = employeeInput.JamsostekNumber;
-                employee.JamsostekRemark = employeeInput.JamsostekRemark;
-                employee.BpjsNumber = employeeInput.BpjsNumber;
-                employee.BpjsRemark = employeeInput.BpjsRemark;
-                employee.DriverLicense = employeeInput.DriverLicense;
-                employee.DriverLicenseType = employeeInput.DriverLicenseType;
-                //employee.DriverLicenseExpire = employeeInput.DriverLicenseExpire;
                 employee.AccountNumber = employeeInput.AccountNumber;
                 employee.AccountName = employeeInput.AccountName;
                 employee.BankCode = employeeInput.BankCode;
                 employee.FamilyStatusCode = employeeInput.FamilyStatusCode;
-                //employee.EmploymentStatusId = employeeInput.EmploymentStatusId;
                 employee.PositionId = employeeInput.PositionId;
                 employee.CustomerId = employeeInput.CustomerId;
                 employee.LocationId = employeeInput.LocationId;
                 employee.RoleId = employeeInput.RoleId;
-                //employee.StartContract = employeeInput.StartContract;
-                //employee.EndContract = employeeInput.EndContract;
-                //employee.JoinCompanyDate = employeeInput.JoinCompanyDate;
-                //employee.JoinCustomerDate = employeeInput.JoinCustomerDate;
-                //employee.HasUniform = employeeInput.HasUniform;
-                //employee.UniformDeliveryDate = employeeInput.UniformDeliveryDate;
-                //employee.HasIdCard = employeeInput.HasIdCard;
-                //employee.IdCardDeliveryDate = employeeInput.IdCardDeliveryDate;
-                //employee.HasTraining = employeeInput.HasTraining;
-                //employee.TrainingDeliveryDate = employeeInput.TrainingDeliveryDate;
-                //employee.TrainingName = employeeInput.TrainingName;
-                //employee.TrainingRemark = employeeInput.TrainingRemark;
-                //employee.TrainingGrade = employeeInput.TrainingGrade;
                 employee.IsExist = employeeInput.IsExist;
                 payrollDB.Entry(employee).State = EntityState.Modified;
                 payrollDB.Employee.Update(employee);

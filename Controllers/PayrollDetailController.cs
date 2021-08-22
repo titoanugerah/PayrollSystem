@@ -69,7 +69,8 @@ namespace Payroll.Controllers
 
                     await SetValue($"D1", $"{payrollDetail.PayrollHistory.Month}, {payrollDetail.PayrollHistory.Year}");
                     await SetValue($"H1", $"{payrollDetail.Employee.Name}");
-                    await SetValue($"H2", $"{payrollDetail.Employee.NIK}");
+                    //TODO
+                    //await SetValue($"H2", $"{payrollDetail.Employee.NIK}");
                     await SetValue($"H3", $"{payrollDetail.Employee.Location.Name}");                    
 
                     await SetValue($"D7", $"{payrollDetail.MainSalaryBilling}");

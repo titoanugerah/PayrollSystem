@@ -104,7 +104,8 @@ namespace Payroll.Controllers.Api
                     foreach (Employee employee in employees)
                     {
                         PayrollDetail payrollDetail = new PayrollDetail();
-                        payrollDetail.EmployeeId = employee.NIK;
+                        //TODO
+                        //payrollDetail.EmployeeId = employee.NIK;
                         payrollDetail.PayrollHistoryId = payrollHistory.Id;
                         payrollDetail.MainPrice = 0;
                         payrollDetail.PayrollDetailStatusId = 1;
