@@ -55,7 +55,6 @@ namespace Payroll.Controllers.Api
                 masterData.Customers = await payrollDB.Customer.AsNoTracking().ToListAsync();
                 masterData.Districts = await payrollDB.District.AsNoTracking().ToListAsync();
                 masterData.Employees = await payrollDB.Employee.AsNoTracking().ToListAsync();
-                masterData.EmploymentStatuses = await payrollDB.EmploymentStatus.AsNoTracking().ToListAsync();
                 masterData.FamilyStatuses = await payrollDB.FamilyStatus.AsNoTracking().ToListAsync();
                 masterData.Locations = await payrollDB.Location.AsNoTracking().ToListAsync();
                 masterData.Positions = await payrollDB.Position.AsNoTracking().ToListAsync();

@@ -9,7 +9,6 @@ namespace Payroll.ViewModels
         public List<Position> Positions { set; get; }
         public List<Location> Locations { set; get; }
         public List<FamilyStatus> FamilyStatuses { set; get; }
-        public List<EmploymentStatus> EmploymentStatuses { set; get; }
         public List<Employee> Employees { set; get; }
         public List<District> Districts { set; get; }
         public List<Bank> Banks { set; get; }
