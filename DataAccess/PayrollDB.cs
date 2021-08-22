@@ -27,7 +27,6 @@ namespace Payroll.DataAccess
         public DbSet<Customer> Customer { set; get; }
         public DbSet<District> District { set; get; }
         public DbSet<Employee> Employee { set; get; }
-        public DbSet<EmploymentStatus> EmploymentStatus { set; get; }
         public DbSet<FamilyStatus> FamilyStatus { set; get; }
         public DbSet<Location> Location { set; get; }
         public DbSet<MainCustomer> MainCustomer { set; get; }
@@ -70,11 +69,6 @@ namespace Payroll.DataAccess
             modelBuilder.Entity<Employee>(employee =>
             {
                 employee.HasKey(col => col.NIK);
-            });
-
-            modelBuilder.Entity<EmploymentStatus>(employmentStatus =>
-            {
-                employmentStatus.HasKey(col => col.Id);
             });
 
             modelBuilder.Entity<FamilyStatus>(familyStatus =>
@@ -156,5 +150,4 @@ namespace Payroll.DataAccess
             }
         }
     }
-
 }
