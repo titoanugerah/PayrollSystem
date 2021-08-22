@@ -216,9 +216,10 @@ function updateEmployee() {
         type: "POST",
         dataType: "json",
         contentType: "application/x-www-form-urlencoded",
-        url: "api/employee/update/" + $('#editNIK').val(),
+        url: "api/employee/update/" + $('#editId').val(),
         data: {
             Name: $("#editName").val(),
+            NIK: $("#editNIK").val(),
             PhoneNumber: $('#editPhoneNumber').val(),
             BpjsStatusId: $('#editBpjsStatusId').val(),
             AccountNumber: $('#editAccountNumber').val(),

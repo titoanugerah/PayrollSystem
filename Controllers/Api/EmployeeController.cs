@@ -400,6 +400,24 @@ namespace Payroll.Controllers.Api
                                         continue;
                                     }
 
+                                    //BpjsStatus
+                                    if (GetStringValue(excelWorksheet, address.BpjsStatusId, currentRow) != null)
+                                    {
+                                        if (GetStringValue(excelWorksheet, address.BpjsStatusId, currentRow).Contains("bumbk"))
+                                        {
+                                            employee.BpjsStatusId = 1;
+                                        }
+                                        else
+                                        {
+                                            employee.BpjsStatusId = 2;
+
+                                        }
+                                    }
+                                    else
+                                    {
+                                        employee.BpjsStatusId = 0;
+                                    }
+
                                     //Customer
                                     if (address.CustomerId != null)
                                     {
@@ -776,6 +794,18 @@ namespace Payroll.Controllers.Api
                     .Where(column => column.Id == id)
                     .FirstOrDefaultAsync();
                 employee.Name = employeeInput.Name;
+                if (employeeInput.NIK != null)
+                {
+                    int primaryNIK;
+                    if (int.TryParse(employeeInput.NIK, out primaryNIK))
+                    {
+                        employee.PrimaryNIK = primaryNIK;
+                    }
+                    else
+                    {
+                        employee.SecondaryNIK = employeeInput.NIK;
+                    }
+                }
                 employee.PhoneNumber = employeeInput.PhoneNumber;
                 employee.AccountNumber = employeeInput.AccountNumber;
                 employee.AccountName = employeeInput.AccountName;
