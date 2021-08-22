@@ -24,13 +24,11 @@ namespace Payroll.Controllers.Api
     {
         private readonly ILogger<EmployeeController> logger;
         private readonly PayrollDB payrollDB;
-        private readonly IHostingEnvironment hostingEnvironment;
-
+     
         public EmployeeController(ILogger<EmployeeController> _logger, PayrollDB _payrollDB, IHostingEnvironment _hostingEnvironment)
         {
             logger = _logger;
             payrollDB = _payrollDB;
-            hostingEnvironment = _hostingEnvironment;
         }
 
         [HttpPost]

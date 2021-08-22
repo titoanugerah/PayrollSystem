@@ -105,7 +105,7 @@ namespace Payroll.Controllers
                 }
                 else
                 {
-                    ViewBag.Message = $"Kombinasi nik dan password anda keliru, silahkan cek kembali";
+                    ViewBag.Message = $"Kombinasi NIK dan password anda keliru, silahkan cek kembali";
                     return View("Login");
                 }
             }

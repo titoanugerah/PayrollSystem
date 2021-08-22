@@ -120,8 +120,8 @@ namespace Payroll.DataAccess
             {
                 if (httpContextAccessor != null && httpContextAccessor.HttpContext != null && httpContextAccessor.HttpContext.User != null && httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
                 {
-                    int nik = httpContextAccessor.HttpContext.User.GetEmployeeId();
-                    if (nik != null)
+                    int employeeId = httpContextAccessor.HttpContext.User.GetEmployeeId();
+                    if (employeeId != null)
                     {
                         var entries = ChangeTracker.Entries().ToList();
                         foreach (var entry in entries)
@@ -131,13 +131,13 @@ namespace Payroll.DataAccess
                                 switch (entry.State)
                                 {
                                     case EntityState.Added:
-                                        audit.CreateBy = nik;
+                                        audit.CreateBy = employeeId;
                                         audit.CreateDateUtc = DateTime.UtcNow;
-                                        audit.ModifyBy = nik;
+                                        audit.ModifyBy = employeeId;
                                         audit.ModifyDateUtc = DateTime.UtcNow;
                                         break;
                                     case EntityState.Modified:
-                                        audit.ModifyBy = nik;
+                                        audit.ModifyBy = employeeId;
                                         audit.ModifyDateUtc = DateTime.UtcNow;
                                         Entry(audit).Property(p => p.CreateBy).IsModified = false;
                                         Entry(audit).Property(p => p.CreateDateUtc).IsModified = false;

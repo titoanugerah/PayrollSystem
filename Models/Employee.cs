@@ -12,6 +12,25 @@ namespace Payroll.Models
         public int? PrimaryNIK { set; get; }
         [MaxLength(16)]
         public string SecondaryNIK { set; get; }
+        [NotMapped]
+        public string NIK
+        {
+            get
+            {
+                if (PrimaryNIK != null)
+                {
+                    return PrimaryNIK.ToString();
+                }
+                else if (SecondaryNIK != null)
+                {
+                    return SecondaryNIK;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
         [Required]
         public string Password { set; get; }
         [Required]
