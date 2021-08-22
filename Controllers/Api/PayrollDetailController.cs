@@ -177,6 +177,7 @@ namespace Payroll.Controllers.Api
                     payrollDetail.PayrollHistoryId = payrollHistory.Id;
                     payrollDetail.MainPrice = 0;
                     payrollDetail.PayrollDetailStatusId = 1;
+                    payrollDetail.IsExist = true;
                     payrollDB.Entry(payrollDetail).State = EntityState.Added;
                     newPayrollDetails.Add(payrollDetail);
                 }
@@ -395,7 +396,7 @@ namespace Payroll.Controllers.Api
                                 }
 
                                 int rowNum = 1;
-                                for (int currentRow = address.DataStartRow; currentRow < address.Worksheet.Dimension.End.Row; currentRow++)
+                                for (int currentRow = address.DataStartRow; currentRow <= address.Worksheet.Dimension.End.Row; currentRow++)
                                 {
                                     string employeeNIK = GetStringValue(excelWorksheet, address.NIK, currentRow);
                                     if (employeeNIK == null)

@@ -98,7 +98,7 @@ namespace Payroll.Controllers.Api
                                 continue;
                             }
 
-                            for (int currentRow = address.DataStartRow; currentRow < address.DataEndRow; currentRow++)
+                            for (int currentRow = address.DataStartRow; currentRow <= address.DataEndRow; currentRow++)
                             {
                                 bool isOldEmployee = false;
                                 Employee employee = new Employee();
@@ -116,6 +116,9 @@ namespace Payroll.Controllers.Api
                                         }
                                         else
                                         {
+                                            isFileOk = false;
+                                            isSheetOk = false;
+                                            excelWorksheet.Cells[$"{address.No}{currentRow}"].Value = $"Data sudah ada";
                                             continue;
                                         }
 
@@ -129,7 +132,11 @@ namespace Payroll.Controllers.Api
                                         }
                                         else
                                         {
+                                            isFileOk = false;
+                                            isSheetOk = false;
+                                            excelWorksheet.Cells[$"{address.No}{currentRow}"].Value = $"Data sudah ada";
                                             continue;
+
                                         }
 
                                     }
@@ -404,26 +411,28 @@ namespace Payroll.Controllers.Api
                                     }
                                     else
                                     {
-                                        isFileOk = false;
-                                        isSheetOk = false;
-                                        excelWorksheet.Cells[$"{address.No}{currentRow}"].Value = "Status Perkawinan tidak cocok";
-                                        excelWorksheet.Cells[$"{address.FamilyStatusCode}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-                                        excelWorksheet.Cells[$"{address.FamilyStatusCode}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
-                                        continue;
+                                        employee.FamilyStatusCode = "K";
+                                        //isFileOk = false;
+                                        //isSheetOk = false;
+                                        //excelWorksheet.Cells[$"{address.No}{currentRow}"].Value = "Status Perkawinan tidak cocok";
+                                        //excelWorksheet.Cells[$"{address.FamilyStatusCode}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                        //excelWorksheet.Cells[$"{address.FamilyStatusCode}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                        //continue;
                                     }
                                 }
                                 else
                                 {
-                                    isFileOk = false;
-                                    isSheetOk = false;
-                                    excelWorksheet.Cells[$"{address.No}{currentRow}"].Value = "Status Perkawinan kosong";
-                                    excelWorksheet.Cells[$"{address.FamilyStatusCode}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-                                    excelWorksheet.Cells[$"{address.FamilyStatusCode}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
-                                    continue;
+                                    employee.FamilyStatusCode = "K";
+                                    //isFileOk = false;
+                                    //isSheetOk = false;
+                                    //excelWorksheet.Cells[$"{address.No}{currentRow}"].Value = "Status Perkawinan kosong";
+                                    //excelWorksheet.Cells[$"{address.FamilyStatusCode}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                    //excelWorksheet.Cells[$"{address.FamilyStatusCode}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                    //continue;
                                 }
 
                                 //DriverLicenseType
-                                if(address.DriverLicenseType != null)
+                                if (address.DriverLicenseType != null)
                                 {
                                     employee.DriverLicenseType = GetStringValue(excelWorksheet, address.DriverLicenseType, currentRow);
                                 }
@@ -485,25 +494,25 @@ namespace Payroll.Controllers.Api
                                             .Where(column => Standarize(column.Code) == Standarize(GetStringValue(excelWorksheet, address.BankCode, currentRow)))
                                             .FirstOrDefault().Code;
                                     }
-                                    else
-                                    {
-                                        isFileOk = false;
-                                        isSheetOk = false;
-                                        excelWorksheet.Cells[$"{address.No}{currentRow}"].Value = "Bank tidak cocok";
-                                        excelWorksheet.Cells[$"{address.BankCode}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-                                        excelWorksheet.Cells[$"{address.BankCode}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
-                                        continue;
-                                    }
+                                    //else
+                                    //{
+                                    //    isFileOk = false;
+                                    //    isSheetOk = false;
+                                    //    excelWorksheet.Cells[$"{address.No}{currentRow}"].Value = "Bank tidak cocok";
+                                    //    excelWorksheet.Cells[$"{address.BankCode}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                    //    excelWorksheet.Cells[$"{address.BankCode}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                    //    continue;
+                                    //}
                                 }
-                                else
-                                {
-                                    isFileOk = false;
-                                    isSheetOk = false;
-                                    excelWorksheet.Cells[$"{address.No}{currentRow}"].Value = "Bank kosong";
-                                    excelWorksheet.Cells[$"{address.BankCode}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-                                    excelWorksheet.Cells[$"{address.BankCode}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
-                                    continue;
-                                }
+                                //else
+                                //{
+                                //    isFileOk = false;
+                                //    isSheetOk = false;
+                                //    excelWorksheet.Cells[$"{address.No}{currentRow}"].Value = "Bank kosong";
+                                //    excelWorksheet.Cells[$"{address.BankCode}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                //    excelWorksheet.Cells[$"{address.BankCode}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                //    continue;
+                                //}
 
                                 // Account Name
                                 if (address.AccountName != null)
@@ -516,15 +525,15 @@ namespace Payroll.Controllers.Api
                                 {
                                     employee.AccountNumber = GetStringValue(excelWorksheet, address.AccountNumber, currentRow);
                                 }
-                                else
-                                {
-                                    isFileOk = false;
-                                    isSheetOk = false;
-                                    excelWorksheet.Cells[$"{address.No}{currentRow}"].Value = "Nomor Rekening Kosong";
-                                    excelWorksheet.Cells[$"{address.AccountNumber}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-                                    excelWorksheet.Cells[$"{address.AccountNumber}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
-                                    continue;
-                                }
+                                //else
+                                //{
+                                //    isFileOk = false;
+                                //    isSheetOk = false;
+                                //    excelWorksheet.Cells[$"{address.No}{currentRow}"].Value = "Nomor Rekening Kosong";
+                                //    excelWorksheet.Cells[$"{address.AccountNumber}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                //    excelWorksheet.Cells[$"{address.AccountNumber}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                //    continue;
+                                //}
 
                                 excelWorksheet.Cells[$"{address.No}{currentRow}"].Value = "OK";
                                 employee.MainCustomerId = address.MainCustomerId;

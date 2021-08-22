@@ -73,12 +73,17 @@ function showAddPayrollDetailForm() {
 
 function resync() {
     var url = "api/payrollDetail/resync/" + $('#payrollHistoryId').val();
+    $('#syncModal').modal('show');
+
     $.ajax({
         type: "POST",
         dataType: "JSON",
         url: url,
         success: function (result) {
             reloadTable();
+            $('#syncModal').modal('hide');
+            notify('fas fa-check', 'Sukses', "Proses sudah selesai", 'success');
+
         },
         error: function (result) {
             console.log(result);

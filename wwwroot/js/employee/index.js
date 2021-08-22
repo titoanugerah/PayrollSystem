@@ -293,9 +293,13 @@ function editEmployeeForm(id) {
             $('#editPositionId').val(result.positionId).change();
             $('#editCustomerId').val(result.customerId).change();
             $('#editLocationId').val(result.locationId).change();
+            if (result.isExist == false) {
+                $('#editIsExist').val("false").change();
+            }
+            else if (result.isExist == true) {
+                $('#editIsExist').val("true").change();
+            }
             $('#editRoleId').val(result.roleId).change();
-
-
         },
         error: function (result) {
             console.log(result);
