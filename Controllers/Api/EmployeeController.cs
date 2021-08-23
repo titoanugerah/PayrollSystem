@@ -550,6 +550,7 @@ namespace Payroll.Controllers.Api
                         List<Employee> fixedNewEmployees = new List<Employee>();
                         foreach (Employee newEmployee in newEmployees)
                         {
+
                             if (!x.Where(column => Standarize(column.Name) == Standarize(newEmployee.Name)).Any())
                             {
                                 fixedNewEmployees.Add(newEmployee);
