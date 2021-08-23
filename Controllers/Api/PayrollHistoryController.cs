@@ -85,6 +85,7 @@ namespace Payroll.Controllers.Api
                         payrollHistory.Month = payrollInput.Month;
                         payrollHistory.Year = payrollInput.Year;
                         payrollHistory.StatusId = 1;
+                        payrollHistory.StatusId = 1;
                         payrollHistory.IsExist = true;
                         payrollDB.Entry(payrollHistory).State = EntityState.Added;
                         await payrollDB.PayrollHistory.AddAsync(payrollHistory);
@@ -110,6 +111,7 @@ namespace Payroll.Controllers.Api
                         payrollDetail.MainPrice = 0;
                         payrollDetail.PayrollDetailStatusId = 1;
                         payrollDetail.IsExist = true;
+                        payrollDetail.EmployeeId = employee.Id;
                         payrollDetails.Add(payrollDetail);
                         payrollDB.Entry(payrollDetail).State = EntityState.Added;
                     }

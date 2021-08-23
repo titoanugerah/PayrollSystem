@@ -194,7 +194,7 @@ namespace Payroll.Controllers.Api
                                             else if (masterData.Employees.Where(column => Standarize(column.SecondaryNIK) == Standarize(inputNIK)).Any())
                                             {
                                                 employee = masterData.Employees
-                                                    .Where(column => column.SecondaryNIK == inputNIK)
+                                                    .Where(column => Standarize(column.SecondaryNIK) == Standarize(inputNIK))
                                                     .FirstOrDefault();
                                                 isOldEmployee = true;
                                             }
