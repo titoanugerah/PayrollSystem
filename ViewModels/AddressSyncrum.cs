@@ -7,9 +7,9 @@ using System.Text.RegularExpressions;
 
 namespace Payroll.ViewModels
 {
-    public class AddressTTNT
+    public class AddressSyncrum
     {
-        public AddressTTNT(ExcelWorksheet excelWorksheet)
+        public AddressSyncrum(ExcelWorksheet excelWorksheet)
         {
             Worksheet = excelWorksheet;
             HeaderRow = FindHeaderRow();
@@ -18,19 +18,16 @@ namespace Payroll.ViewModels
                 DataStartRow = HeaderRow + 1;
                 NIK = FindHeaderColumn("nik");
                 Name = FindHeaderColumn("nama;name");
-                MainSalaryBilling = FindHeaderColumn("gajipokok");
-                TrainingBilling = FindHeaderColumn("training");
-                //RouteBilling = FindHeaderColumn("rute");
-                RouteBilling = "O";
-                JamsostekBilling = FindHeaderColumn("jamsostek");
-                BpjsBilling = FindHeaderColumn("bpjskesehatan");
-                PensionBilling = FindHeaderColumn("jaminanpensiun");
-                Thr = FindHeaderColumn("thr");
-                InsentiveBilling = FindHeaderColumn("insentiflainnya");
-                GrandTotalBilling = FindHeaderColumn("grandtotal");
-                AnotherDeduction = FindHeaderColumn("total pot");
+                MainSalaryBilling = FindHeaderColumn("prorata");
+                RouteBilling = FindHeaderColumn("insentif alokasi");
+                InsentiveBilling = FindHeaderColumn("insentif jabatan");
 
-                IsValid = NIK != null && Name != null && MainSalaryBilling != null && JamsostekBilling != null && BpjsBilling != null && PensionBilling != null  && GrandTotalBilling != null;
+                BpjsBilling = "R";
+                
+                AnotherDeduction = FindHeaderColumn("kasbon ritase");
+                AbsentDeduction = FindHeaderColumn("kasbon/backup");
+
+                IsValid = NIK != null && Name != null && MainSalaryBilling != null && RouteBilling !=null && InsentiveBilling != null && AnotherDeduction !=null;
                 if (IsValid)
                 {
                     DataEndRow = FindEndDataRow();
@@ -128,16 +125,11 @@ namespace Payroll.ViewModels
         public string Name { set; get; }
 
         public string MainSalaryBilling { set; get; }
-        public string TrainingBilling { set; get; }
         public string RouteBilling { set; get; }
         public string InsentiveBilling { set; get; }
 
 
-        public string JamsostekBilling { set; get; }
-        public string BpjsBilling { set; get; }
-        public string PensionBilling { set; get; }
-        public string Thr { set; get; }
-       
+        public string BpjsBilling { set; get; }       
         public bool IsAnyInsentiveBilling
         {
             get
@@ -168,6 +160,6 @@ namespace Payroll.ViewModels
             }
         }
         
-        public string GrandTotalBilling { set; get; }
+        public string AbsentDeduction { set; get; }
     }
 }

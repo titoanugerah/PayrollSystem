@@ -291,7 +291,7 @@ namespace Payroll.Controllers.Api
                 List<PayrollDetail> updatedPayrollDetails = new List<PayrollDetail>();
                 foreach (PayrollDetail payrollDetail in payrollDetails)
                 {
-                    if (payrollDetail.MainSalaryBilling != 0)
+                    if (payrollDetail.MainSalaryBilling != 0 || payrollDetail.RouteBilling !=0 || payrollDetail.TrainingBilling != 0 || payrollDetail.InsentiveBilling != 0)
                     {
                         payrollDetail.PayrollDetailStatusId = 2;
                         payrollDetail.BpjsTkDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * payrollHistory.BpjsTk1Percentage) / 100);
@@ -303,11 +303,11 @@ namespace Payroll.Controllers.Api
                         {
                             payrollDetail.BpjsKesehatanDeduction = 0;
                         }
-
+                        payrollDetail.ResultPayroll = payrollDetail.MainSalaryBilling + payrollDetail.TrainingBilling + payrollDetail.RouteBilling + payrollDetail.InsentiveBilling;
                         payrollDetail.BpjsReturn = payrollDetail.BpjsKesehatanDeduction;
                         payrollDetail.PensionDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * payrollHistory.PensionPayrollPercentage) / 100);
                         payrollDetail.PTKP = Convert.ToInt32(payrollDetail.Employee.FamilyStatus.PTKP);
-                        payrollDetail.PKP1 = Convert.ToInt32(payrollDetail.GrandTotalBilling - payrollDetail.BpjsKesehatanDeduction - payrollDetail.PensionDeduction - payrollDetail.BpjsTkDeduction);
+                        payrollDetail.PKP1 = Convert.ToInt32(payrollDetail.ResultPayroll - payrollDetail.BpjsKesehatanDeduction - payrollDetail.PensionDeduction - payrollDetail.BpjsTkDeduction);
                         payrollDetail.PKP2 = Convert.ToInt32(payrollDetail.PKP1 - payrollDetail.PTKP);
                         if (payrollDetail.PKP2 > 1)
                         {
@@ -320,7 +320,7 @@ namespace Payroll.Controllers.Api
                         }
 
                         payrollDetail.PPH23 = Convert.ToInt32((payrollDetail.FeePayroll * payrollDetail.PayrollHistory.Pph23Percentage) / 100);
-                        payrollDetail.Netto = Convert.ToInt32(payrollDetail.GrandTotalBilling - payrollDetail.BpjsTkDeduction - payrollDetail.BpjsKesehatanDeduction - payrollDetail.PensionDeduction - payrollDetail.PPH21);
+                        payrollDetail.Netto = Convert.ToInt32(payrollDetail.ResultPayroll - payrollDetail.BpjsTkDeduction - payrollDetail.BpjsKesehatanDeduction - payrollDetail.PensionDeduction - payrollDetail.PPH21);
                         payrollDetail.TakeHomePay = Convert.ToInt32(payrollDetail.Netto - payrollDetail.AnotherDeduction - payrollDetail.TransferFee);
                         payrollDB.Entry(payrollDetail).State = EntityState.Modified;
                         updatedPayrollDetails.Add(payrollDetail);
@@ -333,7 +333,62 @@ namespace Payroll.Controllers.Api
             }
             catch (Exception error)
             {
-                logger.LogError(error, $"Calculate Assa");
+                logger.LogError(error, $"Calculate TTNT");
+                throw error;
+            }
+
+        }
+
+        private async Task<IActionResult> CalculateSyncrum(List<PayrollDetail> payrollDetails, PayrollHistory payrollHistory)
+        {
+            try
+            {
+                List<PayrollDetail> updatedPayrollDetails = new List<PayrollDetail>();
+                foreach (PayrollDetail payrollDetail in payrollDetails)
+                {
+                    if (payrollDetail.MainSalaryBilling != 0 || payrollDetail.RouteBilling != 0 || payrollDetail.TrainingBilling != 0 || payrollDetail.InsentiveBilling != 0)
+                    {
+                        payrollDetail.PayrollDetailStatusId = 2;
+                        payrollDetail.BpjsTkDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * payrollHistory.BpjsTk1Percentage) / 100);
+                        if (payrollDetail.Employee.BpjsStatusId == 1)
+                        {
+                            payrollDetail.BpjsKesehatanDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * payrollHistory.BpjsPayrollPercentage) / 100);
+                        }
+                        else
+                        {
+                            payrollDetail.BpjsKesehatanDeduction = 0;
+                        }
+                        payrollDetail.ResultPayroll = payrollDetail.MainSalaryBilling + payrollDetail.RouteBilling + payrollDetail.InsentiveBilling;
+                        payrollDetail.BpjsReturn = payrollDetail.BpjsKesehatanDeduction;
+                        payrollDetail.PensionDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * payrollHistory.PensionPayrollPercentage) / 100);
+                        payrollDetail.PTKP = Convert.ToInt32(payrollDetail.Employee.FamilyStatus.PTKP);
+                        payrollDetail.PKP1 = Convert.ToInt32(payrollDetail.ResultPayroll - payrollDetail.BpjsKesehatanDeduction - payrollDetail.PensionDeduction - payrollDetail.BpjsTkDeduction);
+                        payrollDetail.PKP2 = Convert.ToInt32(payrollDetail.PKP1 - payrollDetail.PTKP);
+                        if (payrollDetail.PKP2 > 1)
+                        {
+                            payrollDetail.PPH21 = Convert.ToInt32((payrollDetail.PKP2 * payrollDetail.PayrollHistory.Pph21Percentage) / 100);
+                        }
+                        else
+                        {
+                            payrollDetail.PPH21 = 0;
+
+                        }
+
+                        payrollDetail.PPH23 = Convert.ToInt32((payrollDetail.FeePayroll * payrollDetail.PayrollHistory.Pph23Percentage) / 100);
+                        payrollDetail.Netto = Convert.ToInt32(payrollDetail.ResultPayroll - payrollDetail.BpjsTkDeduction - payrollDetail.BpjsKesehatanDeduction - payrollDetail.PensionDeduction - payrollDetail.PPH21);
+                        payrollDetail.TakeHomePay = Convert.ToInt32(payrollDetail.Netto - payrollDetail.AnotherDeduction - payrollDetail.TransferFee);
+                        payrollDB.Entry(payrollDetail).State = EntityState.Modified;
+                        updatedPayrollDetails.Add(payrollDetail);
+                    }
+                }
+
+                payrollDB.PayrollDetail.UpdateRange(updatedPayrollDetails);
+                await payrollDB.SaveChangesAsync();
+                return Ok();
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error, $"Calculate Syncrum");
                 throw error;
             }
 
@@ -584,6 +639,74 @@ namespace Payroll.Controllers.Api
                         }
                         else if (payrollHistory.MainCustomerId == 3)
                         {
+                            foreach (ExcelWorksheet excelWorksheet in excelPackage.Workbook.Worksheets.ToList())
+                            {
+                                bool isSheetOk = true;
+                                AddressSyncrum address = new AddressSyncrum(excelWorksheet);
+                                if (!address.IsValid)
+                                {
+                                    isFileOk = false;
+                                    isSheetOk = false;
+                                    excelWorksheet.Cells[$"G1"].Value = "Format tidak valid";
+                                    excelWorksheet.Cells[$"G1"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                    excelWorksheet.Cells[$"G1"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                    continue;
+                                }
+
+                                int rowNum = 1;
+                                for (int currentRow = address.DataStartRow; currentRow < address.DataEndRow; currentRow++)
+                                {
+                                    string employeeNIK = GetStringValue(excelWorksheet, address.NIK, currentRow);
+                                    if (employeeNIK == null)
+                                    {
+                                        continue;
+                                    }
+                                    List<string> employeeNames = GetStringValue(excelWorksheet, address.Name, currentRow).Split(";").ToList();
+                                    PayrollDetail payrollDetail = payrollDetails
+                                        .Where(column => Standarize(column.Employee.SecondaryNIK) == Standarize(employeeNIK))
+                                        //                                    .Where(column => employeeNames.Contains(column.Employee.Name))
+                                        .FirstOrDefault();
+                                    if (payrollDetail == null)
+                                    {
+                                        isFileOk = false;
+                                        isSheetOk = false;
+                                        excelWorksheet.Cells[$"A{currentRow}"].Value = "Pekerja tidak terdaftar";
+                                        excelWorksheet.Cells[$"{address.NIK}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                        excelWorksheet.Cells[$"{address.NIK}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                        excelWorksheet.Cells[$"{address.Name}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                        excelWorksheet.Cells[$"{address.Name}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                        continue;
+                                    }
+
+                                    payrollDetail.MainSalaryBilling = GetIntValue(excelWorksheet, address.MainSalaryBilling, currentRow);
+                                    payrollDetail.RouteBilling = GetIntValue(excelWorksheet, address.RouteBilling, currentRow);
+                                    payrollDetail.InsentiveBilling = address.IsAnyInsentiveBilling ? GetIntValue(excelWorksheet, address.InsentiveBilling, currentRow) : 0;
+
+                                    payrollDetail.BpjsBilling = GetIntValue(excelWorksheet, address.BpjsBilling, currentRow);
+
+                                    payrollDetail.AnotherDeduction = address.IsAnyAnotherDeduction ? GetIntValue(excelWorksheet, address.AnotherDeduction, currentRow) : 0;
+
+                                    if ((payrollDetail.MainSalaryBilling + payrollDetail.RouteBilling + payrollDetail.InsentiveBilling) != 0)
+                                    {
+                                        isFileOk = false;
+                                        isSheetOk = false;
+                                        excelWorksheet.Cells[$"A{currentRow}"].Value = "Perhitungan Keliru, silahkan periksa kembali";
+                                        continue;
+                                    }
+                                    payrollDetail.PayrollDetailStatusId = 2;
+                                    payrollDB.Entry(payrollDetail).State = EntityState.Modified;
+                                    updatedPayrollDetails.Add(payrollDetail);
+
+                                    excelWorksheet.Cells[$"A{currentRow}"].Value = "OK";
+                                    rowNum++;
+                                }
+
+                                if (isSheetOk)
+                                {
+                                    excelPackage.Workbook.Worksheets.Delete(excelWorksheet);
+                                }
+                            }
+
                         }
                         else if (payrollHistory.MainCustomerId == 4)
                         {
@@ -603,6 +726,7 @@ namespace Payroll.Controllers.Api
                         }
                         else if (payrollHistory.MainCustomerId == 3)
                         {
+                            await CalculateSyncrum(payrollDetails, payrollHistory);
                         }
                         else if (payrollHistory.MainCustomerId == 4)
                         {
