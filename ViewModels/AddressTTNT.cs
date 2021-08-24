@@ -20,8 +20,8 @@ namespace Payroll.ViewModels
                 Name = FindHeaderColumn("nama;name");
                 MainSalaryBilling = FindHeaderColumn("gajipokok");
                 TrainingBilling = FindHeaderColumn("training");
-                RouteBilling = FindHeaderColumn("rute");
-                
+                //RouteBilling = FindHeaderColumn("rute");
+                RouteBilling = "O";
                 JamsostekBilling = FindHeaderColumn("jamsostek");
                 BpjsBilling = FindHeaderColumn("bpjskesehatan");
                 PensionBilling = FindHeaderColumn("jaminanpensiun");

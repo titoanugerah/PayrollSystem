@@ -62,7 +62,7 @@ namespace Payroll.Controllers
             try
             {
                 //Default Id Syncrum
-                ViewBag.MainCustomerId = 2;
+                ViewBag.MainCustomerId = 3;
                 return View();
             }
             catch (Exception error)
@@ -78,7 +78,7 @@ namespace Payroll.Controllers
             try
             {
                 //Default Id TTNT
-                ViewBag.MainCustomerId = 3;
+                ViewBag.MainCustomerId = 2;
                 return View();
             }
             catch (Exception error)

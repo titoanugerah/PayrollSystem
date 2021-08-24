@@ -66,10 +66,6 @@ namespace Payroll.Controllers.Api
                     }
                     else if (payrollInput.MainCustomerId == 2)
                     {
-
-                    }
-                    else if (payrollInput.MainCustomerId == 3)
-                    {
                         payrollHistory.JamsostekPercentage = payrollConfiguration.Value.JamsostekPercentage;
                         payrollHistory.BpjsPercentage = payrollConfiguration.Value.BpjsPercentage;
                         payrollHistory.PensionPercentage = payrollConfiguration.Value.PensionPercentage;

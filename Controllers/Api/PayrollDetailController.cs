@@ -507,10 +507,6 @@ namespace Payroll.Controllers.Api
                         }
                         else if (payrollHistory.MainCustomerId == 2)
                         {
-
-                        }
-                        else if (payrollHistory.MainCustomerId == 3)
-                        {
                             foreach (ExcelWorksheet excelWorksheet in excelPackage.Workbook.Worksheets.ToList())
                             {
                                 bool isSheetOk = true;
@@ -529,9 +525,13 @@ namespace Payroll.Controllers.Api
                                 for (int currentRow = address.DataStartRow; currentRow < address.DataEndRow; currentRow++)
                                 {
                                     string employeeNIK = GetStringValue(excelWorksheet, address.NIK, currentRow);
+                                    if (employeeNIK == null)
+                                    {
+                                        continue;
+                                    }
                                     List<string> employeeNames = GetStringValue(excelWorksheet, address.Name, currentRow).Split(";").ToList();
                                     PayrollDetail payrollDetail = payrollDetails
-                                        .Where(column => Standarize(column.EmployeeId) == Standarize(employeeNIK))
+                                        .Where(column => Standarize(column.Employee.SecondaryNIK) == Standarize(employeeNIK))
                                         //                                    .Where(column => employeeNames.Contains(column.Employee.Name))
                                         .FirstOrDefault();
                                     if (payrollDetail == null)
@@ -580,6 +580,10 @@ namespace Payroll.Controllers.Api
                                     excelPackage.Workbook.Worksheets.Delete(excelWorksheet);
                                 }
                             }
+
+                        }
+                        else if (payrollHistory.MainCustomerId == 3)
+                        {
                         }
                         else if (payrollHistory.MainCustomerId == 4)
                         {
@@ -595,10 +599,10 @@ namespace Payroll.Controllers.Api
                         else if (payrollHistory.MainCustomerId == 2)
                         {
 
+                            await CalculateTTNT(payrollDetails, payrollHistory);
                         }
                         else if (payrollHistory.MainCustomerId == 3)
                         {
-                            await CalculateTTNT(payrollDetails, payrollHistory);
                         }
                         else if (payrollHistory.MainCustomerId == 4)
                         {

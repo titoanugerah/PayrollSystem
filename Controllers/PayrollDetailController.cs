@@ -36,7 +36,7 @@ namespace Payroll.Controllers
                 PayrollHistory payrollHistory = await payrollDB.PayrollHistory
                     .Where(column => column.Id == id)
                     .FirstOrDefaultAsync();
-                ViewBag.Period = $"{UcFirst(payrollHistory.Month)}, {payrollHistory.Year}";
+                ViewBag.Period = $"{UcFirst(payrollHistory.Month)}, {payrollHistory.Year}";                
                 ViewBag.Id = id;
                 return View();
             }
