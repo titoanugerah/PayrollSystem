@@ -904,6 +904,171 @@ namespace Payroll.Controllers.Api
                                     excelPackage.Workbook.Worksheets.Delete(excelWorksheet);
                                 }
                             }
+                            else if (mainCustomerId == 4)
+                            {
+                                AddressStaffEmployee address = new AddressStaffEmployee(excelWorksheet);
+                                if (!address.IsValid)
+                                {
+                                    isFileOk = false;
+                                    isSheetOk = false;
+                                    excelWorksheet.Cells[$"G1"].Value = "Format tidak valid";
+                                    excelWorksheet.Cells[$"G1"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                    excelWorksheet.Cells[$"G1"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                    continue;
+                                }
+
+                                for (int currentRow = address.DataStartRow; currentRow <= address.DataEndRow; currentRow++)
+                                {
+                                    currentRoww = currentRow;
+                                    int inputNIK = GetIntValue(excelWorksheet, address.NIK, currentRow);
+                                    bool isOldEmployee = false;
+                                    Employee employee = new Employee();
+                                    if (inputNIK != null)
+                                    {
+                                        isOldEmployee = masterData.Employees
+                                            .Where(column => column.PrimaryNIK ==  inputNIK)
+                                            .Any();
+
+                                        if (isOldEmployee)
+                                        {
+                                            employee = masterData.Employees
+                                            .Where(column => column.PrimaryNIK == inputNIK)
+                                            .FirstOrDefault();
+                                        }
+                                        else
+                                        {
+                                            employee.PrimaryNIK = inputNIK;
+                                        }
+
+                                    }
+                                    else
+                                    {
+                                        continue;
+                                    }
+
+                                    //Name
+                                    if (GetStringValue(excelWorksheet, address.Name, currentRow) != null)
+                                    {
+                                        employee.Name = excelWorksheet.Cells[$"{address.Name}{currentRow}"].Value.ToString();
+                                    }
+                                    else
+                                    {
+                                        isFileOk = false;
+                                        isSheetOk = false;
+                                        excelWorksheet.Cells[$"{address.No}{currentRow}"].Value = "Nama kosong";
+                                        excelWorksheet.Cells[$"{address.Name}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                        excelWorksheet.Cells[$"{address.Name}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                        continue;
+                                    }
+
+                                    //Phone Number
+                                    if (GetStringValue(excelWorksheet, address.PhoneNumber, currentRow) != null)
+                                    {
+                                        employee.PhoneNumber = GetStringValue(excelWorksheet, address.PhoneNumber, currentRow);
+                                    }
+
+
+                                    //Location
+                                    if (GetStringValue(excelWorksheet, address.LocationId, currentRow) != null)
+                                    {
+                                        bool isAny = masterData.Locations
+                                            .Where(column => Standarize(column.Name) == Standarize(GetStringValue(excelWorksheet, address.LocationId, currentRow)))
+                                            .Any();
+                                        if (isAny)
+                                        {
+                                            employee.LocationId = masterData.Locations
+                                                .Where(column => Standarize(column.Name) == Standarize(GetStringValue(excelWorksheet, address.LocationId, currentRow)))
+                                                .FirstOrDefault().Id;
+                                        }
+                                        else
+                                        {
+                                            employee.LocationId = masterData.Locations
+                                                .Where(column => Standarize(column.Name) == Standarize("bekasi"))
+                                                .FirstOrDefault().Id;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        //isFileOk = false;
+                                        //isSheetOk = false;
+                                        //excelWorksheet.Cells[$"{address.No}{currentRow}"].Value = "Lokasi kosong";
+                                        //excelWorksheet.Cells[$"{address.LocationId}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                        //excelWorksheet.Cells[$"{address.LocationId}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                        //continue;
+                                        employee.LocationId = 0;
+                                    }
+                                    employee.CustomerId = 0;
+
+                                    //Position
+                                    if (GetStringValue(excelWorksheet, address.PositionId, currentRow) != null)
+                                    {
+                                        bool isAny = positionKeywords
+                                            .Where(column => column.Key.Equals(Standarize(GetStringValue(excelWorksheet, address.PositionId, currentRow))))
+                                            .Any();
+                                        if (isAny)
+                                        {
+                                            employee.PositionId = positionKeywords
+                                            .Where(column => column.Key.Equals(Standarize(GetStringValue(excelWorksheet, address.PositionId, currentRow))))
+                                            .FirstOrDefault().Id;
+                                        }
+                                        else
+                                        {
+                                            isFileOk = false;
+                                            isSheetOk = false;
+                                            excelWorksheet.Cells[$"{address.No}{currentRow}"].Value = "Jabatan tidak cocok";
+                                            excelWorksheet.Cells[$"{address.PositionId}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                            excelWorksheet.Cells[$"{address.PositionId}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                            continue;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        isFileOk = false;
+                                        isSheetOk = false;
+                                        excelWorksheet.Cells[$"{address.No}{currentRow}"].Value = "Jabatan kosong";
+                                        excelWorksheet.Cells[$"{address.PositionId}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                        excelWorksheet.Cells[$"{address.PositionId}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                        continue;
+                                    }
+
+                                    //BpjsStatus                                    
+                                    employee.BpjsStatusId = 0;
+
+                                    //Family Status Code
+                                    
+
+                                    
+                                    employee.RoleId = 2;
+
+                                    excelWorksheet.Cells[$"{address.No}{currentRow}"].Value = "OK";
+                                    employee.MainCustomerId = mainCustomerId;
+                                    //Todo Password
+                                    using (MD5 md5Hash = MD5.Create())
+                                    {
+                                        employee.Password = GetMd5Hash(md5Hash, employee.NIK);
+                                    }
+
+                                    employee.IsExist = true;
+
+                                    if (isOldEmployee)
+                                    {
+                                        payrollDB.Entry(employee).State = EntityState.Modified;
+                                        oldEmployees.Add(employee);
+                                    }
+                                    else
+                                    {
+                                        payrollDB.Entry(employee).State = EntityState.Added;
+                                        newEmployees.Add(employee);
+                                    }
+                                    payrollDB.Entry(employee).State = EntityState.Detached;
+
+                                }
+
+                                if (isSheetOk)
+                                {
+                                    excelPackage.Workbook.Worksheets.Delete(excelWorksheet);
+                                }
+                            }
 
                             //Filter New Employee
                             var x = payrollDB.Employee.AsNoTracking().ToList();

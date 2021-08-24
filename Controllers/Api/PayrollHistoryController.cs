@@ -107,6 +107,27 @@ namespace Payroll.Controllers.Api
                         payrollDB.Entry(payrollHistory).State = EntityState.Added;
                         await payrollDB.PayrollHistory.AddAsync(payrollHistory);
                     }
+                    else if (payrollInput.MainCustomerId == 4)
+                    {
+                        payrollHistory.JamsostekPercentage = payrollConfiguration.Value.JamsostekPercentage;
+                        payrollHistory.BpjsPercentage = payrollConfiguration.Value.BpjsPercentage;
+                        payrollHistory.PensionPercentage = payrollConfiguration.Value.PensionPercentage;
+                        payrollHistory.ManagementFeePercentage = 0;
+                        payrollHistory.PpnPercentage = 0;
+                        payrollHistory.BpjsTk1Percentage = payrollConfiguration.Value.BpjsTk1Percentage;
+                        payrollHistory.BpjsKesehatanPercentage = payrollConfiguration.Value.BpjsKesehatanPercentage;
+                        payrollHistory.Pension1Percentage = payrollConfiguration.Value.Pension1Percentage;
+                        payrollHistory.Pph21Percentage = payrollConfiguration.Value.PPH21Percentage;
+                        payrollHistory.Pph23Percentage = payrollConfiguration.Value.PPH23Percentage;
+                        payrollHistory.BpjsPayrollPercentage = payrollConfiguration.Value.BpjsPayrollPercentage;
+                        payrollHistory.PensionPayrollPercentage = payrollConfiguration.Value.PensionPayrollPercentage;
+                        payrollHistory.Month = payrollInput.Month;
+                        payrollHistory.Year = payrollInput.Year;
+                        payrollHistory.StatusId = 1;
+                        payrollHistory.IsExist = true;
+                        payrollDB.Entry(payrollHistory).State = EntityState.Added;
+                        await payrollDB.PayrollHistory.AddAsync(payrollHistory);
+                    }
 
                     await payrollDB.SaveChangesAsync();
 
