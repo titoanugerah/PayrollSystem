@@ -54,6 +54,10 @@ namespace Payroll.Models
         [DefaultValue(0)]
         public int InsentiveBilling { set; get; }
         [DefaultValue(0)]
+        public int PositionInsentiveBilling { set; get; }
+        [DefaultValue(0)]
+        public int AnotherInsentive { set; get; }
+        [DefaultValue(0)]
         public int AttendanceBilling { set; get; }
         [DefaultValue(0)]
         public int OvertimeBilling { set; get; }        
