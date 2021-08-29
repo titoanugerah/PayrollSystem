@@ -20,7 +20,7 @@ namespace Payroll.ViewModels
                 Name = FindHeaderColumn("nama;name");
                 MainSalaryBilling = FindHeaderColumn("prorata");
                 RouteBilling = FindHeaderColumn("insentif alokasi");
-                InsentiveBilling = FindHeaderColumn("insentif jabatan");
+                InsentiveBilling = FindHeaderColumn("insentif jabatan; TUNJANGAN TRANSPORTASI");                
 
                 BpjsBilling = "R";
                 
@@ -48,7 +48,7 @@ namespace Payroll.ViewModels
 
             for (int currentRow = Worksheet.Dimension.Start.Row; currentRow <= Worksheet.Dimension.End.Row; currentRow++)
             {
-                ExcelRange selectedCell = Worksheet.Cells[$"A{currentRow}"];
+                ExcelRange selectedCell = Worksheet.Cells[$"B{currentRow}"];
                 if (selectedCell.Style.Fill.BackgroundColor.Indexed == 8)
                 {
                     headerRow = currentRow;

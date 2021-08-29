@@ -89,7 +89,7 @@ namespace Payroll.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Dharma()
+        public async Task<IActionResult> Staff()
         {
             try
             {

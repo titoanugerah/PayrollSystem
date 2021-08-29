@@ -712,7 +712,7 @@ namespace Payroll.Controllers.Api
                                 }
 
                                 int rowNum = 1;
-                                for (int currentRow = address.DataStartRow; currentRow < address.DataEndRow; currentRow++)
+                                for (int currentRow = address.DataStartRow; currentRow <= address.DataEndRow; currentRow++)
                                 {
                                     string employeeNIK = GetStringValue(excelWorksheet, address.NIK, currentRow);
                                     if (employeeNIK == null)
@@ -744,7 +744,7 @@ namespace Payroll.Controllers.Api
 
                                     payrollDetail.AnotherDeduction = address.IsAnyAnotherDeduction ? GetIntValue(excelWorksheet, address.AnotherDeduction, currentRow) : 0;
 
-                                    if ((payrollDetail.MainSalaryBilling + payrollDetail.RouteBilling + payrollDetail.InsentiveBilling) != 0)
+                                    if ((payrollDetail.MainSalaryBilling + payrollDetail.RouteBilling + payrollDetail.InsentiveBilling) == 0)
                                     {
                                         isFileOk = false;
                                         isSheetOk = false;
@@ -792,7 +792,7 @@ namespace Payroll.Controllers.Api
                                     }
                                     List<string> employeeNames = GetStringValue(excelWorksheet, address.Name, currentRow).Split(";").ToList();
                                     PayrollDetail payrollDetail = payrollDetails
-                                        .Where(column => Standarize(column.Employee.SecondaryNIK) == Standarize(employeeNIK))
+                                        .Where(column => Standarize(column.Employee.PrimaryNIK) == Standarize(employeeNIK))
                                         //                                    .Where(column => employeeNames.Contains(column.Employee.Name))
                                         .FirstOrDefault();
                                     if (payrollDetail == null)
@@ -816,7 +816,7 @@ namespace Payroll.Controllers.Api
                                     payrollDetail.AnotherDeduction = address.IsAnyAnotherDeduction ? GetIntValue(excelWorksheet, address.AnotherDeduction, currentRow) : 0;
 
 
-                                    if ((payrollDetail.MainSalaryBilling + payrollDetail.InsentiveBilling + payrollDetail.PulseAllowance + payrollDetail.PositionInsentiveBilling + payrollDetail.AnotherInsentive + payrollDetail.Rapel) != 0)
+                                    if ((payrollDetail.MainSalaryBilling + payrollDetail.InsentiveBilling + payrollDetail.PulseAllowance + payrollDetail.PositionInsentiveBilling + payrollDetail.AnotherInsentive + payrollDetail.Rapel) == 0)
                                     {
                                         isFileOk = false;
                                         isSheetOk = false;
