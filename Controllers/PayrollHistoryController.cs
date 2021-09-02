@@ -121,11 +121,6 @@ namespace Payroll.Controllers
                     .Where(column => column.IsExist == true)
                     .OrderBy(column => column.Employee.CustomerId)
                     .ToListAsync();
-                List<Bank> banks = await payrollDB.Bank
-                    .ToListAsync();
-                List<PayrollDetail> payrollBCA = allPayrollDetails
-                    .Where(column => column.Employee.BankCode == "BCA")
-                    .ToList();
 
                 ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
                 using (ExcelPackage excelPackage = new ExcelPackage(new FileInfo(excelTemplate.FullName)))
@@ -137,12 +132,22 @@ namespace Payroll.Controllers
                     int no = 1;
                     string worksheetName = $"BANK DRIVER";
                     worksheet = workbook.Worksheets.Copy(template.ToString(), worksheetName);
-                    foreach (PayrollDetail payrollDetail in payrollBCA)
+                    foreach (PayrollDetail payrollDetail in allPayrollDetails)
                     {
 
+                        int nik = 0;
+                        string displayNIK = null;
+                        if (int.TryParse(payrollDetail.Employee.NIK, out nik))
+                        {
+                            displayNIK = nik.ToString().PadLeft(4, '0');
+                        }
+                        else
+                        {
+                            displayNIK = payrollDetail.Employee.NIK;
+                        }
+
                         await SetValue($"A{currentRow}", no);
-                        //TODO
-                        //await SetValue($"B{currentRow}", payrollDetail.Employee.NIK);
+                        await SetValue($"B{currentRow}", displayNIK);
                         await SetValue($"C{currentRow}", payrollDetail.Employee.Name);
                         await SetValue($"D{currentRow}", payrollDetail.Employee.Position.Name);
                         await SetValue($"E{currentRow}", payrollDetail.Employee.Location.Name);
@@ -155,33 +160,6 @@ namespace Payroll.Controllers
                         no++;
                         currentRow++;
                     }
-                    await HideColumn(2);
-                    await Borderize($"A6", $"K{currentRow}");
-
-
-                    currentRow = 6;
-                    no = 1;
-                    worksheetName = $"BANK LAIN";
-                    worksheet = workbook.Worksheets.Copy(template.ToString(), worksheetName);
-                    foreach (PayrollDetail payrollDetail in allPayrollDetails.Where(col => col.Employee.BankCode != "BCA"))
-                    {
-
-                        await SetValue($"A{currentRow}", no);
-                        //TODO
-                        //await SetValue($"B{currentRow}", payrollDetail.Employee.NIK);
-                        await SetValue($"C{currentRow}", payrollDetail.Employee.Name);
-                        await SetValue($"D{currentRow}", payrollDetail.Employee.Position.Name);
-                        await SetValue($"E{currentRow}", payrollDetail.Employee.Location.Name);
-                        await SetValue($"F{currentRow}", payrollDetail.Employee.Customer.Name);
-                        await SetValue($"G{currentRow}", payrollDetail.TakeHomePay - 6500);
-                        await SetValue($"H{currentRow}", 6500);
-                        await SetValue($"I{currentRow}", payrollDetail.TakeHomePay);
-                        await SetValue($"J{currentRow}", payrollDetail.Employee.AccountNumber);
-                        await SetValue($"K{currentRow}", payrollDetail.Employee.BankCode);
-                        no++;
-                        currentRow++;
-                    }
-                    await HideColumn(2);
                     await Borderize($"A6", $"K{currentRow}");
                     worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
 

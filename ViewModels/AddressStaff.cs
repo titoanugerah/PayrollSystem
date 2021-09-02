@@ -23,6 +23,9 @@ namespace Payroll.ViewModels
                 PulseAllowance = FindHeaderColumn("uang pulsa");
                 PositionInsentiveBilling = FindHeaderColumn("tunjangan jabatan");
                 AnotherInsentiveBilling = FindHeaderColumn("tunjangan lainnya");
+                BpjsTkDeduction = FindHeaderColumn("JHT");
+                PensionDeduction = FindHeaderColumn("Pensiun");
+                BpjsKesehatanDeduction = FindHeaderColumn("BPJS Kesehatan");
                 Rapel = FindHeaderColumn("rapel");
                 
                 AnotherDeduction = FindHeaderColumn("potongan kasbon");
@@ -126,6 +129,10 @@ namespace Payroll.ViewModels
 
         public string MainSalaryBilling { set; get; }
         public string InsentiveBilling { set; get; }
+        public string BpjsKesehatanDeduction { set; get; }
+        public string PensionDeduction { set; get; }
+        public string BpjsTkDeduction { set; get; }
+        
 
 
 

@@ -827,9 +827,26 @@ namespace Payroll.Controllers.Api
                                         continue;
                                     }
 
-                                    //BpjsStatus                                    
+                                    //BpjsStatus
+                                    if (GetStringValue(excelWorksheet, address.BpjsStatusId, currentRow) != null)
+                                    {
+                                        if (GetStringValue(excelWorksheet, address.BpjsStatusId, currentRow).Contains("pbi"))
+                                        {
+                                            employee.BpjsStatusId = 2;
+                                        }
+                                        else
+                                        {
+                                            employee.BpjsStatusId = 1;
+
+                                        }
+                                    }
+                                    else
+                                    {
                                         employee.BpjsStatusId = 0;
-                                    
+                                    }
+
+
+
                                     //Family Status Code
                                     if (GetStringValue(excelWorksheet, address.FamilyStatusCode, currentRow) != null)
                                     {
@@ -1071,31 +1088,31 @@ namespace Payroll.Controllers.Api
                             }
 
                             //Filter New Employee
-                            var x = payrollDB.Employee.AsNoTracking().ToList();
-                            List<Employee> fixedNewEmployees = new List<Employee>();
-                            foreach (Employee newEmployee in newEmployees)
-                            {
+                        }
+                        var x = payrollDB.Employee.AsNoTracking().ToList();
+                        List<Employee> fixedNewEmployees = new List<Employee>();
+                        foreach (Employee newEmployee in newEmployees)
+                        {
 
-                                if (!x.Where(column => Standarize(column.Name) == Standarize(newEmployee.Name)).Any())
-                                {
-                                    fixedNewEmployees.Add(newEmployee);
-                                }
-                            }
-                            payrollDB.Employee.AddRange(fixedNewEmployees);
-                            payrollDB.Employee.UpdateRange(oldEmployees);
-                            await payrollDB.SaveChangesAsync();
-                            if (!isFileOk)
+                            if (x.Where(column => Standarize(column.Name) != Standarize(newEmployee.Name)).Any())
                             {
-
-                                string excelFileDirectory = $"wwwroot/file/ErrorEmployeeUpload.xlsx";
-                                if (System.IO.File.Exists(excelFileDirectory))
-                                {
-                                    System.IO.File.Delete(excelFileDirectory);
-                                }
-                                FileInfo excelFile = new FileInfo(excelFileDirectory);
-                                await excelPackage.SaveAsAsync(excelFile);
-                                return BadRequest($"0");
+                                fixedNewEmployees.Add(newEmployee);
                             }
+                        }
+                        payrollDB.Employee.AddRange(fixedNewEmployees);
+                        payrollDB.Employee.UpdateRange(oldEmployees);
+                        await payrollDB.SaveChangesAsync();
+                        if (!isFileOk)
+                        {
+
+                            string excelFileDirectory = $"wwwroot/file/ErrorEmployeeUpload.xlsx";
+                            if (System.IO.File.Exists(excelFileDirectory))
+                            {
+                                System.IO.File.Delete(excelFileDirectory);
+                            }
+                            FileInfo excelFile = new FileInfo(excelFileDirectory);
+                            await excelPackage.SaveAsAsync(excelFile);
+                            return BadRequest($"0");
                         }
                     }
                 }

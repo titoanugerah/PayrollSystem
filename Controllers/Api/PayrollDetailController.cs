@@ -237,8 +237,7 @@ namespace Payroll.Controllers.Api
                         {
                             payrollDetail.BpjsKesehatanDeduction = 0;
                         }
-
-                        payrollDetail.BpjsReturn = payrollDetail.BpjsKesehatanDeduction;
+                        payrollDetail.BpjsReturn = 0;
                         payrollDetail.PensionDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * payrollHistory.PensionPayrollPercentage) / 100);
                         payrollDetail.PTKP = Convert.ToInt32(payrollDetail.Employee.FamilyStatus.PTKP);
                         payrollDetail.PKP1 = Convert.ToInt32(payrollDetail.ResultPayroll - payrollDetail.BpjsKesehatanDeduction - payrollDetail.PensionDeduction - payrollDetail.BpjsTkDeduction - payrollDetail.AnotherDeduction);
@@ -306,9 +305,9 @@ namespace Payroll.Controllers.Api
                     {
                         payrollDetail.PayrollDetailStatusId = 2;
                         payrollDetail.ResultPayroll = payrollDetail.MainSalaryBilling + payrollDetail.InsentiveBilling + payrollDetail.PulseAllowance + payrollDetail.PositionInsentiveBilling + payrollDetail.AnotherInsentive + payrollDetail.Rapel ;
-                        payrollDetail.BpjsTkDeduction = Convert.ToInt32((payrollDetail.MainSalaryBilling * payrollHistory.BpjsTk1Percentage) / 100);
-                        payrollDetail.BpjsKesehatanDeduction = Convert.ToInt32((payrollDetail.MainSalaryBilling * payrollHistory.BpjsPayrollPercentage) / 100);
-                        payrollDetail.PensionDeduction = Convert.ToInt32((payrollDetail.MainSalaryBilling * payrollHistory.PensionPayrollPercentage) / 100);
+                        payrollDetail.BpjsTkDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * payrollHistory.BpjsTk1Percentage) / 100);
+                        payrollDetail.BpjsKesehatanDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * payrollHistory.BpjsPayrollPercentage) / 100);
+                        payrollDetail.PensionDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * payrollHistory.PensionPayrollPercentage) / 100);
                         payrollDetail.PTKP = Convert.ToInt32(payrollDetail.Employee.FamilyStatus.PTKP);
                         payrollDetail.PKP1 = Convert.ToInt32(payrollDetail.ResultPayroll - payrollDetail.BpjsKesehatanDeduction - payrollDetail.PensionDeduction - payrollDetail.BpjsTkDeduction);
                         payrollDetail.PKP2 = Convert.ToInt32(payrollDetail.PKP1 - payrollDetail.PTKP);
@@ -352,32 +351,9 @@ namespace Payroll.Controllers.Api
                     if (payrollDetail.MainSalaryBilling != 0 || payrollDetail.RouteBilling != 0 || payrollDetail.TrainingBilling != 0 || payrollDetail.InsentiveBilling != 0)
                     {
                         payrollDetail.PayrollDetailStatusId = 2;
-                        payrollDetail.BpjsTkDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * payrollHistory.BpjsTk1Percentage) / 100);
-                        if (payrollDetail.Employee.BpjsStatusId == 1)
-                        {
-                            payrollDetail.BpjsKesehatanDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * payrollHistory.BpjsPayrollPercentage) / 100);
-                        }
-                        else
-                        {
-                            payrollDetail.BpjsKesehatanDeduction = 0;
-                        }
-                        payrollDetail.ResultPayroll = payrollDetail.MainSalaryBilling + payrollDetail.TrainingBilling + payrollDetail.RouteBilling + payrollDetail.InsentiveBilling;
-                        payrollDetail.BpjsReturn = payrollDetail.BpjsKesehatanDeduction;
-                        payrollDetail.PensionDeduction = Convert.ToInt32((payrollDetail.Employee.Location.UMK * payrollHistory.PensionPayrollPercentage) / 100);
-                        payrollDetail.PTKP = Convert.ToInt32(payrollDetail.Employee.FamilyStatus.PTKP);
-                        payrollDetail.PKP1 = Convert.ToInt32(payrollDetail.ResultPayroll - payrollDetail.BpjsKesehatanDeduction - payrollDetail.PensionDeduction - payrollDetail.BpjsTkDeduction);
-                        payrollDetail.PKP2 = Convert.ToInt32(payrollDetail.PKP1 - payrollDetail.PTKP);
-                        if (payrollDetail.PKP2 > 1)
-                        {
-                            payrollDetail.PPH21 = Convert.ToInt32((payrollDetail.PKP2 * payrollDetail.PayrollHistory.Pph21Percentage) / 100);
-                        }
-                        else
-                        {
-                            payrollDetail.PPH21 = 0;
-
-                        }
-
-                        payrollDetail.PPH23 = Convert.ToInt32((payrollDetail.FeePayroll * payrollDetail.PayrollHistory.Pph23Percentage) / 100);
+                        payrollDetail.ResultPayroll = payrollDetail.MainSalaryBilling + payrollDetail.TrainingBilling + payrollDetail.RouteBilling + payrollDetail.InsentiveBilling + payrollDetail.PulseAllowance + payrollDetail.PositionInsentiveBilling + payrollDetail.AppreciationBilling;
+                        payrollDetail.PPH23 = 0;
+                        payrollDetail.PPH21 = 0;
                         payrollDetail.Netto = Convert.ToInt32(payrollDetail.ResultPayroll - payrollDetail.BpjsTkDeduction - payrollDetail.BpjsKesehatanDeduction - payrollDetail.PensionDeduction - payrollDetail.PPH21);
                         payrollDetail.TakeHomePay = Convert.ToInt32(payrollDetail.Netto - payrollDetail.AnotherDeduction - payrollDetail.TransferFee);
                         payrollDB.Entry(payrollDetail).State = EntityState.Modified;
@@ -811,10 +787,13 @@ namespace Payroll.Controllers.Api
                                     payrollDetail.InsentiveBilling = GetIntValue(excelWorksheet, address.InsentiveBilling, currentRow);
                                     payrollDetail.PulseAllowance = GetIntValue(excelWorksheet, address.PulseAllowance, currentRow);
                                     payrollDetail.PositionInsentiveBilling = GetIntValue(excelWorksheet, address.PositionInsentiveBilling, currentRow);
+                                    payrollDetail.AppreciationBilling = GetIntValue(excelWorksheet, address.AnotherInsentiveBilling, currentRow);
                                     payrollDetail.AnotherInsentive = GetIntValue(excelWorksheet, address.AnotherInsentiveBilling, currentRow);
                                     payrollDetail.Rapel = GetIntValue(excelWorksheet, address.Rapel, currentRow);
                                     payrollDetail.AnotherDeduction = address.IsAnyAnotherDeduction ? GetIntValue(excelWorksheet, address.AnotherDeduction, currentRow) : 0;
-
+                                    payrollDetail.BpjsKesehatanDeduction = GetIntValue(excelWorksheet, address.BpjsKesehatanDeduction, currentRow);
+                                    payrollDetail.PensionDeduction = GetIntValue(excelWorksheet, address.PensionDeduction, currentRow);
+                                    payrollDetail.BpjsTkDeduction= GetIntValue(excelWorksheet, address.BpjsTkDeduction, currentRow);
 
                                     if ((payrollDetail.MainSalaryBilling + payrollDetail.InsentiveBilling + payrollDetail.PulseAllowance + payrollDetail.PositionInsentiveBilling + payrollDetail.AnotherInsentive + payrollDetail.Rapel) == 0)
                                     {

@@ -159,6 +159,8 @@ function reloadTable() {
 }
 
 function updatePayrollDetail() {
+    $('.spinner-border').show();
+
     var fd = new FormData();
     var files = $('#fileUpload1')[0].files[0];
     fd.append('file', files);
@@ -171,10 +173,13 @@ function updatePayrollDetail() {
         success: function (response) {
             reloadTable()
             console.log('success', response);
+            $('.spinner-border').hide();
+
             $('#addPayrollDetailModal').modal('hide');
         },
         error: function (result) {
             console.log('error', result);
+            $('.spinner-border').hide();
             $('#addPayrollDetailModal').modal('hide');
             if (result.responseText == "0") {
                 $('#submitErrorModal').modal('show');
@@ -244,6 +249,7 @@ function zeroPad(num) {
 }
 
 $(document).ready(function () {
+    $('.spinner-border').hide();
     $('.select2addmodal').select2({
         dropdownParent: $('#addPayrollDetailModal')
     });

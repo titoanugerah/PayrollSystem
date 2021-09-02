@@ -21,9 +21,7 @@
             "exportOptions": {
                 "columns": [0, 1, 2, 3, 4, 5],
                 "modifier": {
-                    "order": 'current',
                     "page": 'all',
-                    "selected": false,
                 },
             }
         },

@@ -167,6 +167,10 @@ namespace Payroll.ViewModels
                 }
             }
         }
+
+        //public string BpjsTkDeduction { set; get; }
+        //public string BpjsKesehatanDeduction { set; get; }
+        //public string PensionDeduction { set; get; }
         
         public string GrandTotalBilling { set; get; }
     }

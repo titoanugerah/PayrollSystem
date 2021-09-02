@@ -47,6 +47,7 @@ namespace Payroll
             {
                 options.ExpireTimeSpan = TimeSpan.FromHours(5);
                 options.LoginPath = Configuration["Login:Path"];
+                options.SlidingExpiration = true;
             });
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();           
         }
