@@ -11,6 +11,7 @@ namespace Payroll.ViewModels
         public string AccountName { set; get; }
         public string BankCode { set; get; }
         public string FamilyStatusCode { set; get; }
+        public int BpjsStatusId { set; get; }
         public int PositionId { set; get; }
         public int CustomerId { set; get; }
         public int LocationId { set; get; }

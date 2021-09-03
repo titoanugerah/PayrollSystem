@@ -1339,6 +1339,7 @@ namespace Payroll.Controllers.Api
                 employee.AccountName = employeeInput.AccountName;
                 employee.BankCode = employeeInput.BankCode;
                 employee.FamilyStatusCode = employeeInput.FamilyStatusCode;
+                employee.BpjsStatusId = employeeInput.BpjsStatusId;
                 employee.PositionId = employeeInput.PositionId;
                 employee.CustomerId = employeeInput.CustomerId;
                 employee.LocationId = employeeInput.LocationId;
