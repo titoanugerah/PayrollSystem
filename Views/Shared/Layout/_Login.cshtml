@@ -24,7 +24,12 @@
     <link rel="stylesheet" href="~/css/additionalcss.css">
 </head>
 <body class="login">    
-    <div class="env-notice">@hostingEnv.EnvironmentName</div>
+    @if (hostingEnv.EnvironmentName != "Production")
+    {
+        <div class="env-notice">
+            @hostingEnv.EnvironmentName
+        </div>
+    }
     @RenderBody();
 </body>
 <script src="~/js/core/jquery.3.2.1.min.js"></script>

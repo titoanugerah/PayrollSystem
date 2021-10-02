@@ -61,7 +61,10 @@
 <body id="bodyDiv">
     <div class="wrapper">
         <div class="main-header">
-            <div class="env-notice">@hostingEnv.EnvironmentName</div>
+            @if (hostingEnv.EnvironmentName != "Production")
+            {
+                <div class="env-notice">@hostingEnv.EnvironmentName</div>
+            }
             <div class="logo-header" data-background-color="blue">
                 <a asp-action="Index" asp-controller="Dashboard" class="logo" style="color:white;">
                     Payroll
@@ -149,7 +152,7 @@
 
         <div class="main-panel">
             <div class="content">
-                <br /><br />
+@*                <br /><br />*@
                 @RenderBody()
                 <br /><br />
 

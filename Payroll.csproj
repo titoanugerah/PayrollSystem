@@ -6,14 +6,15 @@
     <UserSecretsId>6a64f09e-1e83-4b9f-b862-93af9b0d3868</UserSecretsId>
     <!--<IsTransformWebConfigDisabled>true</IsTransformWebConfigDisabled>-->
     <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <Configurations>Dev;Test;Production</Configurations>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)' == 'Debug'">
-	 <EnvironmentName>Test</EnvironmentName>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Test|AnyCPU'">
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <Optimize>false</Optimize>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
-     <EnvironmentName>Test</EnvironmentName>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Production|AnyCPU'">
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <Optimize>false</Optimize>
     <DebugType>full</DebugType>
