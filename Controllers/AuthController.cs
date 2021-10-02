@@ -48,6 +48,21 @@ namespace Payroll.Controllers
             }
         }
 
+        [Authorize]
+        [Route("Auth/ChangePassword")]
+        public async Task<IActionResult> ChangePassword()
+        {
+            try
+            {
+                return View();
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error, "Auth Controller - Change Password");
+                throw;
+            }
+        }
+
         [HttpPost]
         [AllowAnonymous]
         [Route("Auth/Validate")]
