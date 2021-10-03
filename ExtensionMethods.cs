@@ -8,9 +8,9 @@ namespace Payroll
 {
     public static class ExtensionMethods
     {
-        public static string GetNIK(this ClaimsPrincipal user)
+        public static int GetEmployeeId(this ClaimsPrincipal user)
         {
-            return GetClaim(user, "NIK").ToString();
+            return int.Parse(GetClaim(user, "Id").ToString());
         }
 
         public static string GetRole(this ClaimsPrincipal user)
@@ -26,7 +26,7 @@ namespace Payroll
         public static UserIdentity GetUserIdentity(this ClaimsPrincipal user)
         {
             UserIdentity userIdentity = new UserIdentity();
-            userIdentity.NIK = GetNIK(user);
+            userIdentity.EmployeeId = GetEmployeeId(user);
             userIdentity.Name = GetName(user);
             userIdentity.Role = GetRole(user);
             return userIdentity;

@@ -9,6 +9,6 @@ namespace Payroll.Models
         public string Code { set; get; }
         [Required]
         public string Name { set; get; }
-
+        public string Keyword { set; get; }
     }
 }

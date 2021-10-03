@@ -36,7 +36,7 @@ namespace Payroll.Controllers
                 PayrollHistory payrollHistory = await payrollDB.PayrollHistory
                     .Where(column => column.Id == id)
                     .FirstOrDefaultAsync();
-                ViewBag.Period = $"{UcFirst(payrollHistory.Month)}, {payrollHistory.Year}";
+                ViewBag.Period = $"{UcFirst(payrollHistory.Month)}, {payrollHistory.Year}";                
                 ViewBag.Id = id;
                 return View();
             }
@@ -69,7 +69,8 @@ namespace Payroll.Controllers
 
                     await SetValue($"D1", $"{payrollDetail.PayrollHistory.Month}, {payrollDetail.PayrollHistory.Year}");
                     await SetValue($"H1", $"{payrollDetail.Employee.Name}");
-                    await SetValue($"H2", $"{payrollDetail.Employee.NIK}");
+                    //TODO
+                    //await SetValue($"H2", $"{payrollDetail.Employee.NIK}");
                     await SetValue($"H3", $"{payrollDetail.Employee.Location.Name}");                    
 
                     await SetValue($"D7", $"{payrollDetail.MainSalaryBilling}");
@@ -125,7 +126,7 @@ namespace Payroll.Controllers
                     .Include(table => table.PayrollHistory)
                     .Where(column => column.Id == id)
                     .FirstOrDefault();
-                if (payrollDetail.EmployeeId == userIdentity.NIK || userIdentity.Role.ToLower() == "admin")
+                if (payrollDetail.EmployeeId == userIdentity.EmployeeId || userIdentity.Role.ToLower() == "admin")
                 {
                     ViewBag.payrollDetail = payrollDetail;
                     return View();

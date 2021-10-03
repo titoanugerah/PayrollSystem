@@ -9,5 +9,7 @@ namespace Payroll.Models
         [Required]
         public string Name { set; get; }
         public string Remark { set; get; }
+        public string Keyword { set; get; }
+
     }
 }

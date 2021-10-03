@@ -2,7 +2,7 @@
 {
     public class LoginInput
     {
-        public string NIK { set; get; }
+        public string Username { set; get; }
         public string Password { set; get; }
     }
 }

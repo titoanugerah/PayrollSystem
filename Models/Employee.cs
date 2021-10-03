@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -9,80 +7,38 @@ namespace Payroll.Models
     public class Employee : Audit
     {
         [Key]
-        [MaxLength(6)]
-        public string NIK { set; get; }
+        public int Id { set; get; }
+        [MaxLength(4)]
+        public int? PrimaryNIK { set; get; }
+        [MaxLength(16)]
+        public string SecondaryNIK { set; get; }
+        [Required]
+        public int MainCustomerId { set; get; }
+        public MainCustomer MainCustomer { set; get; }       
+        [NotMapped]
+        public string NIK
+        {
+            get
+            {
+                if (PrimaryNIK != null)
+                {
+                    return PrimaryNIK.ToString();
+                }
+                else if (SecondaryNIK != null)
+                {
+                    return SecondaryNIK;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
         [Required]
         public string Password { set; get; }
         [Required]
         public string Name { set; get; }
-        //[MaxLength(1)]
-        //[DefaultValue("L")]
-        //public string Sex { set; get; }
-        //public string BirthPlace { set; get; }
-        //public DateTime BirthDate { set; get; }
-        //public string Religion { set; get; }
-        //public string Address { set; get; }
         public string PhoneNumber { set; get; }
-        [MaxLength(16)]
-        public string KTP { set; get; }
-        //[MaxLength(16)]
-        //public string KK { set; get; }
-        [NotMapped]
-        public bool HasDriverLicense
-        {
-            get
-            {
-                if (DriverLicense == null)
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
-
-        public string DriverLicenseType { set; get; }
-        public string DriverLicense { set; get; }
-        //public DateTime DriverLicenseExpire { set; get; }
-        //[DefaultValue("L")]
-        public string FamilyStatusCode { set; get; }
-        public FamilyStatus FamilyStatus { set; get; }
-        [MaxLength(14)]
-        public string BpjsNumber { set; get; }
-        public string BpjsRemark { set; get; }
-        [MaxLength(12)]
-        public string JamsostekNumber { set; get; }
-        public string JamsostekRemark { set; get; }
-        public string NPWP { set; get; }
-
-        //public DateTime JoinCompanyDate { set; get; }
-        //public DateTime StartContract { set; get; }
-        //public DateTime EndContract { set; get; }
-
-        public string BankCode { set; get; }
-        public Bank Bank { set; get; }
-        public string AccountNumber { set; get; }
-        public string AccountName { set; get; }
-        //public int EmploymentStatusId { set; get; }
-        //public EmploymentStatus EmploymentStatus { set; get; }
-
-        //[Column(TypeName = "bit")]
-        //[DefaultValue(false)]
-        //public bool HasUniform { set; get; }
-        //public DateTime UniformDeliveryDate { set; get; }
-        //[Column(TypeName = "bit")]
-        //[DefaultValue(false)]
-        //public bool HasIdCard { set; get; }
-        //public DateTime IdCardDeliveryDate { set; get; }
-        //[Column(TypeName = "bit")]
-        //[DefaultValue(false)]
-        //public bool HasTraining { set; get; }
-        //public string TrainingName { set; get; }
-        //public string TrainingRemark { set; get; }
-        //public string TrainingGrade { set; get; }
-        //public DateTime TrainingDeliveryDate { set; get; }
 
         [Required]
         public int PositionId { set; get; }
@@ -91,7 +47,41 @@ namespace Payroll.Models
         public Location Location { set; get; }
         public int CustomerId { set; get; }
         public Customer Customer { set; get; }
-        //public DateTime JoinCustomerDate { set; get; }
+        public string FamilyStatusCode { set; get; }
+        public FamilyStatus FamilyStatus { set; get; }
+
+        [DefaultValue(0)]
+        public int BpjsStatusId { set; get; }
+        [NotMapped]
+        public string BpjsStatus
+        {
+            get
+            {
+                string result = null;
+                if (BpjsStatusId != null)
+                {
+                    switch (BpjsStatusId)
+                    {
+                        case 0:
+                            result = "Tidak ada";
+                            break;
+                        case 1:
+                            result = "BU MBK";
+                            break;
+                        case 2:
+                            result = "Lainnya";
+                            break;
+                    }
+                }
+                return result;
+            }
+
+        }
+
+        public string AccountName { set; get; }
+        public string BankCode { set; get; }
+        public Bank Bank { set; get; }
+        public string AccountNumber { set; get; }
         [DefaultValue(2)]
         public int RoleId { set; get; }
         public Role Role { set; get; }

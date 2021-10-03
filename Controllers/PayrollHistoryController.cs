@@ -6,7 +6,6 @@ using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using Payroll.DataAccess;
 using Payroll.Models;
-using Payroll.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -41,6 +40,70 @@ namespace Payroll.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Assa()
+        {
+            try
+            {
+                //Default Id Assa
+                ViewBag.MainCustomerId = 1;
+                return View();
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error, "Payroll Controller - Assa");
+                throw error;
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Syncrum()
+        {
+            try
+            {
+                //Default Id Syncrum
+                ViewBag.MainCustomerId = 3;
+                return View();
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error, "Payroll Controller - Syncrum");
+                throw error;
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> TTNT()
+        {
+            try
+            {
+                //Default Id TTNT
+                ViewBag.MainCustomerId = 2;
+                return View();
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error, "Payroll Controller - TTNT");
+                throw error;
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Staff()
+        {
+            try
+            {
+                //Default Id Dharma
+                ViewBag.MainCustomerId = 4;
+                return View();
+            }
+            catch (Exception error)
+            {
+                logger.LogError(error, "Payroll Controller - Dharma");
+                throw error;
+            }
+        }
+
         [Route("PayrollHistory/Download/ReportBank/{id}")]
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DownloadReportBank(int id)
@@ -58,11 +121,6 @@ namespace Payroll.Controllers
                     .Where(column => column.IsExist == true)
                     .OrderBy(column => column.Employee.CustomerId)
                     .ToListAsync();
-                List<Bank> banks = await payrollDB.Bank
-                    .ToListAsync();
-                List<PayrollDetail> payrollBCA = allPayrollDetails
-                    .Where(column => column.Employee.BankCode == "BCA")
-                    .ToList();
 
                 ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
                 using (ExcelPackage excelPackage = new ExcelPackage(new FileInfo(excelTemplate.FullName)))
@@ -74,11 +132,22 @@ namespace Payroll.Controllers
                     int no = 1;
                     string worksheetName = $"BANK DRIVER";
                     worksheet = workbook.Worksheets.Copy(template.ToString(), worksheetName);
-                    foreach (PayrollDetail payrollDetail in payrollBCA)
+                    foreach (PayrollDetail payrollDetail in allPayrollDetails)
                     {
 
+                        int nik = 0;
+                        string displayNIK = null;
+                        if (int.TryParse(payrollDetail.Employee.NIK, out nik))
+                        {
+                            displayNIK = nik.ToString().PadLeft(4, '0');
+                        }
+                        else
+                        {
+                            displayNIK = payrollDetail.Employee.NIK;
+                        }
+
                         await SetValue($"A{currentRow}", no);
-                        await SetValue($"B{currentRow}", payrollDetail.Employee.NIK);
+                        await SetValue($"B{currentRow}", displayNIK);
                         await SetValue($"C{currentRow}", payrollDetail.Employee.Name);
                         await SetValue($"D{currentRow}", payrollDetail.Employee.Position.Name);
                         await SetValue($"E{currentRow}", payrollDetail.Employee.Location.Name);
@@ -91,32 +160,6 @@ namespace Payroll.Controllers
                         no++;
                         currentRow++;
                     }
-                    await HideColumn(2);
-                    await Borderize($"A6", $"K{currentRow}");
-
-
-                    currentRow = 6;
-                    no = 1;
-                    worksheetName = $"BANK LAIN";
-                    worksheet = workbook.Worksheets.Copy(template.ToString(), worksheetName);
-                    foreach (PayrollDetail payrollDetail in allPayrollDetails.Where(col => col.Employee.BankCode != "BCA"))
-                    {
-
-                        await SetValue($"A{currentRow}", no);
-                        await SetValue($"B{currentRow}", payrollDetail.Employee.NIK);
-                        await SetValue($"C{currentRow}", payrollDetail.Employee.Name);
-                        await SetValue($"D{currentRow}", payrollDetail.Employee.Position.Name);
-                        await SetValue($"E{currentRow}", payrollDetail.Employee.Location.Name);
-                        await SetValue($"F{currentRow}", payrollDetail.Employee.Customer.Name);
-                        await SetValue($"G{currentRow}", payrollDetail.TakeHomePay - 6500);
-                        await SetValue($"H{currentRow}", 6500);
-                        await SetValue($"I{currentRow}", payrollDetail.TakeHomePay);
-                        await SetValue($"J{currentRow}", payrollDetail.Employee.AccountNumber);
-                        await SetValue($"K{currentRow}", payrollDetail.Employee.BankCode);
-                        no++;
-                        currentRow++;
-                    }
-                    await HideColumn(2);
                     await Borderize($"A6", $"K{currentRow}");
                     worksheet.Cells[worksheet.Dimension.Address].AutoFitColumns();
 
@@ -192,7 +235,7 @@ namespace Payroll.Controllers
                             foreach (PayrollDetail payrollDetail in payrollDetails)
                             {
                                 await SetValue($"A{currentRow}", no);
-                                await SetValue($"B{currentRow}", payrollDetail.Employee.NIK);
+                                //await SetValue($"B{currentRow}", payrollDetail.Employee.NIK);
                                 await SetValue($"C{currentRow}", payrollDetail.Employee.Name);
                                 await SetValue($"D{currentRow}", payrollDetail.Employee.Position.Name);
                                 await SetValue($"E{currentRow}", payrollDetail.Employee.Location.Name);
@@ -214,7 +257,8 @@ namespace Payroll.Controllers
                                 //await SetValue($"U{currentRow}", payrollDetail.Employee.JoinCustomerDate);
 
                                 await SetValue($"X{currentRow}", no);
-                                await SetValue($"Y{currentRow}", payrollDetail.Employee.NIK);
+                                //TODO
+                                //await SetValue($"Y{currentRow}", payrollDetail.Employee.NIK);
                                 await SetValue($"Z{currentRow}", payrollDetail.Employee.Name);
                                 await SetValue($"AA{currentRow}", payrollDetail.Employee.FamilyStatusCode);
                                 await SetValue($"AB{currentRow}", payrollDetail.ResultPayroll);
@@ -238,7 +282,8 @@ namespace Payroll.Controllers
                                 await SetValue($"AT{currentRow}", payrollDetail.TakeHomePay);
                                 
                                 await SetValue($"AV{currentRow}", no);
-                                await SetValue($"AW{currentRow}", payrollDetail.Employee.NIK);
+                                //TODO
+                                //await SetValue($"AW{currentRow}", payrollDetail.Employee.NIK);
                                 await SetValue($"AX{currentRow}", payrollDetail.Employee.Name);
                                 await SetValue($"AY{currentRow}", payrollDetail.TakeHomePay);
                                 currentRow++;
@@ -398,7 +443,8 @@ namespace Payroll.Controllers
                             foreach (PayrollDetail payrollDetail in payrollDetails)
                             {
                                 await SetValue($"A{currentRow}", no);
-                                await SetValue($"B{currentRow}", payrollDetail.Employee.NIK);
+                                //TODO
+                                //await SetValue($"B{currentRow}", payrollDetail.Employee.NIK);
                                 await SetValue($"C{currentRow}", payrollDetail.Employee.Name);
                                 await SetValue($"D{currentRow}", payrollDetail.Employee.Position.Name);
                                 await SetValue($"E{currentRow}", payrollDetail.Employee.Location.Name);
@@ -420,7 +466,8 @@ namespace Payroll.Controllers
                                 //await SetValue($"U{currentRow}", payrollDetail.Employee.JoinCustomerDate);
 
                                 await SetValue($"X{currentRow}", no);
-                                await SetValue($"Y{currentRow}", payrollDetail.Employee.NIK);
+                                //TODO
+                                //await SetValue($"Y{currentRow}", payrollDetail.Employee.NIK);
                                 await SetValue($"Z{currentRow}", payrollDetail.Employee.Name);
                                 await SetValue($"AA{currentRow}", payrollDetail.Employee.FamilyStatusCode);
                                 await SetValue($"AB{currentRow}", payrollDetail.ResultPayroll);
@@ -444,7 +491,8 @@ namespace Payroll.Controllers
                                 await SetValue($"AT{currentRow}", payrollDetail.TakeHomePay);
 
                                 await SetValue($"AV{currentRow}", no);
-                                await SetValue($"AW{currentRow}", payrollDetail.Employee.NIK);
+                                //TODO
+                                //await SetValue($"AW{currentRow}", payrollDetail.Employee.NIK);
                                 await SetValue($"AX{currentRow}", payrollDetail.Employee.Name);
                                 await SetValue($"AY{currentRow}", payrollDetail.TakeHomePay);
 

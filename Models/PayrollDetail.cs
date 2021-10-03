@@ -13,7 +13,7 @@ namespace Payroll.Models
         public PayrollHistory PayrollHistory { set; get; }
         [Required]
         [ForeignKey("Employee")]
-        public string EmployeeId { set; get; }
+        public int EmployeeId { set; get; }
         public Employee Employee { set; get; }
         [DefaultValue(0)]
         public int AbsentDeduction { set; get; }
@@ -28,6 +28,12 @@ namespace Payroll.Models
         public int PensionBilling { set; get; }        
         [DefaultValue(0)]
         public int AtributeBilling { set; get; }
+        [DefaultValue(0)]
+        public int TrainingBilling { set; get; }
+        [DefaultValue(0)]
+        public int RouteBilling { set; get; }
+        [DefaultValue(0)]
+        public int Thr { set; get; }
         [DefaultValue(0)]
         public int Rapel { set; get; }
         [DefaultValue(0)]
@@ -47,6 +53,10 @@ namespace Payroll.Models
         
         [DefaultValue(0)]
         public int InsentiveBilling { set; get; }
+        [DefaultValue(0)]
+        public int PositionInsentiveBilling { set; get; }
+        [DefaultValue(0)]
+        public int AnotherInsentive { set; get; }
         [DefaultValue(0)]
         public int AttendanceBilling { set; get; }
         [DefaultValue(0)]

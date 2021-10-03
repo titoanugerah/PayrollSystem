@@ -16,7 +16,7 @@
     <link rel="icon" href="~/img/icon.ico" type="image/x-icon" />
     <link rel="stylesheet" href="~/css/bootstrap.min.css">
     <link rel="stylesheet" href="~/css/atlantis.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+    <link href="~/css/select2.css" rel="stylesheet" />
     <link href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css" rel="stylesheet" />
     <link href="https://cdn.datatables.net/buttons/1.6.2/css/buttons.dataTables.min.css" rel="stylesheet" />
     <link href="~/css/additionalcss.css" rel="stylesheet" />
@@ -25,7 +25,7 @@
     <script>
         WebFont.load({
             google: { "families": ["Lato:300,400,700,900"] },
-            custom: { "families": ["Flaticon", "Font Awesome 5 Solid", "Font Awesome 5 Regular", "Font Awesome 5 Brands", "simple-line-icons"], urls: ["css/fonts.min.css"] },
+            custom: { "families": ["Flaticon", "Font Awesome 5 Solid", "Font Awesome 5 Regular", "Font Awesome 5 Brands", "simple-line-icons"], urls: ["/css/fonts.min.css"] },
             active: function () {
                 sessionStorage.fonts = true;
             }
@@ -58,10 +58,13 @@
     <script src="~/js/atlantis.min.js"></script>
 
 </head>
-<body>
+<body id="bodyDiv">
     <div class="wrapper">
         <div class="main-header">
-            <div class="env-notice">@hostingEnv.EnvironmentName</div>
+            @if (hostingEnv.EnvironmentName != "Production")
+            {
+                <div class="env-notice">@hostingEnv.EnvironmentName</div>
+            }
             <div class="logo-header" data-background-color="blue">
                 <a asp-action="Index" asp-controller="Dashboard" class="logo" style="color:white;">
                     Payroll
@@ -107,6 +110,8 @@
                                         </div>
                                     </li>
                                     <li>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item" asp-action="ChangePassword" asp-controller="Auth">Ganti Password</a>
                                         <div class="dropdown-divider"></div>
                                         <a class="dropdown-item" asp-action="Logout" asp-controller="Auth">Logout</a>
                                     </li>

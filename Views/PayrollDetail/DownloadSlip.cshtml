@@ -80,12 +80,49 @@
                     : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.AttendanceBilling)
                 </div>
 
-                <div class="col-md-6">
-                    Insentif Lainnya
-                </div>
-                <div class="col-md-6">
-                    : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.InsentiveBilling)
-                </div>
+                @if (ViewBag.payrollDetail.Employee.MainCustomerId == 4)
+                {
+                    <div class="col-md-6">
+                        Tunjangan Jabatan
+                    </div>
+                    <div class="col-md-6">
+                        : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.PositionInsentiveBilling)
+                    </div>
+
+                    <div class="col-md-6">
+                        Tunjangan GP
+                    </div>
+                    <div class="col-md-6">
+                        : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.InsentiveBilling)
+                    </div>
+
+                    <div class="col-md-6">
+                        Tunjangan Lainnya
+                    </div>
+                    <div class="col-md-6">
+                        : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.AppreciationBilling)
+                    </div>
+
+
+                }
+                else
+                {
+                    <div class="col-md-6">
+                        Insentif Lainnya
+                    </div>
+                    <div class="col-md-6">
+                        : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.InsentiveBilling)
+                    </div>
+
+                    <div class="col-md-6">
+                        Apresiasi
+                    </div>
+                    <div class="col-md-6">
+                        : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.AppreciationBilling)
+                    </div>
+
+                }
+
 
                 <div class="col-md-6">
                     Rapel
@@ -101,12 +138,6 @@
                     : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.PulseAllowance)
                 </div>
 
-                <div class="col-md-6">
-                    Apresiasi
-                </div>
-                <div class="col-md-6">
-                    : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.AppreciationBilling)
-                </div>
 
                 <div class="col-md-6">
                     <br />
@@ -114,7 +145,7 @@
                 </div>
                 <div class="col-md-6">
                     <br />
-                    <b>: @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", (@ViewBag.payrollDetail.MainSalaryBilling + @ViewBag.payrollDetail.OvertimeBilling + @ViewBag.payrollDetail.AttendanceBilling + @ViewBag.payrollDetail.InsentiveBilling + @ViewBag.payrollDetail.AppreciationBilling + @ViewBag.payrollDetail.Rapel))</b>
+                    <b>: @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", (@ViewBag.payrollDetail.MainSalaryBilling + @ViewBag.payrollDetail.OvertimeBilling + @ViewBag.payrollDetail.AttendanceBilling + @ViewBag.payrollDetail.InsentiveBilling + @ViewBag.payrollDetail.AppreciationBilling + @ViewBag.payrollDetail.Rapel + @ViewBag.payrollDetail.PositionInsentiveBilling + @ViewBag.payrollDetail.PulseAllowance))</b>
                 </div>
 
 
@@ -122,7 +153,7 @@
 
             <div class="col-md-6 row">
                 <div class="col-md-6">
-                    BPJS KT
+                    JHT
                 </div>
                 <div class="col-md-6">
                     : @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", @ViewBag.payrollDetail.BpjsTkDeduction)
@@ -177,7 +208,7 @@
                 </div>
                 <div class="col-md-6">
                     <br />
-                    <b>: @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", (@ViewBag.payrollDetail.BpjsTkDeduction + @ViewBag.payrollDetail.BpjsKesehatanDeduction + @ViewBag.payrollDetail.PensionDeduction + @ViewBag.payrollDetail.PPH21 + @ViewBag.payrollDetail.AnotherDeduction + @ViewBag.payrollDetail.TransferFee))</b>
+                    <b>: @string.Format(new System.Globalization.CultureInfo("ID"), "{0:C}", (@ViewBag.payrollDetail.BpjsTkDeduction + @ViewBag.payrollDetail.AbsentDeduction + @ViewBag.payrollDetail.BpjsKesehatanDeduction + @ViewBag.payrollDetail.PensionDeduction + @ViewBag.payrollDetail.PPH21 + @ViewBag.payrollDetail.AnotherDeduction + @ViewBag.payrollDetail.TransferFee))</b>
                 </div>
 
             </div>

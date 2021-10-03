@@ -9,6 +9,9 @@ namespace Payroll.Models
     {
         public int Id { set; get; }
         [Required]
+        public int MainCustomerId { set; get; }
+        public MainCustomer MainCustomer { set; get; }
+        [Required]
         public string Month { set; get; }
         [Required]
         public string Year { set; get; }
@@ -61,5 +64,6 @@ namespace Payroll.Models
         public decimal Pph23Percentage { set; get; }
         public decimal BpjsPayrollPercentage { set; get; }
         public decimal PensionPayrollPercentage { set; get; }
+
     }
 }

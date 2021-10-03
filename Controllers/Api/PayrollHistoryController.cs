@@ -35,43 +35,117 @@ namespace Payroll.Controllers.Api
             try
             {
                 bool isExist = payrollDB.PayrollHistory
+                    .Where(column => column.MainCustomerId == payrollInput.MainCustomerId)
                     .Where(column => column.Month == payrollInput.Month)
                     .Where(column => column.Year == payrollInput.Year)
                     .Any();
                 if (!isExist)
                 {
                     PayrollHistory payrollHistory = new PayrollHistory();
-                    payrollHistory.JamsostekPercentage = payrollConfiguration.Value.JamsostekPercentage;
-                    payrollHistory.BpjsPercentage = payrollConfiguration.Value.BpjsPercentage;
-                    payrollHistory.PensionPercentage = payrollConfiguration.Value.PensionPercentage;
-                    payrollHistory.ManagementFeePercentage = payrollConfiguration.Value.ManagementFeePercentage;
-                    payrollHistory.PpnPercentage = payrollConfiguration.Value.PpnPercentage;
-                    payrollHistory.BpjsTk1Percentage = payrollConfiguration.Value.BpjsTk1Percentage;
-                    payrollHistory.BpjsKesehatanPercentage = payrollConfiguration.Value.BpjsKesehatanPercentage;
-                    payrollHistory.Pension1Percentage = payrollConfiguration.Value.Pension1Percentage;
-                    payrollHistory.Pph21Percentage = payrollConfiguration.Value.PPH21Percentage;
-                    payrollHistory.Pph23Percentage = payrollConfiguration.Value.PPH23Percentage;
-                    payrollHistory.BpjsPayrollPercentage= payrollConfiguration.Value.BpjsPayrollPercentage;
-                    payrollHistory.PensionPayrollPercentage = payrollConfiguration.Value.PensionPayrollPercentage;
-                    payrollHistory.Month = payrollInput.Month;
-                    payrollHistory.Year = payrollInput.Year;
-                    payrollHistory.StatusId = 1;
-                    payrollHistory.IsExist = true;
-                    payrollDB.Entry(payrollHistory).State = EntityState.Added;
-                    await payrollDB.PayrollHistory.AddAsync(payrollHistory);
+                    payrollHistory.MainCustomerId = payrollInput.MainCustomerId;
+                    if (payrollInput.MainCustomerId == 1)
+                    {
+                        payrollHistory.JamsostekPercentage = payrollConfiguration.Value.JamsostekPercentage;
+                        payrollHistory.BpjsPercentage = payrollConfiguration.Value.BpjsPercentage;
+                        payrollHistory.PensionPercentage = payrollConfiguration.Value.PensionPercentage;
+                        payrollHistory.ManagementFeePercentage = payrollConfiguration.Value.ManagementFeePercentage;
+                        payrollHistory.PpnPercentage = payrollConfiguration.Value.PpnPercentage;
+                        payrollHistory.BpjsTk1Percentage = payrollConfiguration.Value.BpjsTk1Percentage;
+                        payrollHistory.BpjsKesehatanPercentage = payrollConfiguration.Value.BpjsKesehatanPercentage;
+                        payrollHistory.Pension1Percentage = payrollConfiguration.Value.Pension1Percentage;
+                        payrollHistory.Pph21Percentage = payrollConfiguration.Value.PPH21Percentage;
+                        payrollHistory.Pph23Percentage = payrollConfiguration.Value.PPH23Percentage;
+                        payrollHistory.BpjsPayrollPercentage= payrollConfiguration.Value.BpjsPayrollPercentage;
+                        payrollHistory.PensionPayrollPercentage = payrollConfiguration.Value.PensionPayrollPercentage;
+                        payrollHistory.Month = payrollInput.Month;
+                        payrollHistory.Year = payrollInput.Year;
+                        payrollHistory.StatusId = 1;
+                        payrollHistory.IsExist = true;
+                        payrollDB.Entry(payrollHistory).State = EntityState.Added;
+                        await payrollDB.PayrollHistory.AddAsync(payrollHistory);
+                    }
+                    else if (payrollInput.MainCustomerId == 2)
+                    {
+                        payrollHistory.JamsostekPercentage = payrollConfiguration.Value.JamsostekPercentage;
+                        payrollHistory.BpjsPercentage = payrollConfiguration.Value.BpjsPercentage;
+                        payrollHistory.PensionPercentage = payrollConfiguration.Value.PensionPercentage;
+                        payrollHistory.ManagementFeePercentage = 0;
+                        payrollHistory.PpnPercentage = 0;
+                        payrollHistory.BpjsTk1Percentage = payrollConfiguration.Value.BpjsTk1Percentage;
+                        payrollHistory.BpjsKesehatanPercentage = payrollConfiguration.Value.BpjsKesehatanPercentage;
+                        payrollHistory.Pension1Percentage = payrollConfiguration.Value.Pension1Percentage;
+                        payrollHistory.Pph21Percentage = payrollConfiguration.Value.PPH21Percentage;
+                        payrollHistory.Pph23Percentage = payrollConfiguration.Value.PPH23Percentage;
+                        payrollHistory.BpjsPayrollPercentage = payrollConfiguration.Value.BpjsPayrollPercentage;
+                        payrollHistory.PensionPayrollPercentage = payrollConfiguration.Value.PensionPayrollPercentage;
+                        payrollHistory.Month = payrollInput.Month;
+                        payrollHistory.Year = payrollInput.Year;
+                        payrollHistory.StatusId = 1;
+                        payrollHistory.StatusId = 1;
+                        payrollHistory.IsExist = true;
+                        payrollDB.Entry(payrollHistory).State = EntityState.Added;
+                        await payrollDB.PayrollHistory.AddAsync(payrollHistory);
+                    }
+                    else if (payrollInput.MainCustomerId == 3)
+                    {
+                        payrollHistory.JamsostekPercentage = payrollConfiguration.Value.JamsostekPercentage;
+                        payrollHistory.BpjsPercentage = payrollConfiguration.Value.BpjsPercentage;
+                        payrollHistory.PensionPercentage = payrollConfiguration.Value.PensionPercentage;
+                        payrollHistory.ManagementFeePercentage = 0;
+                        payrollHistory.PpnPercentage = 0;
+                        payrollHistory.BpjsTk1Percentage = payrollConfiguration.Value.BpjsTk1Percentage;
+                        payrollHistory.BpjsKesehatanPercentage = payrollConfiguration.Value.BpjsKesehatanPercentage;
+                        payrollHistory.Pension1Percentage = payrollConfiguration.Value.Pension1Percentage;
+                        payrollHistory.Pph21Percentage = payrollConfiguration.Value.PPH21Percentage;
+                        payrollHistory.Pph23Percentage = payrollConfiguration.Value.PPH23Percentage;
+                        payrollHistory.BpjsPayrollPercentage = payrollConfiguration.Value.BpjsPayrollPercentage;
+                        payrollHistory.PensionPayrollPercentage = payrollConfiguration.Value.PensionPayrollPercentage;
+                        payrollHistory.Month = payrollInput.Month;
+                        payrollHistory.Year = payrollInput.Year;
+                        payrollHistory.StatusId = 1;
+                        payrollHistory.IsExist = true;
+                        payrollDB.Entry(payrollHistory).State = EntityState.Added;
+                        await payrollDB.PayrollHistory.AddAsync(payrollHistory);
+                    }
+                    else if (payrollInput.MainCustomerId == 4)
+                    {
+                        payrollHistory.JamsostekPercentage = payrollConfiguration.Value.JamsostekPercentage;
+                        payrollHistory.BpjsPercentage = payrollConfiguration.Value.BpjsPercentage;
+                        payrollHistory.PensionPercentage = payrollConfiguration.Value.PensionPercentage;
+                        payrollHistory.ManagementFeePercentage = 0;
+                        payrollHistory.PpnPercentage = 0;
+                        payrollHistory.BpjsTk1Percentage = payrollConfiguration.Value.BpjsTk1Percentage;
+                        payrollHistory.BpjsKesehatanPercentage = payrollConfiguration.Value.BpjsKesehatanPercentage;
+                        payrollHistory.Pension1Percentage = payrollConfiguration.Value.Pension1Percentage;
+                        payrollHistory.Pph21Percentage = payrollConfiguration.Value.PPH21Percentage;
+                        payrollHistory.Pph23Percentage = payrollConfiguration.Value.PPH23Percentage;
+                        payrollHistory.BpjsPayrollPercentage = payrollConfiguration.Value.BpjsPayrollPercentage;
+                        payrollHistory.PensionPayrollPercentage = payrollConfiguration.Value.PensionPayrollPercentage;
+                        payrollHistory.Month = payrollInput.Month;
+                        payrollHistory.Year = payrollInput.Year;
+                        payrollHistory.StatusId = 1;
+                        payrollHistory.IsExist = true;
+                        payrollDB.Entry(payrollHistory).State = EntityState.Added;
+                        await payrollDB.PayrollHistory.AddAsync(payrollHistory);
+                    }
+
                     await payrollDB.SaveChangesAsync();
 
                     List<Employee> employees = await payrollDB.Employee
+                        .Where(column => column.MainCustomerId == payrollInput.MainCustomerId)
                         .Where(column => column.IsExist == true)
                         .ToListAsync();
                     List<PayrollDetail> payrollDetails = new List<PayrollDetail>();
                     foreach (Employee employee in employees)
                     {
                         PayrollDetail payrollDetail = new PayrollDetail();
-                        payrollDetail.EmployeeId = employee.NIK;
+                        //TODO
+                        //payrollDetail.EmployeeId = employee.NIK;
                         payrollDetail.PayrollHistoryId = payrollHistory.Id;
                         payrollDetail.MainPrice = 0;
                         payrollDetail.PayrollDetailStatusId = 1;
+                        payrollDetail.IsExist = true;
+                        payrollDetail.EmployeeId = employee.Id;
                         payrollDetails.Add(payrollDetail);
                         payrollDB.Entry(payrollDetail).State = EntityState.Added;
                     }
@@ -150,8 +224,8 @@ namespace Payroll.Controllers.Api
 
         [Authorize]
         [HttpPost]
-        [Route("api/payrollHistory/readDatatable")]
-        public async Task<IActionResult> ReadDatatable()
+        [Route("api/payrollHistory/readDatatable/{id}")]
+        public async Task<IActionResult> ReadDatatable(int id)
         {
             try
             {
@@ -159,6 +233,7 @@ namespace Payroll.Controllers.Api
                 PayrollHistoryView payrollHistoryView = new PayrollHistoryView();
                 payrollHistoryView.Data = await payrollDB.PayrollHistory
                     .Where(column => column.IsExist == true)
+                    .Where(column => column.MainCustomerId == id)
                     .Where(column => column.Month.Contains(request.Keyword) || column.Year.Contains(request.Keyword))
                     .OrderBy(column => column.Month)
                     .Skip(request.Skip)

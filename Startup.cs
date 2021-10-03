@@ -6,12 +6,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Payroll.DataAccess;
-using Payroll.WebSockets;
 using Microsoft.AspNetCore.Http;
-using System.Globalization;
-using Microsoft.AspNetCore.Localization;
-using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using System;
 
 namespace Payroll
@@ -52,6 +47,7 @@ namespace Payroll
             {
                 options.ExpireTimeSpan = TimeSpan.FromHours(5);
                 options.LoginPath = Configuration["Login:Path"];
+                options.SlidingExpiration = true;
             });
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();           
         }
@@ -79,7 +75,6 @@ namespace Payroll
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Auth}/{action=Index}/{id?}");
-                endpoints.MapHub<NotificationHub>("/notificationHub");
             });
         }
     }

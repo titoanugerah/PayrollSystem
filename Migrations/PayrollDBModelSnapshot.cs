@@ -23,8 +23,8 @@ namespace Payroll.Migrations
                         .HasMaxLength(12)
                         .HasColumnType("varchar(12)");
 
-                    b.Property<string>("CreateBy")
-                        .HasColumnType("text");
+                    b.Property<int>("CreateBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreateDateUtc")
                         .HasColumnType("datetime");
@@ -32,8 +32,11 @@ namespace Payroll.Migrations
                     b.Property<ulong>("IsExist")
                         .HasColumnType("bit");
 
-                    b.Property<string>("ModifyBy")
+                    b.Property<string>("Keyword")
                         .HasColumnType("text");
+
+                    b.Property<int?>("ModifyBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifyDateUtc")
                         .HasColumnType("datetime");
@@ -53,8 +56,8 @@ namespace Payroll.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("CreateBy")
-                        .HasColumnType("text");
+                    b.Property<int>("CreateBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreateDateUtc")
                         .HasColumnType("datetime");
@@ -62,11 +65,14 @@ namespace Payroll.Migrations
                     b.Property<ulong>("IsExist")
                         .HasColumnType("bit");
 
+                    b.Property<string>("Keyword")
+                        .HasColumnType("text");
+
                     b.Property<int>("MainCustomerId")
                         .HasColumnType("int");
 
-                    b.Property<string>("ModifyBy")
-                        .HasColumnType("text");
+                    b.Property<int?>("ModifyBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifyDateUtc")
                         .HasColumnType("datetime");
@@ -91,8 +97,8 @@ namespace Payroll.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("CreateBy")
-                        .HasColumnType("text");
+                    b.Property<int>("CreateBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreateDateUtc")
                         .HasColumnType("datetime");
@@ -100,8 +106,8 @@ namespace Payroll.Migrations
                     b.Property<ulong>("IsExist")
                         .HasColumnType("bit");
 
-                    b.Property<string>("ModifyBy")
-                        .HasColumnType("text");
+                    b.Property<int?>("ModifyBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifyDateUtc")
                         .HasColumnType("datetime");
@@ -120,9 +126,9 @@ namespace Payroll.Migrations
 
             modelBuilder.Entity("Payroll.Models.Employee", b =>
                 {
-                    b.Property<string>("NIK")
-                        .HasMaxLength(6)
-                        .HasColumnType("varchar(6)");
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
                     b.Property<string>("AccountName")
                         .HasColumnType("text");
@@ -133,15 +139,11 @@ namespace Payroll.Migrations
                     b.Property<string>("BankCode")
                         .HasColumnType("varchar(12)");
 
-                    b.Property<string>("BpjsNumber")
-                        .HasMaxLength(14)
-                        .HasColumnType("varchar(14)");
+                    b.Property<int>("BpjsStatusId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("BpjsRemark")
-                        .HasColumnType("text");
-
-                    b.Property<string>("CreateBy")
-                        .HasColumnType("text");
+                    b.Property<int>("CreateBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreateDateUtc")
                         .HasColumnType("datetime");
@@ -149,40 +151,23 @@ namespace Payroll.Migrations
                     b.Property<int>("CustomerId")
                         .HasColumnType("int");
 
-                    b.Property<string>("DriverLicense")
-                        .HasColumnType("text");
-
-                    b.Property<string>("DriverLicenseType")
-                        .HasColumnType("text");
-
                     b.Property<string>("FamilyStatusCode")
                         .HasColumnType("varchar(2)");
 
                     b.Property<ulong>("IsExist")
                         .HasColumnType("bit");
 
-                    b.Property<string>("JamsostekNumber")
-                        .HasMaxLength(12)
-                        .HasColumnType("varchar(12)");
-
-                    b.Property<string>("JamsostekRemark")
-                        .HasColumnType("text");
-
-                    b.Property<string>("KTP")
-                        .HasMaxLength(16)
-                        .HasColumnType("varchar(16)");
-
                     b.Property<int>("LocationId")
                         .HasColumnType("int");
 
-                    b.Property<string>("ModifyBy")
-                        .HasColumnType("text");
+                    b.Property<int>("MainCustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ModifyBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifyDateUtc")
                         .HasColumnType("datetime");
-
-                    b.Property<string>("NPWP")
-                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -198,10 +183,18 @@ namespace Payroll.Migrations
                     b.Property<int>("PositionId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("PrimaryNIK")
+                        .HasMaxLength(4)
+                        .HasColumnType("int");
+
                     b.Property<int>("RoleId")
                         .HasColumnType("int");
 
-                    b.HasKey("NIK");
+                    b.Property<string>("SecondaryNIK")
+                        .HasMaxLength(16)
+                        .HasColumnType("varchar(16)");
+
+                    b.HasKey("Id");
 
                     b.HasIndex("BankCode");
 
@@ -211,44 +204,13 @@ namespace Payroll.Migrations
 
                     b.HasIndex("LocationId");
 
+                    b.HasIndex("MainCustomerId");
+
                     b.HasIndex("PositionId");
 
                     b.HasIndex("RoleId");
 
                     b.ToTable("Employee");
-                });
-
-            modelBuilder.Entity("Payroll.Models.EmploymentStatus", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<string>("CreateBy")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("CreateDateUtc")
-                        .HasColumnType("datetime");
-
-                    b.Property<ulong>("IsExist")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("ModifyBy")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime?>("ModifyDateUtc")
-                        .HasColumnType("datetime");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("Remark")
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("EmploymentStatus");
                 });
 
             modelBuilder.Entity("Payroll.Models.FamilyStatus", b =>
@@ -257,8 +219,8 @@ namespace Payroll.Migrations
                         .HasMaxLength(2)
                         .HasColumnType("varchar(2)");
 
-                    b.Property<string>("CreateBy")
-                        .HasColumnType("text");
+                    b.Property<int>("CreateBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreateDateUtc")
                         .HasColumnType("datetime");
@@ -266,8 +228,8 @@ namespace Payroll.Migrations
                     b.Property<ulong>("IsExist")
                         .HasColumnType("bit");
 
-                    b.Property<string>("ModifyBy")
-                        .HasColumnType("text");
+                    b.Property<int?>("ModifyBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifyDateUtc")
                         .HasColumnType("datetime");
@@ -293,8 +255,8 @@ namespace Payroll.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("CreateBy")
-                        .HasColumnType("text");
+                    b.Property<int>("CreateBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreateDateUtc")
                         .HasColumnType("datetime");
@@ -305,8 +267,8 @@ namespace Payroll.Migrations
                     b.Property<ulong>("IsExist")
                         .HasColumnType("bit");
 
-                    b.Property<string>("ModifyBy")
-                        .HasColumnType("text");
+                    b.Property<int?>("ModifyBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifyDateUtc")
                         .HasColumnType("datetime");
@@ -331,8 +293,8 @@ namespace Payroll.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("CreateBy")
-                        .HasColumnType("text");
+                    b.Property<int>("CreateBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreateDateUtc")
                         .HasColumnType("datetime");
@@ -340,8 +302,8 @@ namespace Payroll.Migrations
                     b.Property<ulong>("IsExist")
                         .HasColumnType("bit");
 
-                    b.Property<string>("ModifyBy")
-                        .HasColumnType("text");
+                    b.Property<int?>("ModifyBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifyDateUtc")
                         .HasColumnType("datetime");
@@ -372,6 +334,9 @@ namespace Payroll.Migrations
                     b.Property<string>("AnotherDeductionRemark")
                         .HasColumnType("text");
 
+                    b.Property<int>("AnotherInsentive")
+                        .HasColumnType("int");
+
                     b.Property<int>("AppreciationBilling")
                         .HasColumnType("int");
 
@@ -396,15 +361,14 @@ namespace Payroll.Migrations
                     b.Property<int>("BpjsTkDeduction")
                         .HasColumnType("int");
 
-                    b.Property<string>("CreateBy")
-                        .HasColumnType("text");
+                    b.Property<int>("CreateBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreateDateUtc")
                         .HasColumnType("datetime");
 
-                    b.Property<string>("EmployeeId")
-                        .IsRequired()
-                        .HasColumnType("varchar(6)");
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
 
                     b.Property<int>("FeePayroll")
                         .HasColumnType("int");
@@ -436,8 +400,8 @@ namespace Payroll.Migrations
                     b.Property<int>("ManagementFeeBilling")
                         .HasColumnType("int");
 
-                    b.Property<string>("ModifyBy")
-                        .HasColumnType("text");
+                    b.Property<int?>("ModifyBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifyDateUtc")
                         .HasColumnType("datetime");
@@ -475,6 +439,9 @@ namespace Payroll.Migrations
                     b.Property<int>("PensionDeduction")
                         .HasColumnType("int");
 
+                    b.Property<int>("PositionInsentiveBilling")
+                        .HasColumnType("int");
+
                     b.Property<int>("PulseAllowance")
                         .HasColumnType("int");
 
@@ -482,6 +449,9 @@ namespace Payroll.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("ResultPayroll")
+                        .HasColumnType("int");
+
+                    b.Property<int>("RouteBilling")
                         .HasColumnType("int");
 
                     b.Property<int>("SubtotalBilling")
@@ -496,7 +466,13 @@ namespace Payroll.Migrations
                     b.Property<int>("TaxPayroll")
                         .HasColumnType("int");
 
+                    b.Property<int>("Thr")
+                        .HasColumnType("int");
+
                     b.Property<int>("TotalPayroll")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TrainingBilling")
                         .HasColumnType("int");
 
                     b.Property<int>("TransferFee")
@@ -529,8 +505,8 @@ namespace Payroll.Migrations
                     b.Property<decimal>("BpjsTk1Percentage")
                         .HasColumnType("decimal(18, 2)");
 
-                    b.Property<string>("CreateBy")
-                        .HasColumnType("text");
+                    b.Property<int>("CreateBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreateDateUtc")
                         .HasColumnType("datetime");
@@ -541,11 +517,14 @@ namespace Payroll.Migrations
                     b.Property<decimal>("JamsostekPercentage")
                         .HasColumnType("decimal(18, 2)");
 
+                    b.Property<int>("MainCustomerId")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("ManagementFeePercentage")
                         .HasColumnType("decimal(18, 2)");
 
-                    b.Property<string>("ModifyBy")
-                        .HasColumnType("text");
+                    b.Property<int?>("ModifyBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifyDateUtc")
                         .HasColumnType("datetime");
@@ -581,6 +560,8 @@ namespace Payroll.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("MainCustomerId");
+
                     b.ToTable("PayrollHistory");
                 });
 
@@ -590,8 +571,8 @@ namespace Payroll.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("CreateBy")
-                        .HasColumnType("text");
+                    b.Property<int>("CreateBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreateDateUtc")
                         .HasColumnType("datetime");
@@ -599,8 +580,11 @@ namespace Payroll.Migrations
                     b.Property<ulong>("IsExist")
                         .HasColumnType("bit");
 
-                    b.Property<string>("ModifyBy")
+                    b.Property<string>("Keyword")
                         .HasColumnType("text");
+
+                    b.Property<int?>("ModifyBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifyDateUtc")
                         .HasColumnType("datetime");
@@ -623,8 +607,8 @@ namespace Payroll.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<string>("CreateBy")
-                        .HasColumnType("text");
+                    b.Property<int>("CreateBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime>("CreateDateUtc")
                         .HasColumnType("datetime");
@@ -632,8 +616,8 @@ namespace Payroll.Migrations
                     b.Property<ulong>("IsExist")
                         .HasColumnType("bit");
 
-                    b.Property<string>("ModifyBy")
-                        .HasColumnType("text");
+                    b.Property<int?>("ModifyBy")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("ModifyDateUtc")
                         .HasColumnType("datetime");
@@ -683,6 +667,12 @@ namespace Payroll.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Payroll.Models.MainCustomer", "MainCustomer")
+                        .WithMany()
+                        .HasForeignKey("MainCustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Payroll.Models.Position", "Position")
                         .WithMany()
                         .HasForeignKey("PositionId")
@@ -702,6 +692,8 @@ namespace Payroll.Migrations
                     b.Navigation("FamilyStatus");
 
                     b.Navigation("Location");
+
+                    b.Navigation("MainCustomer");
 
                     b.Navigation("Position");
 
@@ -736,6 +728,17 @@ namespace Payroll.Migrations
                     b.Navigation("Employee");
 
                     b.Navigation("PayrollHistory");
+                });
+
+            modelBuilder.Entity("Payroll.Models.PayrollHistory", b =>
+                {
+                    b.HasOne("Payroll.Models.MainCustomer", "MainCustomer")
+                        .WithMany()
+                        .HasForeignKey("MainCustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MainCustomer");
                 });
 #pragma warning restore 612, 618
         }

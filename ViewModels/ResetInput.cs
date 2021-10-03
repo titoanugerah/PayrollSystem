@@ -2,8 +2,8 @@
 {
     public class ResetInput
     {
-        public string NIK { set; get; }
-        public string KTP { set; get; }
+        public string Username { set; get; }
+        public string Name { set; get; }
         public string Password { set; get; }
     }
 }

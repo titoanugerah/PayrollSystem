@@ -27,7 +27,6 @@ namespace Payroll.DataAccess
         public DbSet<Customer> Customer { set; get; }
         public DbSet<District> District { set; get; }
         public DbSet<Employee> Employee { set; get; }
-        public DbSet<EmploymentStatus> EmploymentStatus { set; get; }
         public DbSet<FamilyStatus> FamilyStatus { set; get; }
         public DbSet<Location> Location { set; get; }
         public DbSet<MainCustomer> MainCustomer { set; get; }
@@ -69,12 +68,7 @@ namespace Payroll.DataAccess
 
             modelBuilder.Entity<Employee>(employee =>
             {
-                employee.HasKey(col => col.NIK);
-            });
-
-            modelBuilder.Entity<EmploymentStatus>(employmentStatus =>
-            {
-                employmentStatus.HasKey(col => col.Id);
+                employee.HasKey(col => col.Id);
             });
 
             modelBuilder.Entity<FamilyStatus>(familyStatus =>
@@ -126,8 +120,8 @@ namespace Payroll.DataAccess
             {
                 if (httpContextAccessor != null && httpContextAccessor.HttpContext != null && httpContextAccessor.HttpContext.User != null && httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
                 {
-                    string nik = httpContextAccessor.HttpContext.User.GetNIK();
-                    if (nik != null)
+                    int employeeId = httpContextAccessor.HttpContext.User.GetEmployeeId();
+                    if (employeeId != null)
                     {
                         var entries = ChangeTracker.Entries().ToList();
                         foreach (var entry in entries)
@@ -137,14 +131,13 @@ namespace Payroll.DataAccess
                                 switch (entry.State)
                                 {
                                     case EntityState.Added:
-                                        audit.IsExist = true;
-                                        audit.CreateBy = nik;
+                                        audit.CreateBy = employeeId;
                                         audit.CreateDateUtc = DateTime.UtcNow;
-                                        audit.ModifyBy = nik;
+                                        audit.ModifyBy = employeeId;
                                         audit.ModifyDateUtc = DateTime.UtcNow;
                                         break;
                                     case EntityState.Modified:
-                                        audit.ModifyBy = nik;
+                                        audit.ModifyBy = employeeId;
                                         audit.ModifyDateUtc = DateTime.UtcNow;
                                         Entry(audit).Property(p => p.CreateBy).IsModified = false;
                                         Entry(audit).Property(p => p.CreateDateUtc).IsModified = false;
@@ -157,5 +150,4 @@ namespace Payroll.DataAccess
             }
         }
     }
-
 }

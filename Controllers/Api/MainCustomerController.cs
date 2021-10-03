@@ -39,6 +39,7 @@ namespace Payroll.Controllers.Api
                     MainCustomer mainCustomer = new MainCustomer();
                     mainCustomer.Name = mainCustomerInput.Name;
                     mainCustomer.Remark = mainCustomerInput.Remark;
+                    mainCustomer.IsExist = true;
                     payrollDB.Entry(mainCustomer).State = EntityState.Added;
                     await payrollDB.MainCustomer.AddAsync(mainCustomer);
                     await payrollDB.SaveChangesAsync();
@@ -141,7 +142,7 @@ namespace Payroll.Controllers.Api
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [Route("api/maincustomer/update/{id}")]
-        public async Task<IActionResult> update([FromForm] MainCustomerInput mainCustomerInput, int id)
+        public async Task<IActionResult> Update([FromForm] MainCustomerInput mainCustomerInput, int id)
         {
             try
             {
