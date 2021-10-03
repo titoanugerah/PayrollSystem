@@ -77,7 +77,6 @@ namespace Payroll.Models
             }
 
         }
-
         public string AccountName { set; get; }
         public string BankCode { set; get; }
         public Bank Bank { set; get; }
@@ -85,5 +84,8 @@ namespace Payroll.Models
         [DefaultValue(2)]
         public int RoleId { set; get; }
         public Role Role { set; get; }
+        public string KTP { set; get; }
+        [Column(TypeName = "bit")]
+        public bool IsActive { set; get; }
     }
 }
