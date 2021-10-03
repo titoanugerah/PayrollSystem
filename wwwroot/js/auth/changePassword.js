@@ -40,3 +40,7 @@ function getKTP() {
         }
     });
 }
+
+$(document).ready(function () {
+    getKTP();
+});
