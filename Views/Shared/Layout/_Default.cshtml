@@ -111,6 +111,8 @@
                                     </li>
                                     <li>
                                         <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item" asp-action="ChangePassword" asp-controller="Auth">Ganti Password</a>
+                                        <div class="dropdown-divider"></div>
                                         <a class="dropdown-item" asp-action="Logout" asp-controller="Auth">Logout</a>
                                     </li>
                                 </div>
@@ -152,7 +154,7 @@
 
         <div class="main-panel">
             <div class="content">
-@*                <br /><br />*@
+                <br /><br />
                 @RenderBody()
                 <br /><br />
 
