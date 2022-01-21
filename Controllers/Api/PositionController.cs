@@ -38,6 +38,7 @@ namespace Payroll.Controllers.Api
                     Position position = new Position();
                     position.Name = positionInput.Name;
                     position.Remark = positionInput.Remark;
+                    position.Keyword = positionInput.Keyword;
                     position.IsExist = true;
                     payrollDB.Position.Add(position);                
                     payrollDB.Entry(position).State = EntityState.Added;
@@ -156,6 +157,7 @@ namespace Payroll.Controllers.Api
                     .FirstOrDefaultAsync();
                 position.Name = positionInput.Name;
                 position.Remark = positionInput.Remark;
+                position.Keyword = positionInput.Keyword;
                 payrollDB.Entry(position).State = EntityState.Modified;
                 await payrollDB.SaveChangesAsync();
                 return new JsonResult(position);

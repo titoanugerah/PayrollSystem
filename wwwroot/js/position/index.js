@@ -37,6 +37,7 @@ function showEditForm(id) {
             $('#editId').val(result.id);
             $('#editName').val(result.name);
             $('#editRemark').val(result.remark);
+            $('#editKeyword').val(result.keyword);
         },
         error: function (result) {
             console.log(result);
@@ -62,10 +63,12 @@ function addPosition() {
             data: {
                 Name: $("#addName").val(),
                 Remark: $("#addRemark").val(),
-            },
+                Keyword: $("#addKeyword").val(),
+             },
             success: function (result) {
                 $("#addName").val("");
                 $("#addRemark").val("");
+                $("#addKeyword").val("");
                 $('.spinner-border').hide();
                 $('#addPositionModal').modal('hide');
                 notify('fas fa-check', 'Berhasil', 'Position berhasil ditambahkan', 'success');
@@ -97,6 +100,7 @@ function updatePosition() {
             data: {
                 Name: $("#editName").val(),
                 Remark: $("#editRemark").val(),
+                Keyword: $("#editKeyword").val(),
             },
             success: function (result) {
                 $('.spinner-border').hide();
