@@ -35,6 +35,11 @@ namespace Payroll.ViewModels
                 TaxBilling = FindHeaderColumn("ppn");
                 GrandTotalBilling = FindHeaderColumn("grandtotal");
                 AnotherDeduction = FindHeaderColumn("potongan");
+                BpjsTkDeduction = FindHeaderColumn("bpjstk1");
+                BpjsKesehatanDeduction = FindHeaderColumn("bpjskes");
+                PensionDeduction = FindHeaderColumn("pensiun1");
+                PPH21 = FindHeaderColumn("pph21");
+                
                 IsValid = NIK != null && Name != null && MainSalaryBilling != null && JamsostekBilling != null && BpjsBilling != null && PensionBilling != null && MainPrice != null && ManagementFeeBilling != null && SubtotalBilling != null && TaxBilling != null && GrandTotalBilling != null;
                 if (IsValid)
                 {
@@ -131,6 +136,7 @@ namespace Payroll.ViewModels
         public bool IsValid { set; get; }
         public string NIK { set; get; }      
         public string Name { set; get; }
+        public string PPH21 { set; get; }
         public string AbsentDeduction { set; get; }
         public bool IsAnyAbsentDeduction
         {
@@ -148,7 +154,10 @@ namespace Payroll.ViewModels
         }
         public string MainSalaryBilling { set; get; }
         public string JamsostekBilling { set; get; }
+        public string BpjsTkDeduction { set; get; }
         public string BpjsBilling { set; get; }
+        public string BpjsKesehatanDeduction { set; get; }
+        public string PensionDeduction { set; get; }
         public string PensionBilling { set; get; }
         public string AtributeBilling { set; get; }
         public string MainPrice { set; get; }
