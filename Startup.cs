@@ -25,7 +25,7 @@ namespace Payroll
 
         public void ConfigureServices(IServiceCollection services)
         {
-            var connectionStrings = Configuration.GetConnectionString("PayrollDev");
+            var connectionStrings = Configuration.GetConnectionString("PayrollProd");
             services.AddDbContext<PayrollDB>(options => options
                 .UseMySQL(connectionStrings));
 

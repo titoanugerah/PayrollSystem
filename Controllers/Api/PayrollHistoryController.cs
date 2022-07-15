@@ -50,7 +50,7 @@ namespace Payroll.Controllers.Api
                         payrollHistory.PensionPercentage = payrollConfiguration.Value.PensionPercentage;
                         payrollHistory.ManagementFeePercentage = payrollConfiguration.Value.ManagementFeePercentage;
                         payrollHistory.PpnPercentage = payrollConfiguration.Value.PpnPercentage;
-                        payrollHistory.BpjsTk1Percentage = payrollConfiguration.Value.BpjsTk1Percentage;
+                        payrollHistory.BpjsTk1Percentage = 2;
                         payrollHistory.BpjsKesehatanPercentage = payrollConfiguration.Value.BpjsKesehatanPercentage;
                         payrollHistory.Pension1Percentage = payrollConfiguration.Value.Pension1Percentage;
                         payrollHistory.Pph21Percentage = payrollConfiguration.Value.PPH21Percentage;
@@ -71,7 +71,7 @@ namespace Payroll.Controllers.Api
                         payrollHistory.PensionPercentage = payrollConfiguration.Value.PensionPercentage;
                         payrollHistory.ManagementFeePercentage = 0;
                         payrollHistory.PpnPercentage = 0;
-                        payrollHistory.BpjsTk1Percentage = payrollConfiguration.Value.BpjsTk1Percentage;
+                        payrollHistory.BpjsTk1Percentage = 2;
                         payrollHistory.BpjsKesehatanPercentage = payrollConfiguration.Value.BpjsKesehatanPercentage;
                         payrollHistory.Pension1Percentage = payrollConfiguration.Value.Pension1Percentage;
                         payrollHistory.Pph21Percentage = payrollConfiguration.Value.PPH21Percentage;
@@ -93,7 +93,7 @@ namespace Payroll.Controllers.Api
                         payrollHistory.PensionPercentage = payrollConfiguration.Value.PensionPercentage;
                         payrollHistory.ManagementFeePercentage = 0;
                         payrollHistory.PpnPercentage = 0;
-                        payrollHistory.BpjsTk1Percentage = payrollConfiguration.Value.BpjsTk1Percentage;
+                        payrollHistory.BpjsTk1Percentage = 2;
                         payrollHistory.BpjsKesehatanPercentage = payrollConfiguration.Value.BpjsKesehatanPercentage;
                         payrollHistory.Pension1Percentage = payrollConfiguration.Value.Pension1Percentage;
                         payrollHistory.Pph21Percentage = payrollConfiguration.Value.PPH21Percentage;
@@ -114,7 +114,7 @@ namespace Payroll.Controllers.Api
                         payrollHistory.PensionPercentage = payrollConfiguration.Value.PensionPercentage;
                         payrollHistory.ManagementFeePercentage = 0;
                         payrollHistory.PpnPercentage = 0;
-                        payrollHistory.BpjsTk1Percentage = payrollConfiguration.Value.BpjsTk1Percentage;
+                        payrollHistory.BpjsTk1Percentage = 2;
                         payrollHistory.BpjsKesehatanPercentage = payrollConfiguration.Value.BpjsKesehatanPercentage;
                         payrollHistory.Pension1Percentage = payrollConfiguration.Value.Pension1Percentage;
                         payrollHistory.Pph21Percentage = payrollConfiguration.Value.PPH21Percentage;

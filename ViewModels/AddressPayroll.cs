@@ -75,14 +75,19 @@ namespace Payroll.ViewModels
         public int FindEndDataRow()
         {
             int DataRow = 0;
-            for (int currentRow = DataStartRow; currentRow <= Worksheet.Dimension.End.Row; currentRow++)
+            for (int currentRow = Worksheet.Dimension.End.Row; currentRow >= DataStartRow; currentRow--)
             {
                 ExcelRange selectedCell1 = Worksheet.Cells[$"{NIK}{currentRow}"];
                 ExcelRange selectedCell2 = Worksheet.Cells[$"{Name}{currentRow}"];
-                if (selectedCell1.Value == null && selectedCell2.Value == null)
+                ExcelRange selectedCell3 = Worksheet.Cells[$"A{currentRow}"];
+                if (selectedCell3.Value != null )
                 {
-                    DataRow = currentRow;
-                    break;
+                    if (selectedCell3.Value.ToString().ToLower() == "total")
+                    {
+                        DataRow = currentRow -1;
+                        break;
+                    }
+
                 }
             }
             return DataRow; 

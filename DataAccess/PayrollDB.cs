@@ -39,7 +39,7 @@ namespace Payroll.DataAccess
         {
             optionsBuilder.UseLoggerFactory(this.logger);
             optionsBuilder.EnableSensitiveDataLogging();
-            optionsBuilder.UseMySQL(configuration.GetConnectionString("PayrollDev"));
+            optionsBuilder.UseMySQL(configuration.GetConnectionString("PayrollProd"));
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

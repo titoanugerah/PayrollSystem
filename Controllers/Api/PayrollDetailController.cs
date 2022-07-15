@@ -485,11 +485,13 @@ namespace Payroll.Controllers.Api
                             foreach (ExcelWorksheet excelWorksheet in excelPackage.Workbook.Worksheets.ToList())
                             {
                                 bool isSheetOk = true;
+                                string ngLocation = null;
                                 AddressPayroll address = new AddressPayroll(excelWorksheet);
                                 if (!address.IsValid)
                                 {
                                     isFileOk = false;
                                     isSheetOk = false;
+                                    ngLocation = "Address Invalid";
                                     excelWorksheet.Cells[$"G1"].Value = "Format tidak valid";
                                     excelWorksheet.Cells[$"G1"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                                     excelWorksheet.Cells[$"G1"].Style.Fill.BackgroundColor.SetColor(Color.Red);
@@ -497,7 +499,7 @@ namespace Payroll.Controllers.Api
                                 }
 
                                 int rowNum = 1;
-                                for (int currentRow = address.DataStartRow; currentRow <= address.Worksheet.Dimension.End.Row; currentRow++)
+                                for (int currentRow = address.DataStartRow; currentRow <= address.DataEndRow; currentRow++)
                                 {
                                     PayrollDetail payrollDetail = new PayrollDetail();
                                     string employeeNIK = GetStringValue(excelWorksheet, address.NIK, currentRow);                                   
@@ -505,6 +507,7 @@ namespace Payroll.Controllers.Api
                                     {
                                         isFileOk = false;
                                         isSheetOk = false;
+                                        ngLocation = $"NIK {address.NIK}{currentRow} Invalid";
                                         excelWorksheet.Cells[$"A{currentRow}"].Value = "NIK Kosong";
                                         excelWorksheet.Cells[$"{address.NIK}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                                         excelWorksheet.Cells[$"{address.NIK}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
@@ -520,6 +523,7 @@ namespace Payroll.Controllers.Api
                                         {
                                             isFileOk = false;
                                             isSheetOk = false;
+                                            ngLocation = $"NIK {address.NIK}{currentRow} Invalid";
                                             excelWorksheet.Cells[$"A{currentRow}"].Value = "NIK Tidak Terdaftar";
                                             excelWorksheet.Cells[$"{address.NIK}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                                             excelWorksheet.Cells[$"{address.NIK}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
@@ -536,6 +540,7 @@ namespace Payroll.Controllers.Api
                                         {
                                             isFileOk = false;
                                             isSheetOk = false;
+                                            ngLocation = $"NIK {address.NIK}{currentRow} Invalid";
                                             excelWorksheet.Cells[$"A{currentRow}"].Value = "NIK Tidak Terdaftar";
                                             excelWorksheet.Cells[$"{address.NIK}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                                             excelWorksheet.Cells[$"{address.NIK}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
@@ -546,7 +551,8 @@ namespace Payroll.Controllers.Api
                                     {
                                         isFileOk = false;
                                         isSheetOk = false;
-                                        excelWorksheet.Cells[$"A{currentRow}"].Value = "NIK tidak terdaftar";
+                                        ngLocation = $"NIK {address.NIK}{currentRow} Invalid";
+                                        excelWorksheet.Cells[$"A{currentRow}"].Value = "NIK tidak terdaftar"; 
                                         excelWorksheet.Cells[$"{address.NIK}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
                                         excelWorksheet.Cells[$"{address.NIK}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
                                         excelWorksheet.Cells[$"{address.Name}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
@@ -571,15 +577,15 @@ namespace Payroll.Controllers.Api
                                     payrollDetail.SubtotalBilling = GetIntValue(excelWorksheet, address.SubtotalBilling, currentRow);
                                     payrollDetail.TaxBilling = GetIntValue(excelWorksheet, address.TaxBilling, currentRow);
                                     payrollDetail.GrandTotalBilling = GetIntValue(excelWorksheet, address.GrandTotalBilling, currentRow);
-                                    if (!payrollDetail.IsValidGrandTotalBilling)
-                                    {
-                                        isFileOk = false;
-                                        isSheetOk = false;
-                                        excelWorksheet.Cells[$"A{currentRow}"].Value = "Perhitungan Keliru, silahkan periksa kembali";
-                                        excelWorksheet.Cells[$"{address.GrandTotalBilling}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-                                        excelWorksheet.Cells[$"{address.GrandTotalBilling}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
-                                        continue;
-                                    }
+                                    //if (!payrollDetail.IsValidGrandTotalBilling)
+                                    //{
+                                    //    isFileOk = false;
+                                    //    isSheetOk = false;
+                                    //    excelWorksheet.Cells[$"A{currentRow}"].Value = "Perhitungan Keliru, silahkan periksa kembali";
+                                    //    excelWorksheet.Cells[$"{address.GrandTotalBilling}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                    //    excelWorksheet.Cells[$"{address.GrandTotalBilling}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                    //    continue;
+                                    //}
                                     payrollDetail.PayrollDetailStatusId = 2;
                                     payrollDB.Entry(payrollDetail).State = EntityState.Modified;
                                     updatedPayrollDetails.Add(payrollDetail);
@@ -647,15 +653,15 @@ namespace Payroll.Controllers.Api
                                     payrollDetail.AnotherDeduction = address.IsAnyAnotherDeduction ? GetIntValue(excelWorksheet, address.AnotherDeduction, currentRow) : 0;
                                     payrollDetail.GrandTotalBilling = GetIntValue(excelWorksheet, address.GrandTotalBilling, currentRow);
 
-                                    if (!(payrollDetail.GrandTotalBilling == (payrollDetail.MainSalaryBilling + payrollDetail.TrainingBilling + payrollDetail.RouteBilling + payrollDetail.InsentiveBilling)))
-                                    {
-                                        isFileOk = false;
-                                        isSheetOk = false;
-                                        excelWorksheet.Cells[$"A{currentRow}"].Value = "Perhitungan Keliru, silahkan periksa kembali";
-                                        excelWorksheet.Cells[$"{address.GrandTotalBilling}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
-                                        excelWorksheet.Cells[$"{address.GrandTotalBilling}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
-                                        continue;
-                                    }
+                                    //if (!(payrollDetail.GrandTotalBilling == (payrollDetail.MainSalaryBilling + payrollDetail.TrainingBilling + payrollDetail.RouteBilling + payrollDetail.InsentiveBilling)))
+                                    //{
+                                    //    isFileOk = false;
+                                    //    isSheetOk = false;
+                                    //    excelWorksheet.Cells[$"A{currentRow}"].Value = "Perhitungan Keliru, silahkan periksa kembali";
+                                    //    excelWorksheet.Cells[$"{address.GrandTotalBilling}{currentRow}"].Style.Fill.PatternType = OfficeOpenXml.Style.ExcelFillStyle.Solid;
+                                    //    excelWorksheet.Cells[$"{address.GrandTotalBilling}{currentRow}"].Style.Fill.BackgroundColor.SetColor(Color.Red);
+                                    //    continue;
+                                    //}
                                     payrollDetail.PayrollDetailStatusId = 2;
                                     payrollDB.Entry(payrollDetail).State = EntityState.Modified;
                                     updatedPayrollDetails.Add(payrollDetail);
